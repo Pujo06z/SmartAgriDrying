@@ -9,9 +9,20 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <title>Admin-dashboard</title>
     </head>
     <body>
-        <h1>Hello World!</h1>
+        <h1>ADMIN DASHBOARD</h1>
+
+        <p>
+            Welcome ${sessionScope.LOGIN_USER.fullName}
+        </p>
+
+        <p>
+            Role: ${sessionScope.LOGIN_USER.role}
+        </p>
+        <a href="${pageContext.request.contextPath}/logout">
+            Logout
+        </a>
     </body>
 </html>

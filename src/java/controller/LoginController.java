@@ -4,6 +4,7 @@
  */
 package controller;
 
+import dao.UserDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -11,6 +12,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import model.User;
 
 /**
  *
@@ -28,21 +31,59 @@ public class LoginController extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+    private static final String ERROR
+            = "/WEB-INF/views/login.jsp";
+
+    protected void processRequest(HttpServletRequest request,
+            HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try ( PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet LoginController</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet LoginController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+
+        String url = ERROR;
+
+        try {
+
+            String username = request.getParameter("username");
+            String password = request.getParameter("password");
+
+            if (username != null && password != null) {
+
+                UserDAO dao = new UserDAO();
+
+                User user = dao.checkLogin(username, password);
+
+                if (user != null) {
+
+                    HttpSession session = request.getSession();
+
+                    session.setAttribute("LOGIN_USER", user);
+
+                    response.sendRedirect(
+                            request.getContextPath() + "/dashboard"
+                    );
+
+                    return;
+
+                } else {
+
+                    request.setAttribute(
+                            "error",
+                            "Invalid username or password"
+                    );
+                }
+            }
+
+        } catch (Exception e) {
+
+            log("Error at LoginController: " + e.toString());
+
+            request.setAttribute(
+                    "error",
+                    "System error: " + e.getMessage()
+            );
         }
+
+        request.getRequestDispatcher(url)
+                .forward(request, response);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
