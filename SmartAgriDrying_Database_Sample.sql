@@ -20,7 +20,7 @@ GO
 CREATE TABLE USERS (
     user_id VARCHAR(10) PRIMARY KEY,
     username VARCHAR(50) UNIQUE NOT NULL,
-    password_hash VARCHAR(100) NOT NULL,
+    password VARCHAR(100) NOT NULL,
     full_name NVARCHAR(100) NOT NULL,
     role VARCHAR(20) NOT NULL CHECK (role IN ('ADMIN','MANAGER','OPERATOR')),
     status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE' CHECK (status IN ('ACTIVE','INACTIVE')),
@@ -103,12 +103,18 @@ CREATE TABLE EVENT_LOG (
 GO
 
 -- USERS
+/*
 INSERT INTO USERS VALUES
 ('U001','admin01','$2a$10$sampleAdminHash',N'System Administrator','ADMIN','ACTIVE','2026-09-20T08:00:00'),
 ('U002','manager01','$2a$10$sampleManagerHash',N'Nguyen Minh Quan','MANAGER','ACTIVE','2026-09-20T08:10:00'),
 ('U003','operator01','$2a$10$sampleOperator01Hash',N'Tran Van An','OPERATOR','ACTIVE','2026-09-20T08:20:00'),
-('U004','operator02','$2a$10$sampleOperator02Hash',N'Le Thi Binh','OPERATOR','ACTIVE','2026-09-20T08:30:00');
+('U004','operator02','$2a$10$sampleOperator02Hash',N'Le Thi Binh','OPERATOR','ACTIVE','2026-09-20T08:30:00');*/
 
+INSERT INTO USERS VALUES
+('U001','admin01','123456',N'System Administrator','ADMIN','ACTIVE','2026-09-20T08:00:00'),
+('U002','manager01','123456',N'Nguyen Minh Quan','MANAGER','ACTIVE','2026-09-20T08:10:00'),
+('U003','operator01','123456',N'Tran Van An','OPERATOR','ACTIVE','2026-09-20T08:20:00'),
+('U004','operator02','123456',N'Le Thi Binh','OPERATOR','ACTIVE','2026-09-20T08:30:00');
 -- WAREHOUSE
 INSERT INTO WAREHOUSE VALUES
 ('W001','WH-A01',N'Main Drying Area',N'Agricultural Drying Yard A','ACTIVE','2026-09-20T09:00:00');
