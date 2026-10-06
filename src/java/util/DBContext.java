@@ -1,0 +1,82 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package util;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+/**
+ *
+ * @author ADMIN
+ */
+public class DBContext {
+    private static final String URL
+            = "jdbc:sqlserver://localhost:1433;"
+            + "databaseName=SmartAgriDrying;"
+            + "encrypt=false";
+
+    private static final String USER = "sa";
+
+    private static final String PASSWORD = "12345";
+    public static Connection getConnection()throws SQLException{
+        try {
+            Class.forName(
+                    "com.microsoft.sqlserver.jdbc.SQLServerDriver"
+            );
+        } catch (ClassNotFoundException ex) {
+            throw new SQLException("JDBC Driver not found",ex);
+        }
+         return DriverManager.getConnection(
+                URL,
+                USER,
+                PASSWORD
+        );
+    }
+
+    /**
+     * Execute INSERT / UPDATE / DELETE
+     */
+    public static int exec(String sql, Object... params)
+            throws SQLException {
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            for (int i = 0; i < params.length; i++) {
+                ps.setObject(i + 1, params[i]);
+            }
+
+            return ps.executeUpdate();
+        }
+    }
+
+    /**
+     * Execute SELECT COUNT(*) or similar single-int query
+     */
+    public static int scalar(String sql, Object... params)
+            throws SQLException {
+
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            for (int i = 0; i < params.length; i++) {
+                ps.setObject(i + 1, params[i]);
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+
+        return 0;
+    }
+   
+}
