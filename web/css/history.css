@@ -1,0 +1,329 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : Oct 6, 2026, 11:41:26 PM
+    Author     : ADMIN
+*/
+/* ========================================= */
+/* HISTORY PAGE */
+/* ========================================= */
+
+
+/* ========================================= */
+/* PAGE HEADER */
+/* ========================================= */
+
+.history-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+
+    margin-bottom: 24px;
+}
+
+.history-page-header h1 {
+    font-size: 28px;
+    color: #111827;
+    margin-bottom: 6px;
+}
+
+.history-page-header p {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+
+/* ========================================= */
+/* CONTEXT INFO */
+/* ========================================= */
+
+.history-context {
+    display: flex;
+    gap: 12px;
+}
+
+.context-box {
+    min-width: 160px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    padding: 12px 16px;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+}
+
+.context-label {
+    font-size: 11px;
+    font-weight: 600;
+
+    color: #9ca3af;
+
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.context-box strong {
+    font-size: 14px;
+    color: #1f2937;
+}
+
+
+/* ========================================= */
+/* HISTORY TABS */
+/* ========================================= */
+
+.history-tabs {
+    display: flex;
+    gap: 8px;
+
+    margin-bottom: 20px;
+
+    padding: 6px;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+
+    width: fit-content;
+}
+
+.history-tab {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 40px;
+
+    padding: 9px 18px;
+
+    border-radius: 7px;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    color: #6b7280;
+
+    transition: 0.2s ease;
+}
+
+.history-tab:hover {
+    background: #f3f4f6;
+    color: #111827;
+}
+
+.history-tab.active {
+    background: #2563eb;
+    color: #ffffff;
+}
+
+
+/* ========================================= */
+/* SECTION DESCRIPTION */
+/* ========================================= */
+
+.section-description {
+    margin-top: 5px;
+
+    font-size: 13px;
+    color: #9ca3af;
+}
+
+
+/* ========================================= */
+/* SENSOR HISTORY TABLE */
+/* ========================================= */
+
+.sensor-history-table {
+    min-width: 850px;
+}
+
+.sensor-history-table td:nth-child(2),
+.sensor-history-table td:nth-child(3) {
+    font-weight: 600;
+}
+
+.sensor-history-table td {
+    vertical-align: middle;
+}
+
+
+/* ========================================= */
+/* BATCH HISTORY TABLE */
+/* ========================================= */
+
+.batch-history-table {
+    min-width: 1100px;
+}
+
+.batch-history-table td {
+    vertical-align: middle;
+}
+
+.batch-history-table td:first-child {
+    font-weight: 700;
+}
+
+
+/* ========================================= */
+/* COMPLETED STATUS */
+/* ========================================= */
+
+.history-status-completed {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 5px 10px;
+
+    border-radius: 999px;
+
+    background: #dcfce7;
+    color: #166534;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+
+/* ========================================= */
+/* EVENT HISTORY PLACEHOLDER */
+/* ========================================= */
+
+.history-empty-state {
+    min-height: 220px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    text-align: center;
+
+    background: #f9fafb;
+
+    border: 1px dashed #d1d5db;
+    border-radius: 10px;
+}
+
+.history-empty-state h3 {
+    font-size: 17px;
+    color: #374151;
+}
+
+.history-empty-state p {
+    font-size: 13px;
+    color: #9ca3af;
+}
+
+
+/* ========================================= */
+/* TABLET */
+/* ========================================= */
+
+@media (max-width: 1000px) {
+
+    .history-page-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .history-context {
+        width: 100%;
+    }
+
+    .context-box {
+        flex: 1;
+    }
+}
+
+
+/* ========================================= */
+/* MOBILE */
+/* ========================================= */
+
+@media (max-width: 768px) {
+
+    .history-page-header {
+        margin-bottom: 18px;
+    }
+
+    .history-page-header h1 {
+        font-size: 23px;
+    }
+
+    .history-context {
+        flex-direction: column;
+    }
+
+    .context-box {
+        width: 100%;
+    }
+
+    .history-tabs {
+        width: 100%;
+
+        overflow-x: auto;
+
+        justify-content: flex-start;
+    }
+
+    .history-tab {
+        flex-shrink: 0;
+
+        min-width: 130px;
+    }
+
+    .section-description {
+        font-size: 12px;
+    }
+}
+
+
+/* ========================================= */
+/* SMALL MOBILE */
+/* ========================================= */
+
+@media (max-width: 480px) {
+
+    .history-page-header h1 {
+        font-size: 21px;
+    }
+
+    .history-page-header p {
+        font-size: 13px;
+    }
+
+    .context-box {
+        padding: 11px 13px;
+    }
+
+    .history-tabs {
+        gap: 5px;
+        padding: 5px;
+    }
+
+    .history-tab {
+        min-width: 120px;
+
+        padding: 8px 12px;
+
+        font-size: 12px;
+    }
+
+    .history-empty-state {
+        min-height: 180px;
+
+        padding: 20px;
+    }
+}
