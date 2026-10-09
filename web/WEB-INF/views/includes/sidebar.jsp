@@ -14,7 +14,11 @@
 
 <c:set var="currentURI"
        value="${pageContext.request.requestURI}" />
-
+<button class="sidebar-toggle"
+        type="button"
+        onclick="toggleSidebar()">
+    ☰
+</button>
 <aside class="sidebar" id="sidebar">
 
     <!-- ===================== -->
@@ -280,3 +284,10 @@
     </div>
 
 </aside>
+<script>
+    function toggleSidebar() {
+        document
+            .getElementById("sidebar")
+            .classList.toggle("open");
+    }
+</script>
