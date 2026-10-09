@@ -1,0 +1,716 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : Oct 9, 2026, 7:20:43 PM
+    Author     : ADMIN
+*/
+
+/* =========================================================
+   EVENT LOG PAGE
+   ========================================================= */
+
+.event-page-header {
+    margin-bottom: 18px;
+}
+
+.event-page-header h1 {
+    margin: 0;
+
+    font-size: 28px;
+    font-weight: 700;
+
+    color: #0f172a;
+}
+
+.event-page-header p {
+    margin: 6px 0 0;
+
+    font-size: 14px;
+
+    color: #64748b;
+}
+
+
+/* =========================================================
+   ERROR MESSAGE
+   ========================================================= */
+
+.alert-error {
+    margin-bottom: 18px;
+
+    padding: 12px 16px;
+
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+
+    background: #fef2f2;
+
+    color: #991b1b;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   FILTER SECTION
+   ========================================================= */
+
+.filter-section {
+    margin-bottom: 20px;
+
+    padding: 18px;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+
+    box-shadow:
+        0 4px 14px rgba(15, 23, 42, 0.04);
+}
+
+
+/* =========================================================
+   SECTION TITLE
+   ========================================================= */
+
+.section-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 14px;
+
+    margin-bottom: 16px;
+}
+
+.section-title h2 {
+    margin: 0;
+
+    font-size: 18px;
+    font-weight: 700;
+
+    color: #0f172a;
+}
+
+
+/* =========================================================
+   RESET BUTTON
+   ========================================================= */
+
+.btn-reset {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 8px 14px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #475569;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    transition: 0.2s ease;
+}
+
+.btn-reset:hover {
+    background: #f8fafc;
+
+    border-color: #94a3b8;
+}
+
+
+/* =========================================================
+   FILTER FORM
+   ========================================================= */
+
+.filter-form {
+    display: grid;
+
+    grid-template-columns:
+        minmax(220px, 2fr)
+        repeat(5, minmax(130px, 1fr))
+        auto;
+
+    gap: 14px;
+
+    align-items: end;
+}
+
+
+/* =========================================================
+   FILTER GROUP
+   ========================================================= */
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+
+    gap: 6px;
+}
+
+.filter-group label {
+    font-size: 12px;
+    font-weight: 700;
+
+    color: #475569;
+}
+
+
+/* =========================================================
+   INPUT + SELECT
+   ========================================================= */
+
+.filter-group input,
+.filter-group select {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 10px 12px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #111827;
+
+    font-size: 13px;
+
+    outline: none;
+
+    transition: 0.2s ease;
+}
+
+.filter-group input::placeholder {
+    color: #94a3b8;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+    border-color: #16a34a;
+
+    box-shadow:
+        0 0 0 3px rgba(22, 163, 74, 0.10);
+}
+
+
+/* =========================================================
+   FIXED VALUE
+   Operator warehouse
+   ========================================================= */
+
+.fixed-value {
+    min-height: 39px;
+
+    display: flex;
+    align-items: center;
+
+    box-sizing: border-box;
+
+    padding: 10px 12px;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+
+    background: #f8fafc;
+
+    color: #334155;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   SEARCH BUTTON
+   ========================================================= */
+
+.filter-action {
+    display: flex;
+    align-items: flex-end;
+}
+
+.btn-search {
+    min-width: 100px;
+
+    padding: 10px 18px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: #0f8b4c;
+
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.btn-search:hover {
+    background: #0b6f3d;
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   EVENT SECTION
+   ========================================================= */
+
+.event-section {
+    padding: 18px;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+
+    box-shadow:
+        0 4px 14px rgba(15, 23, 42, 0.04);
+}
+
+
+/* =========================================================
+   EVENT SECTION HEADER
+   ========================================================= */
+
+.event-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 14px;
+
+    margin-bottom: 16px;
+}
+
+.event-section-header h2 {
+    margin: 0;
+
+    font-size: 18px;
+    font-weight: 700;
+
+    color: #0f172a;
+}
+
+.event-section-header p {
+    margin: 4px 0 0;
+
+    font-size: 13px;
+
+    color: #64748b;
+}
+
+
+/* =========================================================
+   TABLE WRAPPER
+   ========================================================= */
+
+.table-wrapper {
+    width: 100%;
+
+    overflow-x: auto;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+}
+
+
+/* =========================================================
+   EVENT TABLE
+   ========================================================= */
+
+.event-table {
+    width: 100%;
+
+    min-width: 1250px;
+
+    border-collapse: collapse;
+
+    background: #ffffff;
+}
+
+.event-table thead {
+    background: #f8fafc;
+}
+
+.event-table th {
+    padding: 13px 12px;
+
+    text-align: left;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    color: #64748b;
+
+    text-transform: uppercase;
+
+    white-space: nowrap;
+
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.event-table td {
+    padding: 14px 12px;
+
+    font-size: 13px;
+
+    color: #475569;
+
+    vertical-align: middle;
+
+    border-bottom: 1px solid #eef2f7;
+}
+
+.event-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.event-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+/* =========================================================
+   EVENT TIME
+   ========================================================= */
+
+.event-time {
+    white-space: nowrap;
+
+    color: #475569;
+}
+
+
+/* =========================================================
+   EVENT ID
+   ========================================================= */
+
+.event-id {
+    font-weight: 700;
+
+    color: #0f172a !important;
+}
+
+
+/* =========================================================
+   EVENT TYPE BADGE
+   ========================================================= */
+
+.event-type {
+    display: inline-block;
+
+    padding: 5px 9px;
+
+    border-radius: 6px;
+
+    background: #f1f5f9;
+
+    color: #334155;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   SOURCE BADGES
+   ========================================================= */
+
+.source-auto,
+.source-manual,
+.source-web {
+    display: inline-block;
+
+    padding: 5px 9px;
+
+    border-radius: 999px;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+/* AUTO */
+
+.source-auto {
+    background: #dcfce7;
+
+    color: #15803d;
+}
+
+
+/* MANUAL */
+
+.source-manual {
+    background: #fef3c7;
+
+    color: #b45309;
+}
+
+
+/* WEB */
+
+.source-web {
+    background: #dbeafe;
+
+    color: #1d4ed8;
+}
+
+
+/* =========================================================
+   DESCRIPTION
+   ========================================================= */
+
+.description-cell {
+    min-width: 250px;
+    max-width: 360px;
+
+    line-height: 1.5;
+
+    color: #475569;
+}
+
+
+/* =========================================================
+   MUTED TEXT
+   ========================================================= */
+
+.text-muted {
+    color: #94a3b8;
+
+    font-style: italic;
+}
+
+
+/* =========================================================
+   EMPTY ROW
+   ========================================================= */
+
+.empty-row {
+    padding: 30px !important;
+
+    text-align: center;
+
+    color: #94a3b8 !important;
+
+    font-style: italic;
+}
+
+
+/* =========================================================
+   PAGINATION WRAPPER
+   ========================================================= */
+
+.pagination-wrapper {
+    margin-top: 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 14px;
+}
+
+
+/* =========================================================
+   PAGINATION INFO
+   ========================================================= */
+
+.pagination-info {
+    font-size: 13px;
+
+    color: #64748b;
+}
+
+.pagination-info strong {
+    color: #0f172a;
+}
+
+
+/* =========================================================
+   PAGINATION
+   ========================================================= */
+
+.pagination {
+    display: flex;
+    align-items: center;
+
+    gap: 6px;
+
+    flex-wrap: wrap;
+}
+
+
+/* =========================================================
+   PAGE LINK
+   ========================================================= */
+
+.page-link {
+    min-width: 34px;
+    height: 34px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    box-sizing: border-box;
+
+    padding: 0 10px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 7px;
+
+    background: #ffffff;
+
+    color: #475569;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    transition: 0.2s ease;
+}
+
+.page-link:hover {
+    background: #f1f5f9;
+
+    border-color: #94a3b8;
+}
+
+
+/* =========================================================
+   ACTIVE PAGE
+   ========================================================= */
+
+.page-link.active {
+    background: #0f8b4c;
+
+    border-color: #0f8b4c;
+
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   DISABLED PAGE
+   ========================================================= */
+
+.page-link.disabled {
+    background: #f8fafc;
+
+    color: #cbd5e1;
+
+    cursor: not-allowed;
+
+    border-color: #e5e7eb;
+}
+
+
+/* =========================================================
+   RESPONSIVE - LARGE
+   ========================================================= */
+
+@media (max-width: 1350px) {
+
+    .filter-form {
+        grid-template-columns:
+            repeat(3, 1fr);
+    }
+
+    .search-group {
+        grid-column: span 2;
+    }
+
+    .filter-action {
+        align-items: stretch;
+    }
+
+    .btn-search {
+        width: 100%;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE - TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .filter-form {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .search-group {
+        grid-column: span 2;
+    }
+
+    .pagination-wrapper {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE - MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .event-page-header h1 {
+        font-size: 24px;
+    }
+
+    .section-title {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .btn-reset {
+        width: 100%;
+    }
+
+    .filter-form {
+        grid-template-columns: 1fr;
+    }
+
+    .search-group {
+        grid-column: span 1;
+    }
+
+    .btn-search {
+        width: 100%;
+    }
+
+    .pagination {
+        width: 100%;
+    }
+
+    .page-link {
+        flex: 1;
+    }
+}

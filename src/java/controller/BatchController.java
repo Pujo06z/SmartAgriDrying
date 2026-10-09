@@ -5,9 +5,11 @@
 package controller;
 
 import dao.DryingBatchDAO;
+import dao.EventLogDAO;
 import dao.WarehouseDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,18 +44,7 @@ public class BatchController extends HttpServlet {
             HttpServletResponse response)
             throws ServletException, IOException {
 
-        HttpSession session = request.getSession(false);
-
-        if (session == null
-                || session.getAttribute("LOGIN_USER") == null) {
-
-            response.sendRedirect(
-                    request.getContextPath() + "/login"
-            );
-
-            return;
-        }
-
+        HttpSession session = request.getSession();
         User user
                 = (User) session.getAttribute("LOGIN_USER");
 
@@ -83,7 +74,8 @@ public class BatchController extends HttpServlet {
     // ==============================
     // LOAD BATCH PAGE
     // ==============================
-  private void loadBatchPage(
+    
+    private void loadBatchPage(
         HttpServletRequest request,
         HttpServletResponse response,
         User user)
@@ -96,12 +88,104 @@ public class BatchController extends HttpServlet {
             = new DryingBatchDAO();
 
 
-    // Lấy warehouse của user
-    Warehouse warehouse
-            = warehouseDAO.getWarehouseByUser(
-                    user.getUserId()
+    Warehouse warehouse = null;
+
+    List<Warehouse> warehouseList
+            = new ArrayList<>();
+
+
+    // =========================================
+    // 1. MANAGER
+    // =========================================
+
+    if ("MANAGER".equals(user.getRole())) {
+
+        warehouseList
+                = warehouseDAO.getWarehousesByManager(
+                        user.getUserId()
+                );
+
+
+        if (warehouseList == null
+                || warehouseList.isEmpty()) {
+
+            request.setAttribute(
+                    "error",
+                    "No warehouse assigned."
             );
 
+            request.setAttribute(
+                    "warehouseList",
+                    warehouseList
+            );
+
+            request.getRequestDispatcher(
+                    "/WEB-INF/views/batch.jsp"
+            ).forward(
+                    request,
+                    response
+            );
+
+            return;
+        }
+
+
+        String warehouseId
+                = request.getParameter(
+                        "warehouseId"
+                );
+
+
+        // Manager đã chọn warehouse
+        if (warehouseId != null
+                && !warehouseId.trim().isEmpty()) {
+
+            for (Warehouse w : warehouseList) {
+
+                if (warehouseId.equals(
+                        w.getWarehouseId())) {
+
+                    warehouse = w;
+
+                    break;
+                }
+            }
+        }
+
+
+        // Chưa chọn -> warehouse đầu tiên
+        if (warehouse == null) {
+
+            warehouse
+                    = warehouseList.get(0);
+        }
+    }
+
+
+    // =========================================
+    // 2. OPERATOR
+    // =========================================
+
+    else if ("OPERATOR".equals(user.getRole())) {
+
+        warehouse
+                = warehouseDAO.getWarehouseByUser(
+                        user.getUserId()
+                );
+
+
+        if (warehouse != null) {
+
+            warehouseList.add(
+                    warehouse
+            );
+        }
+    }
+
+
+    // =========================================
+    // 3. KHÔNG CÓ WAREHOUSE
+    // =========================================
 
     if (warehouse == null) {
 
@@ -110,19 +194,187 @@ public class BatchController extends HttpServlet {
                 "No warehouse assigned."
         );
 
+        request.setAttribute(
+                "warehouseList",
+                warehouseList
+        );
+
         request.getRequestDispatcher(
                 "/WEB-INF/views/batch.jsp"
-        ).forward(request, response);
+        ).forward(
+                request,
+                response
+        );
 
         return;
     }
 
 
-    // Lấy tất cả batch trong warehouse
-    List<DryingBatch> batches
-            = batchDAO.getBatchesByWarehouse(
+    // =========================================
+    // 4. SEARCH
+    // =========================================
+
+    String keyword
+            = request.getParameter(
+                    "keyword"
+            );
+
+
+    if (keyword == null) {
+
+        keyword = "";
+    }
+
+
+    // =========================================
+    // 5. FILTER STATUS
+    // =========================================
+
+    String statusFilter
+            = request.getParameter(
+                    "status"
+            );
+
+
+    if (!"DRYING".equals(statusFilter)
+            && !"COMPLETED".equals(statusFilter)) {
+
+        statusFilter = "";
+    }
+
+
+    // =========================================
+    // 6. SORT
+    // =========================================
+
+    String sortBy
+            = request.getParameter(
+                    "sortBy"
+            );
+
+    String sortOrder
+            = request.getParameter(
+                    "sortOrder"
+            );
+
+
+    if (sortBy == null
+            || sortBy.trim().isEmpty()) {
+
+        sortBy = "startTime";
+    }
+
+
+    if (!"ASC".equalsIgnoreCase(sortOrder)) {
+
+        sortOrder = "DESC";
+    }
+
+
+    // =========================================
+    // 7. PAGINATION
+    // =========================================
+
+    int page = 1;
+
+    int pageSize = 10;
+
+
+    String pageParam
+            = request.getParameter(
+                    "page"
+            );
+
+
+    if (pageParam != null) {
+
+        try {
+
+            page
+                    = Integer.parseInt(
+                            pageParam
+                    );
+
+        } catch (NumberFormatException e) {
+
+            page = 1;
+        }
+    }
+
+
+    if (page < 1) {
+
+        page = 1;
+    }
+
+
+    // =========================================
+    // 8. COUNT BATCHES
+    // =========================================
+
+    int totalRecords
+            = batchDAO.countBatchesByWarehouse(
+                    warehouse.getWarehouseId(),
+                    keyword,
+                    statusFilter
+            );
+
+
+    int totalPages
+            = (int) Math.ceil(
+                    (double) totalRecords
+                    / pageSize
+            );
+
+
+    if (totalPages < 1) {
+
+        totalPages = 1;
+    }
+
+
+    if (page > totalPages) {
+
+        page = totalPages;
+    }
+
+
+    // =========================================
+    // 9. ACTIVE BATCHES
+    // KHÔNG SEARCH / FILTER / PAGINATION
+    // =========================================
+
+    List<DryingBatch> activeBatches
+            = batchDAO.getActiveBatchesByWarehouse(
                     warehouse.getWarehouseId()
             );
+
+
+    // =========================================
+    // 10. ALL BATCHES
+    // SEARCH + FILTER + SORT + PAGINATION
+    // =========================================
+
+    List<DryingBatch> batches
+            = batchDAO.searchBatchesByWarehouse(
+                    warehouse.getWarehouseId(),
+                    keyword,
+                    statusFilter,
+                    sortBy,
+                    sortOrder,
+                    page,
+                    pageSize
+            );
+
+
+    // =========================================
+    // 11. SEND DATA TO JSP
+    // =========================================
+
+    request.setAttribute(
+            "warehouseList",
+            warehouseList
+    );
 
 
     request.setAttribute(
@@ -130,16 +382,218 @@ public class BatchController extends HttpServlet {
             warehouse
     );
 
+
+    request.setAttribute(
+            "activeBatches",
+            activeBatches
+    );
+
+
     request.setAttribute(
             "batches",
             batches
     );
 
 
+    // SEARCH
+
+    request.setAttribute(
+            "keyword",
+            keyword
+    );
+
+
+    // FILTER
+
+    request.setAttribute(
+            "selectedStatus",
+            statusFilter
+    );
+
+
+    // SORT
+
+    request.setAttribute(
+            "sortBy",
+            sortBy
+    );
+
+    request.setAttribute(
+            "sortOrder",
+            sortOrder
+    );
+
+
+    // PAGINATION
+
+    request.setAttribute(
+            "currentPage",
+            page
+    );
+
+    request.setAttribute(
+            "pageSize",
+            pageSize
+    );
+
+    request.setAttribute(
+            "totalRecords",
+            totalRecords
+    );
+
+    request.setAttribute(
+            "totalPages",
+            totalPages
+    );
+
+
+    // =========================================
+    // 12. FORWARD
+    // =========================================
+
     request.getRequestDispatcher(
             "/WEB-INF/views/batch.jsp"
-    ).forward(request, response);
+    ).forward(
+            request,
+            response
+    );
 }
+//    private void loadBatchPage(
+//            HttpServletRequest request,
+//            HttpServletResponse response,
+//            User user)
+//            throws Exception {
+//
+//        WarehouseDAO warehouseDAO
+//                = new WarehouseDAO();
+//
+//        DryingBatchDAO batchDAO
+//                = new DryingBatchDAO();
+//
+//        Warehouse warehouse = null;
+//
+//        List<Warehouse> warehouseList
+//                = new ArrayList<>();
+//
+//        // =========================================
+//        // MANAGER
+//        // =========================================
+//        if ("MANAGER".equals(user.getRole())) {
+//
+//            warehouseList
+//                    = warehouseDAO.getWarehousesByManager(
+//                            user.getUserId()
+//                    );
+//
+//            if (warehouseList == null
+//                    || warehouseList.isEmpty()) {
+//
+//                request.setAttribute(
+//                        "error",
+//                        "No warehouse assigned."
+//                );
+//
+//                request.setAttribute(
+//                        "warehouseList",
+//                        warehouseList
+//                );
+//
+//                request.getRequestDispatcher(
+//                        "/WEB-INF/views/batch.jsp"
+//                ).forward(request, response);
+//
+//                return;
+//            }
+//
+//            String warehouseId
+//                    = request.getParameter(
+//                            "warehouseId"
+//                    );
+//
+//            // Manager đã chọn warehouse
+//            if (warehouseId != null
+//                    && !warehouseId.trim().isEmpty()) {
+//
+//                for (Warehouse w : warehouseList) {
+//
+//                    if (warehouseId.equals(
+//                            w.getWarehouseId())) {
+//
+//                        warehouse = w;
+//                        break;
+//                    }
+//                }
+//            }
+//
+//            // Chưa chọn -> warehouse đầu tiên
+//            if (warehouse == null) {
+//
+//                warehouse
+//                        = warehouseList.get(0);
+//            }
+//        } // =========================================
+//        // OPERATOR
+//        // =========================================
+//        else if ("OPERATOR".equals(user.getRole())) {
+//
+//            warehouse
+//                    = warehouseDAO.getWarehouseByUser(
+//                            user.getUserId()
+//                    );
+//
+//            if (warehouse != null) {
+//
+//                warehouseList.add(
+//                        warehouse
+//                );
+//            }
+//        }
+//
+//        // =========================================
+//        // KHÔNG CÓ WAREHOUSE
+//        // =========================================
+//        if (warehouse == null) {
+//
+//            request.setAttribute(
+//                    "error",
+//                    "No warehouse assigned."
+//            );
+//
+//            request.getRequestDispatcher(
+//                    "/WEB-INF/views/batch.jsp"
+//            ).forward(request, response);
+//
+//            return;
+//        }
+//
+//        // =========================================
+//        // BATCH LIST
+//        // =========================================
+//        List<DryingBatch> batches
+//                = batchDAO.getBatchesByWarehouse(
+//                        warehouse.getWarehouseId()
+//                );
+//
+//        request.setAttribute(
+//                "warehouseList",
+//                warehouseList
+//        );
+//
+//        request.setAttribute(
+//                "warehouse",
+//                warehouse
+//        );
+//
+//        request.setAttribute(
+//                "batches",
+//                batches
+//        );
+//
+//        request.getRequestDispatcher(
+//                "/WEB-INF/views/batch.jsp"
+//        ).forward(request, response);
+//    }
+
 
     // ==============================
     // POST ACTION
@@ -181,123 +635,365 @@ public class BatchController extends HttpServlet {
     // ==============================
     // START BATCH
     // ==============================
-   private void startBatch(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        User user)
-        throws Exception {
+    private void startBatch(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            User user)
+            throws Exception {
 
-    WarehouseDAO warehouseDAO
-            = new WarehouseDAO();
+        WarehouseDAO warehouseDAO
+                = new WarehouseDAO();
 
-    DryingBatchDAO batchDAO
-            = new DryingBatchDAO();
+        DryingBatchDAO batchDAO
+                = new DryingBatchDAO();
 
+        EventLogDAO eventLogDAO
+                = new EventLogDAO();
 
-    // Lấy warehouse của operator
-    Warehouse warehouse
-            = warehouseDAO.getWarehouseByUser(
-                    user.getUserId()
-            );
+        Warehouse warehouse = null;
 
+        // =========================================
+        // OPERATOR
+        // =========================================
+        if ("OPERATOR".equals(user.getRole())) {
 
-    if (warehouse == null) {
+            warehouse
+                    = warehouseDAO.getWarehouseByUser(
+                            user.getUserId()
+                    );
+        } // =========================================
+        // MANAGER
+        // =========================================
+        else if ("MANAGER".equals(user.getRole())) {
 
-        response.sendRedirect(
-                request.getContextPath() + "/batch"
-        );
+            String warehouseId
+                    = request.getParameter(
+                            "warehouseId"
+                    );
 
-        return;
-    }
+            if (warehouseId == null
+                    || warehouseId.trim().isEmpty()) {
 
+                response.sendRedirect(
+                        request.getContextPath()
+                        + "/batch"
+                );
 
-    // Lấy dữ liệu từ form
-    String productName
-            = request.getParameter("productName");
+                return;
+            }
 
-    String weightText
-            = request.getParameter("weightKg");
+            warehouseId
+                    = warehouseId.trim();
 
-    String notes
-            = request.getParameter("notes");
+            boolean allowed
+                    = warehouseDAO.isAssignedToManager(
+                            user.getUserId(),
+                            warehouseId
+                    );
 
+            if (!allowed) {
 
-    // Validate
-    if (productName == null
-            || productName.trim().isEmpty()
-            || weightText == null
-            || weightText.trim().isEmpty()) {
+                response.sendRedirect(
+                        request.getContextPath()
+                        + "/batch"
+                );
 
-        request.getSession().setAttribute(
-                "message",
-                "Product name and weight are required."
-        );
+                return;
+            }
 
-        response.sendRedirect(
-                request.getContextPath() + "/batch"
-        );
-
-        return;
-    }
-
-
-    double weightKg;
-
-    try {
-
-        weightKg
-                = Double.parseDouble(weightText);
-
-        if (weightKg <= 0) {
-            throw new NumberFormatException();
+            warehouse
+                    = warehouseDAO.getById(
+                            warehouseId
+                    );
         }
 
-    } catch (NumberFormatException e) {
+        // =========================================
+        // INVALID ROLE / NO WAREHOUSE
+        // =========================================
+        if (warehouse == null) {
 
-        request.getSession().setAttribute(
-                "message",
-                "Weight must be greater than 0."
-        );
-
-        response.sendRedirect(
-                request.getContextPath() + "/batch"
-        );
-
-        return;
-    }
-
-
-    // Tạo batch mới
-    boolean success
-            = batchDAO.createBatch(
-                    warehouse.getWarehouseId(),
-                    user.getUserId(),
-                    productName.trim(),
-                    weightKg,
-                    notes
+            response.sendRedirect(
+                    request.getContextPath()
+                    + "/batch"
             );
 
+            return;
+        }
 
-    if (success) {
+        // =========================================
+        // FORM DATA
+        // =========================================
+        String productName
+                = request.getParameter(
+                        "productName"
+                );
 
-        request.getSession().setAttribute(
-                "message",
-                "Batch started successfully."
-        );
+        String weightText
+                = request.getParameter(
+                        "weightKg"
+                );
 
-    } else {
+        String notes
+                = request.getParameter(
+                        "notes"
+                );
 
-        request.getSession().setAttribute(
-                "message",
-                "Cannot start batch."
+        // =========================================
+        // VALIDATE REQUIRED DATA
+        // =========================================
+        if (productName == null
+                || productName.trim().isEmpty()
+                || weightText == null
+                || weightText.trim().isEmpty()) {
+
+            request.getSession().setAttribute(
+                    "message",
+                    "Product name and weight are required."
+            );
+
+            redirectBatch(
+                    request,
+                    response,
+                    user,
+                    warehouse.getWarehouseId()
+            );
+
+            return;
+        }
+
+        productName
+                = productName.trim();
+
+        // =========================================
+        // VALIDATE WEIGHT
+        // =========================================
+        double weightKg;
+
+        try {
+
+            weightKg
+                    = Double.parseDouble(
+                            weightText.trim()
+                    );
+
+            if (weightKg <= 0) {
+
+                throw new NumberFormatException();
+            }
+
+        } catch (NumberFormatException e) {
+
+            request.getSession().setAttribute(
+                    "message",
+                    "Weight must be greater than 0."
+            );
+
+            redirectBatch(
+                    request,
+                    response,
+                    user,
+                    warehouse.getWarehouseId()
+            );
+
+            return;
+        }
+
+        // =========================================
+        // NORMALIZE NOTES
+        // =========================================
+        if (notes != null) {
+
+            notes
+                    = notes.trim();
+
+            if (notes.isEmpty()) {
+
+                notes = null;
+            }
+        }
+
+        // =========================================
+        // CREATE BATCH
+        //
+        // B006 / B007 / ...
+        // =========================================
+        String batchId
+                = batchDAO.createBatch(
+                        warehouse.getWarehouseId(),
+                        user.getUserId(),
+                        productName,
+                        weightKg,
+                        notes
+                );
+
+        // =========================================
+        // SUCCESS
+        // =========================================
+        if (batchId != null) {
+
+            // =====================================
+            // EVENT LOG
+            // =====================================
+            eventLogDAO.addEvent(
+                    warehouse.getWarehouseId(),
+                    null, // deviceId
+
+                    batchId, // batchId thật
+
+                    user.getUserId(),
+                    "BATCH_STARTED",
+                    "WEB",
+                    "Started drying batch "
+                    + batchId
+                    + " for "
+                    + productName
+                    + " - "
+                    + weightKg
+                    + " kg"
+            );
+
+            request.getSession().setAttribute(
+                    "message",
+                    "Batch "
+                    + batchId
+                    + " started successfully."
+            );
+
+        } else {
+
+            request.getSession().setAttribute(
+                    "message",
+                    "Cannot start batch."
+            );
+        }
+
+        // =========================================
+        // REDIRECT
+        // =========================================
+        redirectBatch(
+                request,
+                response,
+                user,
+                warehouse.getWarehouseId()
         );
     }
-
-
-    response.sendRedirect(
-            request.getContextPath() + "/batch"
-    );
-}
+//   private void startBatch(
+//        HttpServletRequest request,
+//        HttpServletResponse response,
+//        User user)
+//        throws Exception {
+//
+//    WarehouseDAO warehouseDAO
+//            = new WarehouseDAO();
+//
+//    DryingBatchDAO batchDAO
+//            = new DryingBatchDAO();
+//
+//
+//    // Lấy warehouse của operator
+//    Warehouse warehouse
+//            = warehouseDAO.getWarehouseByUser(
+//                    user.getUserId()
+//            );
+//
+//
+//    if (warehouse == null) {
+//
+//        response.sendRedirect(
+//                request.getContextPath() + "/batch"
+//        );
+//
+//        return;
+//    }
+//
+//
+//    // Lấy dữ liệu từ form
+//    String productName
+//            = request.getParameter("productName");
+//
+//    String weightText
+//            = request.getParameter("weightKg");
+//
+//    String notes
+//            = request.getParameter("notes");
+//
+//
+//    // Validate
+//    if (productName == null
+//            || productName.trim().isEmpty()
+//            || weightText == null
+//            || weightText.trim().isEmpty()) {
+//
+//        request.getSession().setAttribute(
+//                "message",
+//                "Product name and weight are required."
+//        );
+//
+//        response.sendRedirect(
+//                request.getContextPath() + "/batch"
+//        );
+//
+//        return;
+//    }
+//
+//
+//    double weightKg;
+//
+//    try {
+//
+//        weightKg
+//                = Double.parseDouble(weightText);
+//
+//        if (weightKg <= 0) {
+//            throw new NumberFormatException();
+//        }
+//
+//    } catch (NumberFormatException e) {
+//
+//        request.getSession().setAttribute(
+//                "message",
+//                "Weight must be greater than 0."
+//        );
+//
+//        response.sendRedirect(
+//                request.getContextPath() + "/batch"
+//        );
+//
+//        return;
+//    }
+//
+//
+//    // Tạo batch mới
+//    boolean success
+//            = batchDAO.createBatch(
+//                    warehouse.getWarehouseId(),
+//                    user.getUserId(),
+//                    productName.trim(),
+//                    weightKg,
+//                    notes
+//            );
+//
+//
+//    if (success) {
+//
+//        request.getSession().setAttribute(
+//                "message",
+//                "Batch started successfully."
+//        );
+//
+//    } else {
+//
+//        request.getSession().setAttribute(
+//                "message",
+//                "Cannot start batch."
+//        );
+//    }
+//
+//
+//    response.sendRedirect(
+//            request.getContextPath() + "/batch"
+//    );
+//}
 
     // ==============================
     // COMPLETE BATCH
@@ -308,29 +1004,77 @@ public class BatchController extends HttpServlet {
             User user)
             throws Exception {
 
+        DryingBatchDAO batchDAO
+                = new DryingBatchDAO();
+
+        EventLogDAO eventLogDAO
+                = new EventLogDAO();
+
         String batchId
-                = request.getParameter("batchId");
+                = request.getParameter(
+                        "batchId"
+                );
+
+        String warehouseId
+                = request.getParameter(
+                        "warehouseId"
+                );
 
         if (batchId == null
                 || batchId.trim().isEmpty()) {
 
             response.sendRedirect(
-                    request.getContextPath() + "/batch"
+                    request.getContextPath()
+                    + "/batch"
             );
 
             return;
         }
 
-        DryingBatchDAO batchDAO
-                = new DryingBatchDAO();
+        batchId = batchId.trim();
 
-        boolean success
-                = batchDAO.completeBatch(
-                        batchId,
-                        user.getUserId()
-                );
+        boolean success = false;
 
+        // =========================================
+        // OPERATOR
+        // =========================================
+        if ("OPERATOR".equals(user.getRole())) {
+
+            success
+                    = batchDAO.completeBatch(
+                            batchId,
+                            user.getUserId()
+                    );
+        } // =========================================
+        // MANAGER
+        // =========================================
+        else if ("MANAGER".equals(user.getRole())) {
+
+            success
+                    = batchDAO.completeBatchByManager(
+                            batchId,
+                            user.getUserId()
+                    );
+        }
+
+        // =========================================
+        // SUCCESS
+        // =========================================
         if (success) {
+
+            // =====================================
+            // WRITE EVENT LOG
+            // =====================================
+            eventLogDAO.addEvent(
+                    warehouseId,
+                    null, // deviceId
+                    batchId,
+                    user.getUserId(),
+                    "BATCH_COMPLETED",
+                    "WEB",
+                    "Completed drying batch "
+                    + batchId
+            );
 
             request.getSession().setAttribute(
                     "message",
@@ -341,13 +1085,45 @@ public class BatchController extends HttpServlet {
 
             request.getSession().setAttribute(
                     "message",
-                    "Cannot complete this batch."
+                    "Cannot complete batch."
             );
         }
 
-        response.sendRedirect(
-                request.getContextPath() + "/batch"
+        // =========================================
+        // REDIRECT
+        // =========================================
+        redirectBatch(
+                request,
+                response,
+                user,
+                warehouseId
         );
+    }
+
+    private void redirectBatch(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            User user,
+            String warehouseId)
+            throws IOException {
+
+        if ("MANAGER".equals(user.getRole())
+                && warehouseId != null
+                && !warehouseId.trim().isEmpty()) {
+
+            response.sendRedirect(
+                    request.getContextPath()
+                    + "/batch?warehouseId="
+                    + warehouseId
+            );
+
+        } else {
+
+            response.sendRedirect(
+                    request.getContextPath()
+                    + "/batch"
+            );
+        }
     }
 // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
 

@@ -40,150 +40,741 @@ public class HistoryController extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(
-            HttpServletRequest request,
-            HttpServletResponse response)
-            throws ServletException, IOException {
+  protected void processRequest(
+        HttpServletRequest request,
+        HttpServletResponse response)
+        throws ServletException, IOException {
 
-        HttpSession session
-                = request.getSession(false);
+    // =========================================
+    // 1. LOGIN USER
+    // AuthenticationFilter đã kiểm tra login
+    // =========================================
 
-        if (session == null
-                || session.getAttribute("LOGIN_USER") == null) {
+    HttpSession session
+            = request.getSession();
 
-            response.sendRedirect(
-                    request.getContextPath() + "/login"
+    User user
+            = (User) session.getAttribute(
+                    "LOGIN_USER"
             );
 
-            return;
-        }
+    String role
+            = user.getRole();
 
 
-        User user
-                = (User) session.getAttribute(
-                        "LOGIN_USER"
-                );
+    // History chỉ dành cho Operator + Manager
+    if (!"OPERATOR".equals(role)
+            && !"MANAGER".equals(role)) {
+
+        response.sendRedirect(
+                request.getContextPath()
+                + "/dashboard"
+        );
+
+        return;
+    }
 
 
-        try {
+    try {
 
-            WarehouseDAO warehouseDAO
-                    = new WarehouseDAO();
+        WarehouseDAO warehouseDAO
+                = new WarehouseDAO();
 
-            DeviceDAO deviceDAO
-                    = new DeviceDAO();
+        DeviceDAO deviceDAO
+                = new DeviceDAO();
 
-            SensorDataDAO sensorDAO
-                    = new SensorDataDAO();
+        SensorDataDAO sensorDAO
+                = new SensorDataDAO();
 
-            DryingBatchDAO batchDAO
-                    = new DryingBatchDAO();
-
-
-            // 1. Warehouse
-            Warehouse warehouse
-                    = warehouseDAO.getWarehouseByUser(
-                            user.getUserId()
-                    );
+        DryingBatchDAO batchDAO
+                = new DryingBatchDAO();
 
 
-            if (warehouse == null) {
+        Warehouse warehouse = null;
+
+        List<Warehouse> warehouseList
+                = new ArrayList<>();
+
+
+        // =========================================
+        // 2. MANAGER
+        // =========================================
+
+        if ("MANAGER".equals(role)) {
+
+            warehouseList
+                    = warehouseDAO
+                            .getWarehousesByManager(
+                                    user.getUserId()
+                            );
+
+
+            if (warehouseList == null
+                    || warehouseList.isEmpty()) {
 
                 request.setAttribute(
                         "error",
                         "No warehouse assigned."
                 );
 
+                request.setAttribute(
+                        "warehouseList",
+                        warehouseList
+                );
+
                 request.getRequestDispatcher(
                         "/WEB-INF/views/history.jsp"
-                ).forward(request, response);
+                ).forward(
+                        request,
+                        response
+                );
 
                 return;
             }
 
 
-            // 2. Device
-            Device device
-                    = deviceDAO.getDeviceByWarehouse(
-                            warehouse.getWarehouseId()
+            String selectedWarehouseId
+                    = request.getParameter(
+                            "warehouseId"
                     );
 
 
-            // 3. Sensor History
-            List<SensorData> sensors
-                    = new ArrayList<>();
+            // Manager đã chọn warehouse
+            if (selectedWarehouseId != null
+                    && !selectedWarehouseId
+                            .trim()
+                            .isEmpty()) {
 
-            if (device != null) {
+                for (Warehouse w
+                        : warehouseList) {
 
-                sensors
-                        = sensorDAO.getSensorHistory(
-                                device.getDeviceId()
-                        );
+                    if (selectedWarehouseId.equals(
+                            w.getWarehouseId())) {
+
+                        warehouse = w;
+
+                        break;
+                    }
+                }
             }
 
 
-            // 4. Batch History
-            List<DryingBatch> batches
-                    = batchDAO
-                    .getCompletedBatchesByWarehouse(
-                            warehouse.getWarehouseId()
-                    );
+            // Chưa chọn hoặc warehouseId sai
+            // -> lấy warehouse đầu tiên
+            if (warehouse == null) {
 
-
-            // 5. Tab hiện tại
-            String tab
-                    = request.getParameter("tab");
-
-            if (tab == null) {
-                tab = "sensor";
+                warehouse
+                        = warehouseList.get(0);
             }
+        }
 
 
-            // 6. Set attributes
+        // =========================================
+        // 3. OPERATOR
+        // =========================================
+
+        else {
+
+            warehouse
+                    = warehouseDAO
+                            .getWarehouseByUser(
+                                    user.getUserId()
+                            );
+
+
+            if (warehouse != null) {
+
+                warehouseList.add(
+                        warehouse
+                );
+            }
+        }
+
+
+        // =========================================
+        // 4. KHÔNG CÓ WAREHOUSE
+        // =========================================
+
+        if (warehouse == null) {
+
             request.setAttribute(
-                    "warehouse",
-                    warehouse
+                    "error",
+                    "No warehouse assigned."
             );
 
-            request.setAttribute(
-                    "device",
-                    device
-            );
-
-            request.setAttribute(
-                    "sensors",
-                    sensors
-            );
-
-            request.setAttribute(
-                    "batches",
-                    batches
-            );
-
-            request.setAttribute(
-                    "tab",
-                    tab
-            );
-
-
-            // 7. JSP
             request.getRequestDispatcher(
                     "/WEB-INF/views/history.jsp"
-            ).forward(request, response);
-
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-
-            throw new ServletException(
-                    "Error in HistoryController",
-                    e
+            ).forward(
+                    request,
+                    response
             );
+
+            return;
         }
+
+
+        // =========================================
+        // 5. DEVICE
+        // =========================================
+
+        Device device
+                = deviceDAO
+                        .getDeviceByWarehouse(
+                                warehouse
+                                        .getWarehouseId()
+                        );
+
+
+        // =========================================
+        // 6. TAB
+        // =========================================
+
+        String tab
+                = request.getParameter(
+                        "tab"
+                );
+
+
+        if (!"sensor".equals(tab)
+                && !"batch".equals(tab)) {
+
+            tab = "sensor";
+        }
+
+
+        // =================================================
+        // 7. SENSOR HISTORY
+        // Search + Rain Filter + Light Filter + Pagination
+        // =================================================
+
+        String sensorKeyword
+                = request.getParameter(
+                        "sensorKeyword"
+                );
+
+        String rainStatus
+                = request.getParameter(
+                        "rainStatus"
+                );
+
+        String lightStatus
+                = request.getParameter(
+                        "lightStatus"
+                );
+
+
+        if (sensorKeyword == null) {
+
+            sensorKeyword = "";
+        }
+
+
+        // Chỉ nhận giá trị hợp lệ trong database
+        if (!"NO_RAIN".equals(rainStatus)
+                && !"RAINING".equals(rainStatus)) {
+
+            rainStatus = "";
+        }
+
+
+        if (!"BRIGHT".equals(lightStatus)
+                && !"DARK".equals(lightStatus)) {
+
+            lightStatus = "";
+        }
+
+
+        // =========================================
+        // SENSOR PAGINATION
+        // =========================================
+
+        int sensorPage = 1;
+
+        int sensorPageSize = 10;
+
+
+        String sensorPageParam
+                = request.getParameter(
+                        "sensorPage"
+                );
+
+
+        if (sensorPageParam != null) {
+
+            try {
+
+                sensorPage
+                        = Integer.parseInt(
+                                sensorPageParam
+                        );
+
+            } catch (NumberFormatException e) {
+
+                sensorPage = 1;
+            }
+        }
+
+
+        if (sensorPage < 1) {
+
+            sensorPage = 1;
+        }
+
+
+        int sensorTotalRecords = 0;
+
+        int sensorTotalPages = 1;
+
+
+        List<SensorData> sensors
+                = new ArrayList<>();
+
+
+        // Có device mới có sensor history
+        if (device != null) {
+
+            sensorTotalRecords
+                    = sensorDAO
+                            .countSensorHistory(
+                                    device.getDeviceId(),
+                                    sensorKeyword,
+                                    rainStatus,
+                                    lightStatus
+                            );
+
+
+            sensorTotalPages
+                    = (int) Math.ceil(
+                            (double) sensorTotalRecords
+                            / sensorPageSize
+                    );
+
+
+            if (sensorTotalPages < 1) {
+
+                sensorTotalPages = 1;
+            }
+
+
+            if (sensorPage
+                    > sensorTotalPages) {
+
+                sensorPage
+                        = sensorTotalPages;
+            }
+
+
+            sensors
+                    = sensorDAO
+                            .searchSensorHistory(
+                                    device.getDeviceId(),
+                                    sensorKeyword,
+                                    rainStatus,
+                                    lightStatus,
+                                    sensorPage,
+                                    sensorPageSize
+                            );
+        }
+
+
+        // =================================================
+        // 8. BATCH HISTORY
+        // Search + Date Filter + Pagination
+        // =================================================
+
+        String batchKeyword
+                = request.getParameter(
+                        "batchKeyword"
+                );
+
+        String fromDate
+                = request.getParameter(
+                        "fromDate"
+                );
+
+        String toDate
+                = request.getParameter(
+                        "toDate"
+                );
+
+
+        if (batchKeyword == null) {
+
+            batchKeyword = "";
+        }
+
+
+        if (fromDate == null) {
+
+            fromDate = "";
+        }
+
+
+        if (toDate == null) {
+
+            toDate = "";
+        }
+
+
+        // =========================================
+        // BATCH PAGINATION
+        // =========================================
+
+        int batchPage = 1;
+
+        int batchPageSize = 10;
+
+
+        String batchPageParam
+                = request.getParameter(
+                        "batchPage"
+                );
+
+
+        if (batchPageParam != null) {
+
+            try {
+
+                batchPage
+                        = Integer.parseInt(
+                                batchPageParam
+                        );
+
+            } catch (NumberFormatException e) {
+
+                batchPage = 1;
+            }
+        }
+
+
+        if (batchPage < 1) {
+
+            batchPage = 1;
+        }
+
+
+        // =========================================
+        // COUNT BATCH HISTORY
+        // =========================================
+
+        int batchTotalRecords
+                = batchDAO
+                        .countCompletedBatchHistory(
+                                warehouse
+                                        .getWarehouseId(),
+                                batchKeyword,
+                                fromDate,
+                                toDate
+                        );
+
+
+        int batchTotalPages
+                = (int) Math.ceil(
+                        (double) batchTotalRecords
+                        / batchPageSize
+                );
+
+
+        if (batchTotalPages < 1) {
+
+            batchTotalPages = 1;
+        }
+
+
+        if (batchPage
+                > batchTotalPages) {
+
+            batchPage
+                    = batchTotalPages;
+        }
+
+
+        // =========================================
+        // GET BATCH HISTORY
+        // =========================================
+
+        List<DryingBatch> batches
+                = batchDAO
+                        .searchCompletedBatchHistory(
+                                warehouse
+                                        .getWarehouseId(),
+                                batchKeyword,
+                                fromDate,
+                                toDate,
+                                batchPage,
+                                batchPageSize
+                        );
+
+
+        // =========================================
+        // 9. COMMON ATTRIBUTES
+        // =========================================
+
+        request.setAttribute(
+                "warehouseList",
+                warehouseList
+        );
+
+        request.setAttribute(
+                "warehouse",
+                warehouse
+        );
+
+        request.setAttribute(
+                "device",
+                device
+        );
+
+        request.setAttribute(
+                "tab",
+                tab
+        );
+
+
+        // =========================================
+        // 10. SENSOR ATTRIBUTES
+        // =========================================
+
+        request.setAttribute(
+                "sensors",
+                sensors
+        );
+
+        request.setAttribute(
+                "sensorKeyword",
+                sensorKeyword
+        );
+
+        request.setAttribute(
+                "selectedRainStatus",
+                rainStatus
+        );
+
+        request.setAttribute(
+                "selectedLightStatus",
+                lightStatus
+        );
+
+        request.setAttribute(
+                "sensorCurrentPage",
+                sensorPage
+        );
+
+        request.setAttribute(
+                "sensorTotalPages",
+                sensorTotalPages
+        );
+
+        request.setAttribute(
+                "sensorTotalRecords",
+                sensorTotalRecords
+        );
+
+
+        // =========================================
+        // 11. BATCH ATTRIBUTES
+        // =========================================
+
+        request.setAttribute(
+                "batches",
+                batches
+        );
+
+        request.setAttribute(
+                "batchKeyword",
+                batchKeyword
+        );
+
+        request.setAttribute(
+                "fromDate",
+                fromDate
+        );
+
+        request.setAttribute(
+                "toDate",
+                toDate
+        );
+
+        request.setAttribute(
+                "batchCurrentPage",
+                batchPage
+        );
+
+        request.setAttribute(
+                "batchTotalPages",
+                batchTotalPages
+        );
+
+        request.setAttribute(
+                "batchTotalRecords",
+                batchTotalRecords
+        );
+
+
+        // =========================================
+        // 12. JSP
+        // =========================================
+
+        request.getRequestDispatcher(
+                "/WEB-INF/views/history.jsp"
+        ).forward(
+                request,
+                response
+        );
+
+
+    } catch (Exception e) {
+
+        e.printStackTrace();
+
+        throw new ServletException(
+                "Error in HistoryController",
+                e
+        );
     }
-
-
+}
+//    protected void processRequest(
+//            HttpServletRequest request,
+//            HttpServletResponse response)
+//            throws ServletException, IOException {
+//
+//        HttpSession session
+//                = request.getSession(false);
+//
+//        if (session == null
+//                || session.getAttribute("LOGIN_USER") == null) {
+//
+//            response.sendRedirect(
+//                    request.getContextPath() + "/login"
+//            );
+//
+//            return;
+//        }
+//
+//
+//        User user
+//                = (User) session.getAttribute(
+//                        "LOGIN_USER"
+//                );
+//
+//
+//        try {
+//
+//            WarehouseDAO warehouseDAO
+//                    = new WarehouseDAO();
+//
+//            DeviceDAO deviceDAO
+//                    = new DeviceDAO();
+//
+//            SensorDataDAO sensorDAO
+//                    = new SensorDataDAO();
+//
+//            DryingBatchDAO batchDAO
+//                    = new DryingBatchDAO();
+//
+//
+//            // 1. Warehouse
+//            Warehouse warehouse
+//                    = warehouseDAO.getWarehouseByUser(
+//                            user.getUserId()
+//                    );
+//
+//
+//            if (warehouse == null) {
+//
+//                request.setAttribute(
+//                        "error",
+//                        "No warehouse assigned."
+//                );
+//
+//                request.getRequestDispatcher(
+//                        "/WEB-INF/views/history.jsp"
+//                ).forward(request, response);
+//
+//                return;
+//            }
+//
+//
+//            // 2. Device
+//            Device device
+//                    = deviceDAO.getDeviceByWarehouse(
+//                            warehouse.getWarehouseId()
+//                    );
+//
+//
+//            // 3. Sensor History
+//            List<SensorData> sensors
+//                    = new ArrayList<>();
+//
+//            if (device != null) {
+//
+//                sensors
+//                        = sensorDAO.getSensorHistory(
+//                                device.getDeviceId()
+//                        );
+//            }
+//
+//
+//            // 4. Batch History
+//            List<DryingBatch> batches
+//                    = batchDAO
+//                    .getCompletedBatchesByWarehouse(
+//                            warehouse.getWarehouseId()
+//                    );
+//
+//
+//            // 5. Tab hiện tại
+//            String tab
+//                    = request.getParameter("tab");
+//
+//            if (tab == null) {
+//                tab = "sensor";
+//            }
+//
+//
+//            // 6. Set attributes
+//            request.setAttribute(
+//                    "warehouse",
+//                    warehouse
+//            );
+//
+//            request.setAttribute(
+//                    "device",
+//                    device
+//            );
+//
+//            request.setAttribute(
+//                    "sensors",
+//                    sensors
+//            );
+//
+//            request.setAttribute(
+//                    "batches",
+//                    batches
+//            );
+//
+//            request.setAttribute(
+//                    "tab",
+//                    tab
+//            );
+//
+//
+//            // 7. JSP
+//            request.getRequestDispatcher(
+//                    "/WEB-INF/views/history.jsp"
+//            ).forward(request, response);
+//
+//
+//        } catch (Exception e) {
+//
+//            e.printStackTrace();
+//
+//            throw new ServletException(
+//                    "Error in HistoryController",
+//                    e
+//            );
+//        }
+//    }
 //    @Override
 //    protected void doGet(
 //            HttpServletRequest request,
