@@ -327,3 +327,387 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
         padding: 20px;
     }
 }
+
+.history-header-right {
+    display: flex;
+    align-items: flex-end;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.history-warehouse-select {
+    min-width: 260px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 6px;
+}
+
+.history-warehouse-select label {
+    font-size: 11px;
+    font-weight: 700;
+
+    color: #6b7280;
+
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.history-warehouse-select form {
+    width: 100%;
+}
+
+.history-warehouse-select select {
+    width: 100%;
+    height: 42px;
+
+    padding: 0 12px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+
+    background: #ffffff;
+    color: #111827;
+
+    font-size: 13px;
+
+    outline: none;
+    cursor: pointer;
+}
+
+.history-warehouse-select select:focus {
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+
+@media (max-width: 900px) {
+
+    .history-page-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .history-header-right {
+        width: 100%;
+        align-items: stretch;
+    }
+
+    .history-warehouse-select {
+        width: 100%;
+    }
+
+    .history-context {
+        width: 100%;
+    }
+}
+
+/* ========================================================= */
+/* HISTORY SEARCH / FILTER */
+/* ========================================================= */
+
+.history-filter-form {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    margin: 16px 0 18px 0;
+    padding: 14px;
+
+    background: #f9fafb;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+}
+
+
+/* INPUT + SELECT */
+
+.history-filter-form input[type="text"],
+.history-filter-form input[type="date"],
+.history-filter-form select {
+    height: 40px;
+
+    padding: 0 12px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+
+    background: #ffffff;
+    color: #1f2937;
+
+    font-size: 14px;
+
+    outline: none;
+
+    transition: 0.2s ease;
+}
+
+
+/* SEARCH INPUT */
+
+.history-filter-form input[type="text"] {
+    min-width: 240px;
+    flex: 1;
+}
+
+
+.history-filter-form input[type="text"]::placeholder {
+    color: #9ca3af;
+}
+
+
+/* SELECT */
+
+.history-filter-form select {
+    min-width: 150px;
+    cursor: pointer;
+}
+
+
+/* FOCUS */
+
+.history-filter-form input[type="text"]:focus,
+.history-filter-form input[type="date"]:focus,
+.history-filter-form select:focus {
+    border-color: #2563eb;
+
+    box-shadow: 0 0 0 3px
+        rgba(37, 99, 235, 0.10);
+}
+
+
+/* ========================================================= */
+/* DATE FIELD */
+/* ========================================================= */
+
+.history-date-field {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+
+.history-date-field label {
+    font-size: 13px;
+    font-weight: 600;
+
+    color: #4b5563;
+
+    white-space: nowrap;
+}
+
+
+.history-date-field input[type="date"] {
+    min-width: 145px;
+    cursor: pointer;
+}
+
+
+/* ========================================================= */
+/* APPLY BUTTON */
+/* ========================================================= */
+
+.history-filter-form .primary-button {
+    height: 40px;
+
+    padding: 0 18px;
+
+    border: none;
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+}
+
+
+/* ========================================================= */
+/* RESET BUTTON */
+/* ========================================================= */
+
+.history-filter-form .filter-reset {
+    height: 40px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 16px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+
+    background: #ffffff;
+    color: #4b5563;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    transition: 0.2s ease;
+}
+
+
+.history-filter-form .filter-reset:hover {
+    background: #f3f4f6;
+
+    border-color: #9ca3af;
+
+    color: #111827;
+}
+
+
+/* ========================================================= */
+/* PAGINATION */
+/* ========================================================= */
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    gap: 6px;
+
+    margin-top: 20px;
+}
+
+
+.pagination a {
+    min-width: 38px;
+    height: 38px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 12px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+
+    background: #ffffff;
+    color: #374151;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    transition: 0.2s ease;
+}
+
+
+/* HOVER */
+
+.pagination a:hover {
+    background: #f3f4f6;
+
+    border-color: #9ca3af;
+
+    color: #111827;
+}
+
+
+/* CURRENT PAGE */
+
+.pagination a.active {
+    background: #2563eb;
+
+    border-color: #2563eb;
+
+    color: #ffffff;
+}
+
+
+.pagination a.active:hover {
+    background: #1d4ed8;
+
+    border-color: #1d4ed8;
+
+    color: #ffffff;
+}
+
+
+/* ========================================================= */
+/* TABLE SPACING */
+/* ========================================================= */
+
+.history-filter-form + .table-wrapper {
+    margin-top: 0;
+}
+
+
+/* ========================================================= */
+/* RESPONSIVE - TABLET */
+/* ========================================================= */
+
+@media (max-width: 950px) {
+
+    .history-filter-form input[type="text"] {
+        flex-basis: 100%;
+        width: 100%;
+    }
+
+
+    .history-filter-form select {
+        flex: 1;
+        min-width: 160px;
+    }
+
+
+    .history-date-field {
+        flex: 1;
+    }
+
+
+    .history-date-field input[type="date"] {
+        flex: 1;
+    }
+}
+
+
+/* ========================================================= */
+/* RESPONSIVE - MOBILE */
+/* ========================================================= */
+
+@media (max-width: 650px) {
+
+    .history-filter-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+
+    .history-filter-form input[type="text"],
+    .history-filter-form select,
+    .history-filter-form .primary-button,
+    .history-filter-form .filter-reset {
+        width: 100%;
+    }
+
+
+    .history-date-field {
+        width: 100%;
+
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+
+    .history-date-field input[type="date"] {
+        width: 100%;
+    }
+
+
+    .pagination {
+        justify-content: flex-start;
+    }
+}

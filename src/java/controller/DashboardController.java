@@ -7,6 +7,7 @@ package controller;
 import dao.DeviceDAO;
 import dao.DryingBatchDAO;
 import dao.SensorDataDAO;
+import dao.UserDAO;
 import dao.WarehouseDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -45,17 +46,7 @@ public class DashboardController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        HttpSession session = request.getSession(false);
-
-        if (session == null
-                || session.getAttribute("LOGIN_USER") == null) {
-
-            response.sendRedirect(
-                    request.getContextPath() + "/login"
-            );
-
-            return;
-        }
+        HttpSession session = request.getSession();
 
         User user
                 = (User) session.getAttribute("LOGIN_USER");
@@ -64,15 +55,20 @@ public class DashboardController extends HttpServlet {
         try {
             if ("ADMIN".equals(role)) {
 
-                request.getRequestDispatcher(
-                        "/WEB-INF/views/admin-dashboard.jsp"
-                ).forward(request, response);
+                loadAdminDashboard(
+                        request,
+                        response
+                );
+
                 return;
             } else if ("MANAGER".equals(role)) {
 
-                request.getRequestDispatcher(
-                        "/WEB-INF/views/manager-dashboard.jsp"
-                ).forward(request, response);
+                loadManagerDashboard(
+                        request,
+                        response,
+                        user
+                );
+
                 return;
             } else if ("OPERATOR".equals(role)) {
 
@@ -100,222 +96,337 @@ public class DashboardController extends HttpServlet {
         }
     }
 
-    
     private void loadOperatorDashboard(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        User user) throws Exception {
+            HttpServletRequest request,
+            HttpServletResponse response,
+            User user) throws Exception {
 
-    WarehouseDAO warehouseDAO = new WarehouseDAO();
-    DeviceDAO deviceDAO = new DeviceDAO();
-    SensorDataDAO sensorDAO = new SensorDataDAO();
-    DryingBatchDAO batchDAO = new DryingBatchDAO();
-
-    // ==============================
-    // 1. LẤY WAREHOUSE
-    // ==============================
-    Warehouse warehouse
-            = warehouseDAO.getWarehouseByUser(
-                    user.getUserId()
-            );
-
-    if (warehouse == null) {
-
-        request.setAttribute(
-                "error",
-                "No warehouse assigned."
-        );
-
-        request.getRequestDispatcher(
-                "/WEB-INF/views/operator-dashboard.jsp"
-        ).forward(request, response);
-
-        return;
-    }
-
-
-    // ==============================
-    // 2. LẤY DEVICE
-    // ==============================
-    Device device
-            = deviceDAO.getDeviceByWarehouse(
-                    warehouse.getWarehouseId()
-            );
-
-
-    DashboardData dashboard
-            = new DashboardData();
-
-    SensorData latestSensor = null;
-
-    List<SensorData> recentSensors = null;
-
-
-    // ==============================
-    // 3. NẾU CÓ DEVICE
-    // ==============================
-    if (device != null) {
-
-        // Device data
-        dashboard.setMode(
-                device.getMode()
-        );
-
-        dashboard.setRoofStatus(
-                device.getRoofStatus()
-        );
-
-        dashboard.setLastSeen(
-                device.getLastSeen()
-        );
-
+        WarehouseDAO warehouseDAO = new WarehouseDAO();
+        DeviceDAO deviceDAO = new DeviceDAO();
+        SensorDataDAO sensorDAO = new SensorDataDAO();
+        DryingBatchDAO batchDAO = new DryingBatchDAO();
 
         // ==============================
-        // 4. ONLINE / OFFLINE
+        // 1. LẤY WAREHOUSE
         // ==============================
-        String connectionStatus = "OFFLINE";
+        Warehouse warehouse
+                = warehouseDAO.getWarehouseByUser(
+                        user.getUserId()
+                );
 
-        if (device.getLastSeen() != null) {
+        if (warehouse == null) {
 
-            long diff
-                    = System.currentTimeMillis()
-                    - device.getLastSeen().getTime();
+            request.setAttribute(
+                    "error",
+                    "No warehouse assigned."
+            );
 
-            if (diff <= 30000) {
-                connectionStatus = "ONLINE";
-            }
+            request.getRequestDispatcher(
+                    "/WEB-INF/views/operator-dashboard.jsp"
+            ).forward(request, response);
+
+            return;
         }
 
-        dashboard.setConnectionStatus(
-                connectionStatus
-        );
-
-
         // ==============================
-        // 5. SENSOR DATA
+        // 2. LẤY DEVICE
         // ==============================
-        latestSensor
-                = sensorDAO.getLatestSensorData(
-                        device.getDeviceId()
+        Device device
+                = deviceDAO.getDeviceByWarehouse(
+                        warehouse.getWarehouseId()
                 );
 
-        recentSensors
-                = sensorDAO.getRecentSensorData(
-                        device.getDeviceId(),
-                        6
-                );
+        DashboardData dashboard
+                = new DashboardData();
 
+        SensorData latestSensor = null;
 
-        if (latestSensor != null) {
+        List<SensorData> recentSensors = null;
 
-            dashboard.setTemperature(
-                    latestSensor.getTemperature()
+        // ==============================
+        // 3. NẾU CÓ DEVICE
+        // ==============================
+        if (device != null) {
+
+            // Device data
+            dashboard.setMode(
+                    device.getMode()
             );
 
-            dashboard.setHumidity(
-                    latestSensor.getHumidity()
+            dashboard.setRoofStatus(
+                    device.getRoofStatus()
             );
 
-            dashboard.setRainStatus(
-                    latestSensor.getRainStatus()
+            dashboard.setLastSeen(
+                    device.getLastSeen()
             );
-
-            dashboard.setLightStatus(
-                    latestSensor.getLightStatus()
-            );
-
-            dashboard.setRecordedAt(
-                    latestSensor.getRecordedAt()
-            );
-
 
             // ==============================
-            // 6. WARNING
+            // 4. ONLINE / OFFLINE
             // ==============================
-            String warning = "NORMAL";
+            String connectionStatus = "OFFLINE";
 
-            if ("OFFLINE".equals(connectionStatus)) {
+            if (device.getLastSeen() != null) {
 
-                warning = "DEVICE OFFLINE";
+                long diff
+                        = System.currentTimeMillis()
+                        - device.getLastSeen().getTime();
 
-            } else if ("RAINING".equals(
-                    latestSensor.getRainStatus())) {
-
-                warning = "RAIN DETECTED";
+                if (diff <= 30000) {
+                    connectionStatus = "ONLINE";
+                }
             }
 
-            dashboard.setWarning(
-                    warning
+            dashboard.setConnectionStatus(
+                    connectionStatus
             );
+
+            // ==============================
+            // 5. SENSOR DATA
+            // ==============================
+            latestSensor
+                    = sensorDAO.getLatestSensorData(
+                            device.getDeviceId()
+                    );
+
+            recentSensors
+                    = sensorDAO.getRecentSensorData(
+                            device.getDeviceId(),
+                            6
+                    );
+
+            if (latestSensor != null) {
+
+                dashboard.setTemperature(
+                        latestSensor.getTemperature()
+                );
+
+                dashboard.setHumidity(
+                        latestSensor.getHumidity()
+                );
+
+                dashboard.setRainStatus(
+                        latestSensor.getRainStatus()
+                );
+
+                dashboard.setLightStatus(
+                        latestSensor.getLightStatus()
+                );
+
+                dashboard.setRecordedAt(
+                        latestSensor.getRecordedAt()
+                );
+
+                // ==============================
+                // 6. WARNING
+                // ==============================
+                String warning = "NORMAL";
+
+                if ("OFFLINE".equals(connectionStatus)) {
+
+                    warning = "DEVICE OFFLINE";
+
+                } else if ("RAINING".equals(
+                        latestSensor.getRainStatus())) {
+
+                    warning = "RAIN DETECTED";
+                }
+
+                dashboard.setWarning(
+                        warning
+                );
+
+            } else {
+
+                // Có device nhưng chưa có sensor data
+                dashboard.setWarning(
+                        "NO SENSOR DATA"
+                );
+            }
 
         } else {
 
-            // Có device nhưng chưa có sensor data
+            // ==============================
+            // KHÔNG CÓ DEVICE
+            // ==============================
+            dashboard.setConnectionStatus(
+                    "OFFLINE"
+            );
+
             dashboard.setWarning(
-                    "NO SENSOR DATA"
+                    "NO DEVICE"
             );
         }
 
-    } else {
+        // ==============================
+        // 7. ACTIVE BATCH
+        // ==============================
+        DryingBatch activeBatch
+                = batchDAO.getActiveBatchByOperator(
+                        user.getUserId()
+                );
 
         // ==============================
-        // KHÔNG CÓ DEVICE
+        // 8. SET REQUEST ATTRIBUTES
         // ==============================
-        dashboard.setConnectionStatus(
-                "OFFLINE"
+        request.setAttribute(
+                "warehouse",
+                warehouse
         );
 
-        dashboard.setWarning(
-                "NO DEVICE"
+        request.setAttribute(
+                "device",
+                device
         );
+
+        request.setAttribute(
+                "dashboard",
+                dashboard
+        );
+
+        request.setAttribute(
+                "activeBatch",
+                activeBatch
+        );
+
+        request.setAttribute(
+                "recentSensors",
+                recentSensors
+        );
+
+        // ==============================
+        // 9. FORWARD JSP
+        // ==============================
+        request.getRequestDispatcher(
+                "/WEB-INF/views/operator-dashboard.jsp"
+        ).forward(request, response);
     }
 
+    // =========================================================
+// ADMIN DASHBOARD
+// =========================================================
+    private void loadAdminDashboard(
+            HttpServletRequest request,
+            HttpServletResponse response)
+            throws Exception {
 
-    // ==============================
-    // 7. ACTIVE BATCH
-    // ==============================
-    DryingBatch activeBatch
-            = batchDAO.getActiveBatchByOperator(
-                    user.getUserId()
-            );
+        UserDAO userDAO
+                = new UserDAO();
 
+        WarehouseDAO warehouseDAO
+                = new WarehouseDAO();
 
-    // ==============================
-    // 8. SET REQUEST ATTRIBUTES
-    // ==============================
-    request.setAttribute(
-            "warehouse",
-            warehouse
-    );
+        DeviceDAO deviceDAO
+                = new DeviceDAO();
 
-    request.setAttribute(
-            "device",
-            device
-    );
+        DryingBatchDAO batchDAO
+                = new DryingBatchDAO();
 
-    request.setAttribute(
-            "dashboard",
-            dashboard
-    );
+        // =====================================================
+        // USER
+        // =====================================================
+        int totalUsers
+                = userDAO.countAll();
 
-    request.setAttribute(
-            "activeBatch",
-            activeBatch
-    );
+        int activeUsers
+                = userDAO.countActive();
 
-    request.setAttribute(
-            "recentSensors",
-            recentSensors
-    );
+        int inactiveUsers
+                = totalUsers - activeUsers;
 
+        // =====================================================
+        // WAREHOUSE
+        // =====================================================
+        int totalWarehouses
+                = warehouseDAO.countAll();
 
-    // ==============================
-    // 9. FORWARD JSP
-    // ==============================
-    request.getRequestDispatcher(
-            "/WEB-INF/views/operator-dashboard.jsp"
-    ).forward(request, response);
-}
+        int activeWarehouses
+                = warehouseDAO.countActive();
+
+        int inactiveWarehouses
+                = totalWarehouses - activeWarehouses;
+
+        // =====================================================
+        // DEVICE
+        // =====================================================
+        int totalDevices
+                = deviceDAO.countAll();
+
+        int onlineDevices
+                = deviceDAO.countOnline();
+
+        int offlineDevices
+                = totalDevices - onlineDevices;
+
+        // =====================================================
+        // DRYING BATCH
+        // =====================================================
+        int activeBatches
+                = batchDAO.countAllActive();
+
+        // =====================================================
+        // SET ATTRIBUTE
+        // =====================================================
+        request.setAttribute(
+                "totalUsers",
+                totalUsers
+        );
+
+        request.setAttribute(
+                "activeUsers",
+                activeUsers
+        );
+
+        request.setAttribute(
+                "inactiveUsers",
+                inactiveUsers
+        );
+
+        request.setAttribute(
+                "totalWarehouses",
+                totalWarehouses
+        );
+
+        request.setAttribute(
+                "activeWarehouses",
+                activeWarehouses
+        );
+
+        request.setAttribute(
+                "inactiveWarehouses",
+                inactiveWarehouses
+        );
+
+        request.setAttribute(
+                "totalDevices",
+                totalDevices
+        );
+
+        request.setAttribute(
+                "onlineDevices",
+                onlineDevices
+        );
+
+        request.setAttribute(
+                "offlineDevices",
+                offlineDevices
+        );
+
+        request.setAttribute(
+                "activeBatches",
+                activeBatches
+        );
+
+        // =====================================================
+        // JSP
+        // =====================================================
+        request.getRequestDispatcher(
+                "/WEB-INF/views/admin-dashboard.jsp"
+        ).forward(
+                request,
+                response
+        );
+    }
 //    private void loadOperatorDashboard(
 //            HttpServletRequest request,
 //            HttpServletResponse response,
@@ -433,15 +544,273 @@ public class DashboardController extends HttpServlet {
 //        
 //    }
 
-// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+    private void loadManagerDashboard(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            User user)
+            throws Exception {
+
+        WarehouseDAO warehouseDAO
+                = new WarehouseDAO();
+
+        DeviceDAO deviceDAO
+                = new DeviceDAO();
+
+        SensorDataDAO sensorDAO
+                = new SensorDataDAO();
+
+        DryingBatchDAO batchDAO
+                = new DryingBatchDAO();
+
+        // ==========================================
+        // 1. LẤY DANH SÁCH WAREHOUSE CỦA MANAGER
+        // ==========================================
+        List<Warehouse> warehouseList
+                = warehouseDAO.getWarehousesByManager(
+                        user.getUserId()
+                );
+
+        if (warehouseList == null
+                || warehouseList.isEmpty()) {
+
+            request.setAttribute(
+                    "error",
+                    "No warehouse assigned."
+            );
+
+            request.setAttribute(
+                    "warehouseList",
+                    warehouseList
+            );
+
+            request.getRequestDispatcher(
+                    "/WEB-INF/views/manager-dashboard.jsp"
+            ).forward(request, response);
+
+            return;
+        }
+
+        // ==========================================
+        // 2. WAREHOUSE MANAGER ĐANG XEM
+        // ==========================================
+        String selectedWarehouseId
+                = request.getParameter(
+                        "warehouseId"
+                );
+
+        Warehouse warehouse = null;
+
+        // Nếu Manager chọn Warehouse từ dropdown
+        if (selectedWarehouseId != null
+                && !selectedWarehouseId.trim().isEmpty()) {
+
+            for (Warehouse w : warehouseList) {
+
+                if (selectedWarehouseId.equals(
+                        w.getWarehouseId())) {
+
+                    warehouse = w;
+                    break;
+                }
+            }
+        }
+
+        // Nếu chưa chọn
+        // mặc định lấy Warehouse đầu tiên
+        if (warehouse == null) {
+
+            warehouse
+                    = warehouseList.get(0);
+        }
+
+        // ==========================================
+        // 3. DEVICE CỦA WAREHOUSE
+        // ==========================================
+        Device device
+                = deviceDAO.getDeviceByWarehouse(
+                        warehouse.getWarehouseId()
+                );
+
+        DashboardData dashboard
+                = new DashboardData();
+
+        List<SensorData> recentSensors
+                = new java.util.ArrayList<>();
+
+        // ==========================================
+        // 4. DEVICE + SENSOR
+        // ==========================================
+        if (device != null) {
+
+            dashboard.setMode(
+                    device.getMode()
+            );
+
+            dashboard.setRoofStatus(
+                    device.getRoofStatus()
+            );
+
+            dashboard.setLastSeen(
+                    device.getLastSeen()
+            );
+
+            // ======================================
+            // ONLINE / OFFLINE
+            // ======================================
+            String connectionStatus
+                    = "OFFLINE";
+
+            if (device.getLastSeen() != null) {
+
+                long diff
+                        = System.currentTimeMillis()
+                        - device.getLastSeen().getTime();
+
+                if (diff <= 30000) {
+
+                    connectionStatus
+                            = "ONLINE";
+                }
+            }
+
+            dashboard.setConnectionStatus(
+                    connectionStatus
+            );
+
+            // ======================================
+            // SENSOR MỚI NHẤT
+            // ======================================
+            SensorData latestSensor
+                    = sensorDAO.getLatestSensorData(
+                            device.getDeviceId()
+                    );
+
+            // ======================================
+            // 6 SENSOR GẦN NHẤT
+            // ======================================
+            recentSensors
+                    = sensorDAO.getRecentSensorData(
+                            device.getDeviceId(),
+                            6
+                    );
+
+            if (latestSensor != null) {
+
+                dashboard.setTemperature(
+                        latestSensor.getTemperature()
+                );
+
+                dashboard.setHumidity(
+                        latestSensor.getHumidity()
+                );
+
+                dashboard.setRainStatus(
+                        latestSensor.getRainStatus()
+                );
+
+                dashboard.setLightStatus(
+                        latestSensor.getLightStatus()
+                );
+
+                dashboard.setRecordedAt(
+                        latestSensor.getRecordedAt()
+                );
+
+                // ==================================
+                // WARNING
+                // ==================================
+                String warning
+                        = "NORMAL";
+
+                if ("OFFLINE".equals(
+                        connectionStatus)) {
+
+                    warning
+                            = "DEVICE OFFLINE";
+
+                } else if ("RAINING".equals(
+                        latestSensor.getRainStatus())) {
+
+                    warning
+                            = "RAIN DETECTED";
+                }
+
+                dashboard.setWarning(
+                        warning
+                );
+
+            } else {
+
+                dashboard.setWarning(
+                        "NO SENSOR DATA"
+                );
+            }
+
+        } else {
+
+            dashboard.setConnectionStatus(
+                    "OFFLINE"
+            );
+
+            dashboard.setWarning(
+                    "NO DEVICE"
+            );
+        }
+
+        // ==========================================
+        // 5. ACTIVE BATCHES CỦA WAREHOUSE
+        // ==========================================
+        List<DryingBatch> activeBatches
+                = batchDAO.getActiveBatchesByWarehouse(
+                        warehouse.getWarehouseId()
+                );
+
+        // ==========================================
+        // 6. GỬI DỮ LIỆU SANG JSP
+        // ==========================================
+        request.setAttribute(
+                "warehouseList",
+                warehouseList
+        );
+
+        request.setAttribute(
+                "warehouse",
+                warehouse
+        );
+
+        request.setAttribute(
+                "device",
+                device
+        );
+
+        request.setAttribute(
+                "dashboard",
+                dashboard
+        );
+
+        request.setAttribute(
+                "activeBatches",
+                activeBatches
+        );
+
+        request.setAttribute(
+                "activeBatchCount",
+                activeBatches.size()
+        );
+
+        request.setAttribute(
+                "recentSensors",
+                recentSensors
+        );
+
+        // ==========================================
+        // 7. FORWARD
+        // ==========================================
+        request.getRequestDispatcher(
+                "/WEB-INF/views/manager-dashboard.jsp"
+        ).forward(request, response);
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {

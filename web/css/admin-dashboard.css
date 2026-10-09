@@ -1,0 +1,215 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : Oct 8, 2026, 9:50:20 PM
+    Author     : ADMIN
+*/
+
+/* =========================================================
+   ADMIN DASHBOARD
+   ========================================================= */
+
+.admin-header {
+    margin-bottom: 24px;
+}
+
+
+.admin-header h1 {
+    margin: 0;
+
+    font-size: 28px;
+    font-weight: 700;
+
+    color: #0f172a;
+}
+
+
+.admin-header p {
+    margin: 6px 0 0;
+
+    font-size: 14px;
+
+    color: #64748b;
+}
+
+
+/* =========================================================
+   SECTION
+   ========================================================= */
+
+.dashboard-section {
+    margin-bottom: 22px;
+
+    padding: 20px;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+
+    box-shadow:
+        0 4px 14px rgba(15, 23, 42, 0.04);
+}
+
+
+.section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 16px;
+
+    margin-bottom: 16px;
+}
+
+
+.section-title h2 {
+    margin: 0;
+
+    font-size: 18px;
+    font-weight: 700;
+
+    color: #0f172a;
+}
+
+
+.section-title a {
+    font-size: 13px;
+    font-weight: 600;
+
+    color: #15803d;
+
+    text-decoration: none;
+}
+
+
+.section-title a:hover {
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   STAT GRID
+   ========================================================= */
+
+.stat-grid {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 14px;
+}
+
+
+.stat-grid.single-stat {
+    grid-template-columns: 1fr;
+}
+
+
+/* =========================================================
+   STAT CARD
+   ========================================================= */
+
+.stat-card {
+    min-height: 95px;
+
+    padding: 18px;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    box-sizing: border-box;
+
+    background: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+}
+
+
+.stat-card span {
+    font-size: 13px;
+    font-weight: 600;
+
+    color: #64748b;
+}
+
+
+.stat-card strong {
+    font-size: 28px;
+    font-weight: 700;
+
+    color: #0f172a;
+}
+
+
+/* =========================================================
+   STATUS COLORS
+   ========================================================= */
+
+.stat-success {
+    background: #ecfdf5;
+
+    border-color: #d1fae5;
+}
+
+
+.stat-success strong {
+    color: #047857;
+}
+
+
+.stat-danger {
+    background: #fef2f2;
+
+    border-color: #fee2e2;
+}
+
+
+.stat-danger strong {
+    color: #dc2626;
+}
+
+
+.stat-warning {
+    background: #fffbeb;
+
+    border-color: #fef3c7;
+}
+
+
+.stat-warning strong {
+    color: #b45309;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .stat-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+@media (max-width: 768px) {
+
+    .section-title {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+
+    .admin-header h1 {
+        font-size: 24px;
+    }
+}

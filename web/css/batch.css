@@ -432,4 +432,365 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css
     .form-group textarea {
         font-size: 14px;
     }
+    
+    
+    
+}
+/* ========================================= */
+/* MANAGER WAREHOUSE SELECT */
+/* ========================================= */
+
+.batch-warehouse-select {
+    min-width: 280px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 6px;
+}
+
+.batch-warehouse-select label {
+    font-size: 11px;
+    font-weight: 700;
+
+    color: #6b7280;
+
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.batch-warehouse-select form {
+    width: 100%;
+}
+
+.batch-warehouse-select select {
+    width: 100%;
+    height: 42px;
+
+    padding: 0 12px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+
+    background: #ffffff;
+    color: #111827;
+
+    font-size: 13px;
+
+    outline: none;
+    cursor: pointer;
+}
+
+.batch-warehouse-select select:focus {
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+
+/* ========================================= */
+/* CURRENT WAREHOUSE */
+/* ========================================= */
+
+.batch-current-warehouse {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    margin-bottom: 20px;
+
+    padding: 12px 16px;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 9px;
+}
+
+.batch-current-warehouse span {
+    font-size: 11px;
+    font-weight: 700;
+
+    color: #9ca3af;
+
+    text-transform: uppercase;
+}
+
+.batch-current-warehouse strong {
+    font-size: 13px;
+
+    color: #1f2937;
+}
+
+.batch-current-warehouse small {
+    margin-left: auto;
+
+    color: #9ca3af;
+
+    font-size: 12px;
+}
+
+
+@media (max-width: 768px) {
+
+    .batch-warehouse-select {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .batch-current-warehouse {
+        flex-direction: column;
+        align-items: flex-start;
+
+        gap: 5px;
+    }
+
+    .batch-current-warehouse small {
+        margin-left: 0;
+    }
+}
+/* ========================================================= */
+/* BATCH SEARCH / FILTER / SORT */
+/* ========================================================= */
+
+.batch-filter-form {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    margin: 16px 0 18px 0;
+    padding: 14px;
+
+    background: #f9fafb;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+}
+
+
+.batch-filter-form input[type="text"],
+.batch-filter-form select {
+    height: 40px;
+
+    padding: 0 12px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+
+    background: #ffffff;
+    color: #1f2937;
+
+    font-size: 14px;
+
+    outline: none;
+
+    transition: 0.2s ease;
+}
+
+
+/* SEARCH */
+
+.batch-filter-form input[type="text"] {
+    min-width: 260px;
+    flex: 1;
+}
+
+
+.batch-filter-form input[type="text"]::placeholder {
+    color: #9ca3af;
+}
+
+
+/* SELECT */
+
+.batch-filter-form select {
+    min-width: 145px;
+    cursor: pointer;
+}
+
+
+/* FOCUS */
+
+.batch-filter-form input[type="text"]:focus,
+.batch-filter-form select:focus {
+    border-color: #2563eb;
+
+    box-shadow: 0 0 0 3px
+        rgba(37, 99, 235, 0.10);
+}
+
+
+/* APPLY BUTTON */
+
+.batch-filter-form .primary-button {
+    height: 40px;
+
+    padding: 0 18px;
+
+    border: none;
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+}
+
+
+/* RESET */
+
+.filter-reset {
+    height: 40px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 16px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+
+    background: #ffffff;
+    color: #4b5563;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    transition: 0.2s ease;
+}
+
+
+.filter-reset:hover {
+    background: #f3f4f6;
+
+    border-color: #9ca3af;
+
+    color: #111827;
+}
+
+
+
+/* ========================================================= */
+/* PAGINATION */
+/* ========================================================= */
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+
+    gap: 6px;
+
+    margin-top: 20px;
+}
+
+
+.pagination a {
+    min-width: 38px;
+    height: 38px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 12px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+
+    background: #ffffff;
+    color: #374151;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    text-decoration: none;
+
+    transition: 0.2s ease;
+}
+
+
+/* HOVER */
+
+.pagination a:hover {
+    background: #f3f4f6;
+
+    border-color: #9ca3af;
+
+    color: #111827;
+}
+
+
+/* CURRENT PAGE */
+
+.pagination a.active {
+    background: #2563eb;
+
+    border-color: #2563eb;
+
+    color: #ffffff;
+}
+
+
+.pagination a.active:hover {
+    background: #1d4ed8;
+
+    border-color: #1d4ed8;
+
+    color: #ffffff;
+}
+
+
+
+/* ========================================================= */
+/* TABLE SPACING */
+/* ========================================================= */
+
+.batch-filter-form + .table-wrapper {
+    margin-top: 0;
+}
+
+
+
+/* ========================================================= */
+/* RESPONSIVE */
+/* ========================================================= */
+
+@media (max-width: 950px) {
+
+    .batch-filter-form input[type="text"] {
+        flex-basis: 100%;
+        width: 100%;
+    }
+
+    .batch-filter-form select {
+        flex: 1;
+        min-width: 160px;
+    }
+}
+
+
+@media (max-width: 650px) {
+
+    .batch-filter-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .batch-filter-form input[type="text"],
+    .batch-filter-form select,
+    .batch-filter-form .primary-button,
+    .filter-reset {
+        width: 100%;
+    }
+
+    .pagination {
+        justify-content: flex-start;
+    }
 }

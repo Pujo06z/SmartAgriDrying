@@ -87,39 +87,56 @@
         <!-- ================================= -->
 
         <c:if test="${sessionScope.LOGIN_USER.role == 'OPERATOR'
-                    || sessionScope.LOGIN_USER.role == 'MANAGER'}">
+                      || sessionScope.LOGIN_USER.role == 'MANAGER'}">
 
 
-            <!-- DRYING BATCH -->
-            <a href="${pageContext.request.contextPath}/batch"
-               class="sidebar-link
-               ${fn:contains(currentURI, 'batch') ? 'active' : ''}">
+              <!-- DRYING BATCH -->
+              <a href="${pageContext.request.contextPath}/batch"
+                 class="sidebar-link
+                 ${fn:contains(currentURI, 'batch') ? 'active' : ''}">
 
-                <span class="sidebar-icon">
-                    ◫
-                </span>
+                  <span class="sidebar-icon">
+                      ◫
+                  </span>
 
-                <span class="sidebar-text">
-                    Drying Batch
-                </span>
+                  <span class="sidebar-text">
+                      Drying Batch
+                  </span>
 
-            </a>
+              </a>
 
 
-            <!-- HISTORY -->
-            <a href="${pageContext.request.contextPath}/history"
-               class="sidebar-link
-               ${fn:contains(currentURI, 'history') ? 'active' : ''}">
+              <!-- HISTORY -->
+              <a href="${pageContext.request.contextPath}/history"
+                 class="sidebar-link
+                 ${fn:contains(currentURI, 'history') ? 'active' : ''}">
 
-                <span class="sidebar-icon">
-                    ◷
-                </span>
+                  <span class="sidebar-icon">
+                      ◷
+                  </span>
 
-                <span class="sidebar-text">
-                    History
-                </span>
+                  <span class="sidebar-text">
+                      History
+                  </span>
 
-            </a>
+              </a>
+              <!-- ================================= -->
+              <!-- EVENT LOG - ALL ROLES -->
+              <!-- ================================= -->
+
+              <a href="${pageContext.request.contextPath}/events"
+                 class="sidebar-link
+                 ${fn:contains(currentURI, 'event') ? 'active' : ''}">
+
+                  <span class="sidebar-icon">
+                      ☷
+                  </span>
+
+                  <span class="sidebar-text">
+                      Event Log
+                  </span>
+
+              </a>
 
         </c:if>
 
@@ -148,7 +165,7 @@
 
 
             <!-- WAREHOUSE -->
-            <a href="${pageContext.request.contextPath}/warehouse"
+            <a href="${pageContext.request.contextPath}/warehouses"
                class="sidebar-link
                ${fn:contains(currentURI, 'warehouse') ? 'active' : ''}">
 
@@ -161,6 +178,7 @@
                 </span>
 
             </a>
+           
 
         </c:if>
 
@@ -189,7 +207,7 @@
 
 
             <!-- WAREHOUSE MANAGEMENT -->
-            <a href="${pageContext.request.contextPath}/warehouse"
+            <a href="${pageContext.request.contextPath}/warehouses"
                class="sidebar-link
                ${fn:contains(currentURI, 'warehouse') ? 'active' : ''}">
 
@@ -205,7 +223,7 @@
 
 
             <!-- DEVICE MANAGEMENT -->
-            <a href="${pageContext.request.contextPath}/device"
+            <a href="${pageContext.request.contextPath}/devices"
                class="sidebar-link
                ${fn:contains(currentURI, 'device') ? 'active' : ''}">
 
@@ -218,11 +236,27 @@
                 </span>
 
             </a>
+            <!-- ================================= -->
+            <!-- EVENT LOG - ALL ROLES -->
+            <!-- ================================= -->
 
+            <a href="${pageContext.request.contextPath}/events"
+               class="sidebar-link
+               ${fn:contains(currentURI, 'event') ? 'active' : ''}">
+
+                <span class="sidebar-icon">
+                    ☷
+                </span>
+
+                <span class="sidebar-text">
+                    Event Log
+                </span>
+
+            </a>
         </c:if>
 
-    </nav>
 
+    </nav>
 
     <!-- ===================== -->
     <!-- LOGOUT -->

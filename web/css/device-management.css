@@ -1,0 +1,752 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : Oct 8, 2026, 10:31:19 PM
+    Author     : ADMIN
+*/
+
+/* =========================================================
+   DEVICE MANAGEMENT PAGE
+   ========================================================= */
+
+.device-page-header {
+    margin-bottom: 18px;
+}
+
+.device-page-header h1 {
+    margin: 0;
+
+    font-size: 28px;
+    font-weight: 700;
+
+    color: #0f172a;
+}
+
+.device-page-header p {
+    margin: 6px 0 0;
+
+    font-size: 14px;
+
+    color: #64748b;
+}
+
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+.alert-error {
+    margin-bottom: 18px;
+
+    padding: 12px 16px;
+
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+
+    background: #fef2f2;
+
+    color: #991b1b;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   MAIN SECTION
+   ========================================================= */
+
+.device-section {
+    width: 100%;
+
+    padding: 18px;
+
+    box-sizing: border-box;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+
+    box-shadow:
+        0 4px 14px rgba(15, 23, 42, 0.04);
+}
+
+
+/* =========================================================
+   SECTION HEADER
+   ========================================================= */
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 16px;
+
+    margin-bottom: 18px;
+}
+
+.section-header h2 {
+    margin: 0;
+
+    font-size: 19px;
+    font-weight: 700;
+
+    color: #0f172a;
+}
+
+.section-header p {
+    margin: 4px 0 0;
+
+    font-size: 13px;
+
+    color: #64748b;
+}
+
+
+/* =========================================================
+   ADD BUTTON
+   ========================================================= */
+
+.btn-add {
+    padding: 10px 16px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: #0f8b4c;
+
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.btn-add:hover {
+    background: #0b6f3d;
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   DEVICE SUMMARY
+   ========================================================= */
+
+.device-summary {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 14px;
+
+    margin-bottom: 20px;
+}
+
+
+/* =========================================================
+   SUMMARY CARD
+   ========================================================= */
+
+.summary-card {
+    min-height: 100px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 16px 18px;
+
+    box-sizing: border-box;
+
+    border-radius: 12px;
+}
+
+.summary-icon {
+    width: 52px;
+    height: 52px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.summary-info {
+    display: flex;
+    flex-direction: column;
+
+    gap: 4px;
+}
+
+.summary-info span {
+    font-size: 13px;
+    font-weight: 600;
+
+    color: #475569;
+}
+
+.summary-info strong {
+    font-size: 27px;
+    font-weight: 700;
+
+    line-height: 1;
+
+    color: #0f172a;
+}
+
+.summary-info small {
+    font-size: 11px;
+
+    color: #64748b;
+}
+
+
+/* =========================================================
+   TOTAL CARD
+   ========================================================= */
+
+.summary-total {
+    background: #eff6ff;
+}
+
+.summary-total .summary-icon {
+    background: #dbeafe;
+
+    color: #2563eb;
+}
+
+
+/* =========================================================
+   ONLINE CARD
+   ========================================================= */
+
+.summary-online {
+    background: #ecfdf5;
+}
+
+.summary-online .summary-icon {
+    background: #d1fae5;
+
+    color: #15803d;
+}
+
+
+/* =========================================================
+   OFFLINE CARD
+   ========================================================= */
+
+.summary-offline {
+    background: #fef2f2;
+}
+
+.summary-offline .summary-icon {
+    background: #fee2e2;
+
+    color: #dc2626;
+}
+
+
+/* =========================================================
+   ADD DEVICE BOX
+   ========================================================= */
+
+.add-device-box {
+    margin-bottom: 20px;
+
+    padding: 18px;
+
+    background: #f8fafc;
+
+    border: 1px solid #dbe3ea;
+    border-radius: 10px;
+}
+
+.add-device-box h3 {
+    margin: 0 0 16px;
+
+    font-size: 16px;
+    font-weight: 700;
+
+    color: #0f172a;
+}
+
+
+/* =========================================================
+   FORM
+   ========================================================= */
+
+.device-form,
+.edit-form {
+    width: 100%;
+}
+
+.form-grid,
+.edit-grid {
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 14px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 600;
+
+    color: #374151;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 10px 12px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #111827;
+
+    font-size: 13px;
+
+    outline: none;
+
+    transition: 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #16a34a;
+
+    box-shadow:
+        0 0 0 3px rgba(22, 163, 74, 0.10);
+}
+
+.form-group input:disabled {
+    background: #f1f5f9;
+
+    color: #64748b;
+
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+   FORM ACTIONS
+   ========================================================= */
+
+.form-actions {
+    margin-top: 16px;
+
+    display: flex;
+    justify-content: flex-end;
+
+    gap: 10px;
+}
+
+.btn-primary {
+    padding: 9px 15px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: #0f8b4c;
+
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background: #0b6f3d;
+}
+
+.btn-cancel {
+    padding: 9px 15px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    color: #475569;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.btn-cancel:hover {
+    background: #f8fafc;
+}
+
+
+/* =========================================================
+   TABLE
+   ========================================================= */
+
+.table-wrapper {
+    width: 100%;
+
+    overflow-x: auto;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+}
+
+.device-table {
+    width: 100%;
+
+    min-width: 1250px;
+
+    border-collapse: collapse;
+
+    background: #ffffff;
+}
+
+.device-table thead {
+    background: #f8fafc;
+}
+
+.device-table th {
+    padding: 13px 12px;
+
+    text-align: left;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    color: #64748b;
+
+    text-transform: uppercase;
+
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.device-table td {
+    padding: 14px 12px;
+
+    font-size: 13px;
+
+    color: #475569;
+
+    vertical-align: middle;
+
+    border-bottom: 1px solid #eef2f7;
+}
+
+.device-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.device-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+/* =========================================================
+   DEVICE TEXT
+   ========================================================= */
+
+.device-id {
+    font-weight: 700;
+
+    color: #0f172a !important;
+}
+
+.device-name {
+    font-weight: 600;
+
+    color: #0f172a !important;
+}
+
+.text-muted {
+    color: #94a3b8;
+
+    font-style: italic;
+}
+
+
+/* =========================================================
+   MODE
+   ========================================================= */
+
+.mode-auto,
+.mode-manual {
+    display: inline-block;
+
+    padding: 5px 9px;
+
+    border-radius: 6px;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.mode-auto {
+    background: #e0f2fe;
+
+    color: #0369a1;
+}
+
+.mode-manual {
+    background: #fef3c7;
+
+    color: #b45309;
+}
+
+
+/* =========================================================
+   ROOF STATUS
+   ========================================================= */
+
+.roof-open,
+.roof-closed {
+    display: inline-block;
+
+    padding: 5px 9px;
+
+    border-radius: 6px;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.roof-open {
+    background: #dcfce7;
+
+    color: #15803d;
+}
+
+.roof-closed {
+    background: #f1f5f9;
+
+    color: #475569;
+}
+
+
+/* =========================================================
+   CONNECTION STATUS
+   ========================================================= */
+
+.connection-online,
+.connection-offline {
+    display: inline-block;
+
+    padding: 5px 9px;
+
+    border-radius: 999px;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.connection-online {
+    background: #dcfce7;
+
+    color: #15803d;
+}
+
+.connection-offline {
+    background: #fee2e2;
+
+    color: #dc2626;
+}
+
+
+/* =========================================================
+   DATABASE STATUS
+   ========================================================= */
+
+.status-active,
+.status-inactive {
+    display: inline-block;
+
+    padding: 5px 9px;
+
+    border-radius: 999px;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.status-active {
+    background: #ecfdf5;
+
+    color: #047857;
+}
+
+.status-inactive {
+    background: #f1f5f9;
+
+    color: #64748b;
+}
+
+
+/* =========================================================
+   ACTION
+   ========================================================= */
+
+.action-cell {
+    min-width: 150px;
+}
+
+.inline-form {
+    display: inline-block;
+
+    margin-left: 6px;
+}
+
+
+/* =========================================================
+   EDIT BUTTON
+   ========================================================= */
+
+.btn-edit {
+    padding: 7px 12px;
+
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+
+    background: #ffffff;
+
+    color: #334155;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.btn-edit:hover {
+    background: #f1f5f9;
+}
+
+
+/* =========================================================
+   STATUS ACTION
+   ========================================================= */
+
+.btn-status-action {
+    padding: 7px 12px;
+
+    border: 1px solid #fecaca;
+    border-radius: 7px;
+
+    background: #ffffff;
+
+    color: #dc2626;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.btn-status-action:hover {
+    background: #fef2f2;
+}
+
+
+/* =========================================================
+   EDIT ROW
+   ========================================================= */
+
+.edit-row {
+    background: #f8fafc;
+}
+
+.edit-row td {
+    padding: 18px;
+}
+
+.edit-form {
+    padding: 4px;
+}
+
+
+/* =========================================================
+   EMPTY
+   ========================================================= */
+
+.empty-row {
+    padding: 30px !important;
+
+    text-align: center;
+
+    color: #94a3b8 !important;
+
+    font-style: italic;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1000px) {
+
+    .device-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .form-grid,
+    .edit-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+@media (max-width: 768px) {
+
+    .device-page-header h1 {
+        font-size: 24px;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .btn-add {
+        width: 100%;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .btn-primary,
+    .btn-cancel {
+        width: 100%;
+    }
+}
