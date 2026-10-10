@@ -74,40 +74,105 @@ public class BatchController extends HttpServlet {
     // ==============================
     // LOAD BATCH PAGE
     // ==============================
-    
     private void loadBatchPage(
-        HttpServletRequest request,
-        HttpServletResponse response,
-        User user)
-        throws Exception {
+            HttpServletRequest request,
+            HttpServletResponse response,
+            User user)
+            throws Exception {
 
-    WarehouseDAO warehouseDAO
-            = new WarehouseDAO();
+        WarehouseDAO warehouseDAO
+                = new WarehouseDAO();
 
-    DryingBatchDAO batchDAO
-            = new DryingBatchDAO();
+        DryingBatchDAO batchDAO
+                = new DryingBatchDAO();
 
+        Warehouse warehouse = null;
 
-    Warehouse warehouse = null;
+        List<Warehouse> warehouseList
+                = new ArrayList<>();
 
-    List<Warehouse> warehouseList
-            = new ArrayList<>();
+        // =========================================
+        // 1. MANAGER
+        // =========================================
+        if ("MANAGER".equals(user.getRole())) {
 
+            warehouseList
+                    = warehouseDAO.getWarehousesByManager(
+                            user.getUserId()
+                    );
 
-    // =========================================
-    // 1. MANAGER
-    // =========================================
+            if (warehouseList == null
+                    || warehouseList.isEmpty()) {
 
-    if ("MANAGER".equals(user.getRole())) {
-
-        warehouseList
-                = warehouseDAO.getWarehousesByManager(
-                        user.getUserId()
+                request.setAttribute(
+                        "error",
+                        "No warehouse assigned."
                 );
 
+                request.setAttribute(
+                        "warehouseList",
+                        warehouseList
+                );
 
-        if (warehouseList == null
-                || warehouseList.isEmpty()) {
+                request.getRequestDispatcher(
+                        "/WEB-INF/views/batch.jsp"
+                ).forward(
+                        request,
+                        response
+                );
+
+                return;
+            }
+
+            String warehouseId
+                    = request.getParameter(
+                            "warehouseId"
+                    );
+
+            // Manager đã chọn warehouse
+            if (warehouseId != null
+                    && !warehouseId.trim().isEmpty()) {
+
+                for (Warehouse w : warehouseList) {
+
+                    if (warehouseId.equals(
+                            w.getWarehouseId())) {
+
+                        warehouse = w;
+
+                        break;
+                    }
+                }
+            }
+
+            // Chưa chọn -> warehouse đầu tiên
+            if (warehouse == null) {
+
+                warehouse
+                        = warehouseList.get(0);
+            }
+        } // =========================================
+        // 2. OPERATOR
+        // =========================================
+        else if ("OPERATOR".equals(user.getRole())) {
+
+            warehouse
+                    = warehouseDAO.getWarehouseByUser(
+                            user.getUserId()
+                    );
+
+            if (warehouse != null) {
+
+                warehouseList.add(
+                        warehouse
+                );
+            }
+        }
+
+        // =========================================
+        // 3. KHÔNG CÓ WAREHOUSE
+        // =========================================
+        if (warehouse == null) {
 
             request.setAttribute(
                     "error",
@@ -129,335 +194,216 @@ public class BatchController extends HttpServlet {
             return;
         }
 
-
-        String warehouseId
+        // =========================================
+        // 4. SEARCH
+        // =========================================
+        String keyword
                 = request.getParameter(
-                        "warehouseId"
+                        "keyword"
                 );
 
+        if (keyword == null) {
 
-        // Manager đã chọn warehouse
-        if (warehouseId != null
-                && !warehouseId.trim().isEmpty()) {
+            keyword = "";
+        }
 
-            for (Warehouse w : warehouseList) {
+        // =========================================
+        // 5. FILTER STATUS
+        // =========================================
+        String statusFilter
+                = request.getParameter(
+                        "status"
+                );
 
-                if (warehouseId.equals(
-                        w.getWarehouseId())) {
+        if (!"DRYING".equals(statusFilter)
+                && !"COMPLETED".equals(statusFilter)) {
 
-                    warehouse = w;
+            statusFilter = "";
+        }
 
-                    break;
-                }
+        // =========================================
+        // 6. SORT
+        // =========================================
+        String sortBy
+                = request.getParameter(
+                        "sortBy"
+                );
+
+        String sortOrder
+                = request.getParameter(
+                        "sortOrder"
+                );
+
+        if (sortBy == null
+                || sortBy.trim().isEmpty()) {
+
+            sortBy = "startTime";
+        }
+
+        if (!"ASC".equalsIgnoreCase(sortOrder)) {
+
+            sortOrder = "DESC";
+        }
+
+        // =========================================
+        // 7. PAGINATION
+        // =========================================
+        int page = 1;
+
+        int pageSize = 10;
+
+        String pageParam
+                = request.getParameter(
+                        "page"
+                );
+
+        if (pageParam != null) {
+
+            try {
+
+                page
+                        = Integer.parseInt(
+                                pageParam
+                        );
+
+            } catch (NumberFormatException e) {
+
+                page = 1;
             }
         }
 
+        if (page < 1) {
 
-        // Chưa chọn -> warehouse đầu tiên
-        if (warehouse == null) {
-
-            warehouse
-                    = warehouseList.get(0);
+            page = 1;
         }
-    }
 
-
-    // =========================================
-    // 2. OPERATOR
-    // =========================================
-
-    else if ("OPERATOR".equals(user.getRole())) {
-
-        warehouse
-                = warehouseDAO.getWarehouseByUser(
-                        user.getUserId()
+        // =========================================
+        // 8. COUNT BATCHES
+        // =========================================
+        int totalRecords
+                = batchDAO.countBatchesByWarehouse(
+                        warehouse.getWarehouseId(),
+                        keyword,
+                        statusFilter
                 );
 
+        int totalPages
+                = (int) Math.ceil(
+                        (double) totalRecords
+                        / pageSize
+                );
 
-        if (warehouse != null) {
+        if (totalPages < 1) {
 
-            warehouseList.add(
-                    warehouse
-            );
+            totalPages = 1;
         }
-    }
 
+        if (page > totalPages) {
 
-    // =========================================
-    // 3. KHÔNG CÓ WAREHOUSE
-    // =========================================
+            page = totalPages;
+        }
 
-    if (warehouse == null) {
+        // =========================================
+        // 9. ACTIVE BATCHES
+        // KHÔNG SEARCH / FILTER / PAGINATION
+        // =========================================
+        List<DryingBatch> activeBatches
+                = batchDAO.getActiveBatchesByWarehouse(
+                        warehouse.getWarehouseId()
+                );
 
-        request.setAttribute(
-                "error",
-                "No warehouse assigned."
-        );
+        // =========================================
+        // 10. ALL BATCHES
+        // SEARCH + FILTER + SORT + PAGINATION
+        // =========================================
+        List<DryingBatch> batches
+                = batchDAO.searchBatchesByWarehouse(
+                        warehouse.getWarehouseId(),
+                        keyword,
+                        statusFilter,
+                        sortBy,
+                        sortOrder,
+                        page,
+                        pageSize
+                );
 
+        // =========================================
+        // 11. SEND DATA TO JSP
+        // =========================================
         request.setAttribute(
                 "warehouseList",
                 warehouseList
         );
 
+        request.setAttribute(
+                "warehouse",
+                warehouse
+        );
+
+        request.setAttribute(
+                "activeBatches",
+                activeBatches
+        );
+
+        request.setAttribute(
+                "batches",
+                batches
+        );
+
+        // SEARCH
+        request.setAttribute(
+                "keyword",
+                keyword
+        );
+
+        // FILTER
+        request.setAttribute(
+                "selectedStatus",
+                statusFilter
+        );
+
+        // SORT
+        request.setAttribute(
+                "sortBy",
+                sortBy
+        );
+
+        request.setAttribute(
+                "sortOrder",
+                sortOrder
+        );
+
+        // PAGINATION
+        request.setAttribute(
+                "currentPage",
+                page
+        );
+
+        request.setAttribute(
+                "pageSize",
+                pageSize
+        );
+
+        request.setAttribute(
+                "totalRecords",
+                totalRecords
+        );
+
+        request.setAttribute(
+                "totalPages",
+                totalPages
+        );
+
+        // =========================================
+        // 12. FORWARD
+        // =========================================
         request.getRequestDispatcher(
                 "/WEB-INF/views/batch.jsp"
         ).forward(
                 request,
                 response
         );
-
-        return;
     }
-
-
-    // =========================================
-    // 4. SEARCH
-    // =========================================
-
-    String keyword
-            = request.getParameter(
-                    "keyword"
-            );
-
-
-    if (keyword == null) {
-
-        keyword = "";
-    }
-
-
-    // =========================================
-    // 5. FILTER STATUS
-    // =========================================
-
-    String statusFilter
-            = request.getParameter(
-                    "status"
-            );
-
-
-    if (!"DRYING".equals(statusFilter)
-            && !"COMPLETED".equals(statusFilter)) {
-
-        statusFilter = "";
-    }
-
-
-    // =========================================
-    // 6. SORT
-    // =========================================
-
-    String sortBy
-            = request.getParameter(
-                    "sortBy"
-            );
-
-    String sortOrder
-            = request.getParameter(
-                    "sortOrder"
-            );
-
-
-    if (sortBy == null
-            || sortBy.trim().isEmpty()) {
-
-        sortBy = "startTime";
-    }
-
-
-    if (!"ASC".equalsIgnoreCase(sortOrder)) {
-
-        sortOrder = "DESC";
-    }
-
-
-    // =========================================
-    // 7. PAGINATION
-    // =========================================
-
-    int page = 1;
-
-    int pageSize = 10;
-
-
-    String pageParam
-            = request.getParameter(
-                    "page"
-            );
-
-
-    if (pageParam != null) {
-
-        try {
-
-            page
-                    = Integer.parseInt(
-                            pageParam
-                    );
-
-        } catch (NumberFormatException e) {
-
-            page = 1;
-        }
-    }
-
-
-    if (page < 1) {
-
-        page = 1;
-    }
-
-
-    // =========================================
-    // 8. COUNT BATCHES
-    // =========================================
-
-    int totalRecords
-            = batchDAO.countBatchesByWarehouse(
-                    warehouse.getWarehouseId(),
-                    keyword,
-                    statusFilter
-            );
-
-
-    int totalPages
-            = (int) Math.ceil(
-                    (double) totalRecords
-                    / pageSize
-            );
-
-
-    if (totalPages < 1) {
-
-        totalPages = 1;
-    }
-
-
-    if (page > totalPages) {
-
-        page = totalPages;
-    }
-
-
-    // =========================================
-    // 9. ACTIVE BATCHES
-    // KHÔNG SEARCH / FILTER / PAGINATION
-    // =========================================
-
-    List<DryingBatch> activeBatches
-            = batchDAO.getActiveBatchesByWarehouse(
-                    warehouse.getWarehouseId()
-            );
-
-
-    // =========================================
-    // 10. ALL BATCHES
-    // SEARCH + FILTER + SORT + PAGINATION
-    // =========================================
-
-    List<DryingBatch> batches
-            = batchDAO.searchBatchesByWarehouse(
-                    warehouse.getWarehouseId(),
-                    keyword,
-                    statusFilter,
-                    sortBy,
-                    sortOrder,
-                    page,
-                    pageSize
-            );
-
-
-    // =========================================
-    // 11. SEND DATA TO JSP
-    // =========================================
-
-    request.setAttribute(
-            "warehouseList",
-            warehouseList
-    );
-
-
-    request.setAttribute(
-            "warehouse",
-            warehouse
-    );
-
-
-    request.setAttribute(
-            "activeBatches",
-            activeBatches
-    );
-
-
-    request.setAttribute(
-            "batches",
-            batches
-    );
-
-
-    // SEARCH
-
-    request.setAttribute(
-            "keyword",
-            keyword
-    );
-
-
-    // FILTER
-
-    request.setAttribute(
-            "selectedStatus",
-            statusFilter
-    );
-
-
-    // SORT
-
-    request.setAttribute(
-            "sortBy",
-            sortBy
-    );
-
-    request.setAttribute(
-            "sortOrder",
-            sortOrder
-    );
-
-
-    // PAGINATION
-
-    request.setAttribute(
-            "currentPage",
-            page
-    );
-
-    request.setAttribute(
-            "pageSize",
-            pageSize
-    );
-
-    request.setAttribute(
-            "totalRecords",
-            totalRecords
-    );
-
-    request.setAttribute(
-            "totalPages",
-            totalPages
-    );
-
-
-    // =========================================
-    // 12. FORWARD
-    // =========================================
-
-    request.getRequestDispatcher(
-            "/WEB-INF/views/batch.jsp"
-    ).forward(
-            request,
-            response
-    );
-}
 //    private void loadBatchPage(
 //            HttpServletRequest request,
 //            HttpServletResponse response,
@@ -593,7 +539,6 @@ public class BatchController extends HttpServlet {
 //                "/WEB-INF/views/batch.jsp"
 //        ).forward(request, response);
 //    }
-
 
     // ==============================
     // POST ACTION
