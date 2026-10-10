@@ -1,16 +1,50 @@
 -- USERS
-/*
-INSERT INTO USERS VALUES
-('U001','admin01','$2a$10$sampleAdminHash',N'System Administrator','ADMIN','ACTIVE','2026-09-20T08:00:00'),
-('U002','manager01','$2a$10$sampleManagerHash',N'Nguyen Minh Quan','MANAGER','ACTIVE','2026-09-20T08:10:00'),
-('U003','operator01','$2a$10$sampleOperator01Hash',N'Tran Van An','OPERATOR','ACTIVE','2026-09-20T08:20:00'),
-('U004','operator02','$2a$10$sampleOperator02Hash',N'Le Thi Binh','OPERATOR','ACTIVE','2026-09-20T08:30:00');*/
+USE SmartAgriDrying;
 
+INSERT INTO USERS VALUES
+(
+    'U001',
+    'admin01',
+    '65536:5OuLaqR8LFB2flpFwQ5wzw==:9JXu42Akpigq49RHNUVxK9doBYBSt8pKOHT2M5IIG1I=',
+    N'System Administrator',
+    'ADMIN',
+    'ACTIVE',
+    '2026-09-20T08:00:00'
+),
+(
+    'U002',
+    'manager01',
+    '65536:BFK/b1ThlSpgJ1dV9Z9oOw==:3pXwzzZhh9kvaAn22SQCyRY8DWAX/KzHmIb5LTxqNkE=',
+    N'Nguyen Minh Quan',
+    'MANAGER',
+    'ACTIVE',
+    '2026-09-20T08:10:00'
+),
+(
+    'U003',
+    'operator01',
+    '65536:8buq6ti2OPvBNlXgyJKGwg==:FHEbE/4jV5hDnqrNtQs3hxMR+V5c8N6/RL0Ei4HXcsY=',
+    N'Tran Van An',
+    'OPERATOR',
+    'ACTIVE',
+    '2026-09-20T08:20:00'
+),
+(
+    'U004',
+    'operator02',
+    '65536:jBtUxfgmbZ8ZcUmwVF9Xww==:Y2n2ctYbHOsYPxbu0Z7F63X9hzLMSPXYTBKCuOWbm8k=',
+    N'Le Thi Binh',
+    'OPERATOR',
+    'ACTIVE',
+    '2026-09-20T08:30:00'
+);
+
+/*
 INSERT INTO USERS VALUES
 ('U001','admin01','123456',N'System Administrator','ADMIN','ACTIVE','2026-09-20T08:00:00'),
 ('U002','manager01','123456',N'Nguyen Minh Quan','MANAGER','ACTIVE','2026-09-20T08:10:00'),
 ('U003','operator01','123456',N'Tran Van An','OPERATOR','ACTIVE','2026-09-20T08:20:00'),
-('U004','operator02','123456',N'Le Thi Binh','OPERATOR','ACTIVE','2026-09-20T08:30:00');
+('U004','operator02','123456',N'Le Thi Binh','OPERATOR','ACTIVE','2026-09-20T08:30:00');*/
 -- WAREHOUSE
 INSERT INTO WAREHOUSE VALUES
 ('W001','WH-A01',N'Main Drying Area',N'Agricultural Drying Yard A','ACTIVE','2026-09-20T09:00:00');
