@@ -6,7 +6,7 @@ INSERT INTO USERS VALUES
     'U001',
     'admin01',
     '65536:5OuLaqR8LFB2flpFwQ5wzw==:9JXu42Akpigq49RHNUVxK9doBYBSt8pKOHT2M5IIG1I=',
-    N'System Administrator',
+N'System Administrator',
     'ADMIN',
     'ACTIVE',
     '2026-09-20T08:00:00'

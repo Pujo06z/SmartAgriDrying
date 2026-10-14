@@ -126,7 +126,7 @@ public class DeviceDAO {
 
     // =====================================================
     // MAP RESULTSET -> DEVICE
-    // DÙNG SETTER ĐỂ KHỚP DEVICE MODEL HIỆN TẠI
+    // 
     // =====================================================
     private Device mapDevice(ResultSet rs)
             throws SQLException {
@@ -170,8 +170,8 @@ public class DeviceDAO {
 
     // =====================================================
     // ADMIN
-    // LẤY TẤT CẢ DEVICE
-    // BAO GỒM ACTIVE + INACTIVE
+    // TAKE ALL DEVICE
+    //  ACTIVE + INACTIVE
     // =====================================================
     public List<Device> getAllDevices() {
 
@@ -213,7 +213,7 @@ public class DeviceDAO {
 
     // =====================================================
     // MANAGER
-    // LẤY DEVICE THUỘC CÁC WAREHOUSE ĐƯỢC ASSIGN
+    // 
     // =====================================================
     public List<Device> getDevicesByManager(
             String managerId) {
@@ -361,7 +361,7 @@ public class DeviceDAO {
 
     // =====================================================
     // MANAGER
-    // KIỂM TRA DEVICE CÓ THUỘC MANAGER KHÔNG
+    // CHECK DEVICE IS BELONG TO MANAGER
     // =====================================================
     public boolean isAssignedToManager(
             String managerId,
@@ -554,7 +554,7 @@ public class DeviceDAO {
 
     // =====================================================
     // ESP HEARTBEAT
-    // CẬP NHẬT last_seen + trạng thái mái thực tế
+    // UPDATE last_seen + ROOF STATUS 
     // =====================================================
     public boolean updateHeartbeat(
             String deviceId,
@@ -626,7 +626,7 @@ public class DeviceDAO {
 
     // =====================================================
     // MANAGER DASHBOARD
-    // COUNT DEVICE ONLINE CỦA MANAGER
+    // COUNT DEVICE ONLINE OF MANAGER
     // =====================================================
     public int countOnlineDevicesByManager(
             String managerId) {

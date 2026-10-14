@@ -17,16 +17,16 @@ import util.DBContext;
  * @author ADMIN
  */
 public class UserWarehouseDAO {
-     public List<Warehouse> getWarehousesByUser(
+
+    public List<Warehouse> getWarehousesByUser(
             String userId)
             throws Exception {
 
-        List<Warehouse> list =
-                new ArrayList<>();
+        List<Warehouse> list
+                = new ArrayList<>();
 
-
-        String sql =
-                "SELECT w.warehouse_id, "
+        String sql
+                = "SELECT w.warehouse_id, "
                 + "w.warehouse_code, "
                 + "w.warehouse_name, "
                 + "w.status "
@@ -36,30 +36,24 @@ public class UserWarehouseDAO {
                 + "WHERE uw.user_id = ? "
                 + "ORDER BY w.warehouse_id";
 
-
         try (
-                Connection conn =
-                        DBContext.getConnection();
-
-                PreparedStatement ps =
-                        conn.prepareStatement(sql)
-        ) {
+                 Connection conn
+                = DBContext.getConnection();  PreparedStatement ps
+                = conn.prepareStatement(sql)) {
 
             ps.setString(
                     1,
                     userId
             );
 
-
             try (
-                    ResultSet rs =
-                            ps.executeQuery()
-            ) {
+                     ResultSet rs
+                    = ps.executeQuery()) {
 
                 while (rs.next()) {
 
-                    Warehouse warehouse =
-                            new Warehouse();
+                    Warehouse warehouse
+                            = new Warehouse();
 
                     warehouse.setWarehouseId(
                             rs.getString(
@@ -93,11 +87,9 @@ public class UserWarehouseDAO {
         return list;
     }
 
-
     // =========================================
     // SET USER WAREHOUSES
     // =========================================
-
     public void setUserWarehouses(
             String userId,
             String[] warehouseIds)
@@ -107,61 +99,47 @@ public class UserWarehouseDAO {
 
         try {
 
-            conn =
-                    DBContext.getConnection();
-
+            conn = DBContext.getConnection();
             conn.setAutoCommit(false);
 
-
-            // Xóa assignment cũ
-
-            String deleteSql =
-                    "DELETE FROM USER_WAREHOUSE "
+            // ==============================
+            // 1. XÓA ASSIGNMENT CŨ
+            // ==============================
+            String deleteSql
+                    = "DELETE FROM USER_WAREHOUSE "
                     + "WHERE user_id = ?";
 
-
             try (
-                    PreparedStatement delete =
-                            conn.prepareStatement(
-                                    deleteSql
-                            )
-            ) {
+                     PreparedStatement delete
+                    = conn.prepareStatement(deleteSql)) {
 
-                delete.setString(
-                        1,
-                        userId
-                );
+                delete.setString(1, userId);
 
                 delete.executeUpdate();
             }
 
+            // ==============================
+            // 2. THÊM NHIỀU WAREHOUSE MỚI
+            // ==============================
+            if (warehouseIds != null
+                    && warehouseIds.length > 0) {
 
-            // Thêm assignment mới
-
-            if (warehouseIds != null) {
-
-                String insertSql =
-                        "INSERT INTO USER_WAREHOUSE "
-                        + "(user_id, warehouse_id) "
-                        + "VALUES (?, ?)";
-
+                String insertSql
+                        = "INSERT INTO USER_WAREHOUSE "
+                        + "(user_id, warehouse_id, assigned_at, status) "
+                        + "VALUES (?, ?, GETDATE(), 'ACTIVE')";
 
                 try (
-                        PreparedStatement insert =
-                                conn.prepareStatement(
-                                        insertSql
-                                )
-                ) {
+                         PreparedStatement insert
+                        = conn.prepareStatement(insertSql)) {
 
-                    for (String warehouseId
-                            : warehouseIds) {
+                    for (String warehouseId : warehouseIds) {
 
                         if (warehouseId == null
                                 || warehouseId.trim().isEmpty()) {
 
                             continue;
                         }
-
 
                         insert.setString(
                                 1,
@@ -170,7 +148,7 @@ public class UserWarehouseDAO {
 
                         insert.setString(
                                 2,
-                                warehouseId
+                                warehouseId.trim()
                         );
 
                         insert.addBatch();
@@ -180,9 +158,7 @@ public class UserWarehouseDAO {
                 }
             }
 
-
             conn.commit();
-
 
         } catch (Exception e) {
 

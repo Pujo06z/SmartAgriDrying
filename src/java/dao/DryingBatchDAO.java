@@ -762,8 +762,8 @@ public class DryingBatchDAO {
 
     // =====================================================
     // MANAGER
-    // LẤY BATCH TRONG CÁC WAREHOUSE ĐƯỢC ASSIGN
-    // Có thể lọc warehouse + search
+    // TAKE BATCH IN WAREHOUSE IS ASSIGNED
+    // MAYBE FILTER warehouse + search
     // =====================================================
     public List<DryingBatch> getByManager(
             String managerId,
@@ -942,7 +942,7 @@ public class DryingBatchDAO {
 
     // =====================================================
     // ADMIN DASHBOARD
-    // COUNT TẤT CẢ ACTIVE BATCH
+    // COUNT ALL ACTIVE BATCH
     // =====================================================
     public int countAllActive() {
 
