@@ -155,7 +155,7 @@ public class EventLogController extends HttpServlet {
 
 
         // =============================================
-        // Admin được xem tất cả warehouse
+        // Admin can view all warehouses
         // =============================================
 
         List<Warehouse> warehouseList =
@@ -169,8 +169,8 @@ public class EventLogController extends HttpServlet {
 
 
         // =============================================
-        // Không chọn warehouse
-        // → xem toàn hệ thống
+        // If no warehouse is selected
+        // → view the entire system
         // =============================================
 
         if (warehouseId == null) {
@@ -185,8 +185,8 @@ public class EventLogController extends HttpServlet {
 
 
         // =============================================
-        // Nếu có chọn warehouse
-        // → kiểm tra warehouse có tồn tại không
+        // If a warehouse is selected
+        // → check if the warehouse exists
         // =============================================
 
         if (!warehouseId.isEmpty()) {
@@ -256,7 +256,7 @@ public class EventLogController extends HttpServlet {
 
 
         // =============================================
-        // Warehouse được giao cho Manager
+        // Warehouses assigned to the Manager
         // =============================================
 
         List<Warehouse> warehouseList =
@@ -267,7 +267,7 @@ public class EventLogController extends HttpServlet {
 
 
         // =============================================
-        // Chưa được assign warehouse
+        // No warehouse assigned yet
         // =============================================
 
         if (warehouseList == null
@@ -335,8 +335,8 @@ public class EventLogController extends HttpServlet {
 
 
         // =============================================
-        // Chưa chọn warehouse
-        // → mặc định warehouse đầu tiên
+        // No warehouse selected
+        // → default to the first warehouse
         // =============================================
 
         if (warehouseId == null
@@ -357,8 +357,8 @@ public class EventLogController extends HttpServlet {
         // =============================================
         // SECURITY
         //
-        // Manager không được sửa URL
-        // để xem warehouse không thuộc mình
+        // Manager is not allowed to modify the URL
+        // to view warehouses they do not own
         // =============================================
 
         boolean allowed =
@@ -431,7 +431,7 @@ public class EventLogController extends HttpServlet {
 
 
         // =============================================
-        // Operator chỉ dùng warehouse được assign
+        // Operator only uses the assigned warehouse
         // =============================================
 
         Warehouse warehouse =
@@ -442,7 +442,7 @@ public class EventLogController extends HttpServlet {
 
 
         // =============================================
-        // Không có warehouse
+        // No warehouse assigned
         // =============================================
 
         if (warehouse == null) {
@@ -501,9 +501,9 @@ public class EventLogController extends HttpServlet {
 
 
         // =============================================
-        // Operator KHÔNG lấy warehouseId từ URL
+        // Operator does NOT get warehouseId from URL
         //
-        // → luôn khóa vào warehouse của chính Operator
+        // → always locked to the Operator's own warehouse
         // =============================================
 
         loadEventPage(
@@ -612,7 +612,7 @@ public class EventLogController extends HttpServlet {
 
 
         // =====================================================
-        // Chỉ cho phép source hợp lệ
+        // Only allow valid sources
         // =====================================================
 
         if (!source.isEmpty()
@@ -681,7 +681,7 @@ public class EventLogController extends HttpServlet {
         // =====================================================
         // PAGE SIZE
         //
-        // Chốt 10 dòng / trang
+        // Fixed to 10 rows / page
         // =====================================================
 
         int pageSize = 10;
@@ -712,8 +712,8 @@ public class EventLogController extends HttpServlet {
 
 
         // =============================================
-        // Nếu không có record
-        // vẫn coi là page 1
+        // If there are no records,
+        // still treat it as page 1
         // =============================================
 
         if (totalPages < 1) {
@@ -723,10 +723,10 @@ public class EventLogController extends HttpServlet {
 
 
         // =============================================
-        // Nếu user sửa URL page quá lớn
+        // If the user modifies the URL page to be too large
         //
         // page=999
-        // → đưa về trang cuối
+        // → redirect to the last page
         // =============================================
 
         if (page > totalPages) {
@@ -756,7 +756,7 @@ public class EventLogController extends HttpServlet {
         // =====================================================
         // 10. RECORD RANGE
         //
-        // dùng JSP hiển thị:
+        // Used in JSP to display:
         //
         // Showing 11 - 20 of 47 events
         // =====================================================
@@ -887,9 +887,8 @@ public class EventLogController extends HttpServlet {
 
 
         } catch (Exception e) {
-
-            // Không làm gì
-            // → dùng default
+            // Do nothing
+            // → use default
         }
 
 

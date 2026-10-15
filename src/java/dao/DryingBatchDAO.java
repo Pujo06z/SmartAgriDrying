@@ -708,7 +708,7 @@ public class DryingBatchDAO {
 
     // =====================================================
     // OPERATOR + MANAGER DASHBOARD
-    // CHỈ LẤY CÁC BATCH ĐANG DRYING
+    // ONLY GET BATCHES THAT ARE DRYING
     // =====================================================
     public List<DryingBatch> getActiveBatchesByWarehouse(
             String warehouseId) {
@@ -762,8 +762,8 @@ public class DryingBatchDAO {
 
     // =====================================================
     // MANAGER
-    // TAKE BATCH IN WAREHOUSE IS ASSIGNED
-    // MAYBE FILTER warehouse + search
+    // GET BATCHES IN ASSIGNED WAREHOUSES
+    // OPTIONAL WAREHOUSE FILTER + SEARCH
     // =====================================================
     public List<DryingBatch> getByManager(
             String managerId,
@@ -898,7 +898,7 @@ public class DryingBatchDAO {
 
     // =====================================================
     // MANAGER DASHBOARD
-    // COUNT ACTIVE BATCH TRONG CÁC WAREHOUSE CỦA MANAGER
+    // COUNT ACTIVE BATCHES IN MANAGER'S WAREHOUSES
     // =====================================================
     public int countActiveByManager(
             String managerId) {
@@ -942,7 +942,7 @@ public class DryingBatchDAO {
 
     // =====================================================
     // ADMIN DASHBOARD
-    // COUNT ALL ACTIVE BATCH
+    // COUNT ALL ACTIVE BATCHES
     // =====================================================
     public int countAllActive() {
 
@@ -969,7 +969,7 @@ public class DryingBatchDAO {
     }
 
     // =====================================================
-    // CHECK BATCH ID EXIST
+    // CHECK IF BATCH ID EXISTS
     // =====================================================
     public boolean exists(
             String batchId) {
@@ -1006,7 +1006,7 @@ public class DryingBatchDAO {
 
     // =====================================================
     // MANAGER
-    // COMPLETE BATCH TRONG WAREHOUSE ĐƯỢC ASSIGN
+    // COMPLETE BATCH IN ASSIGNED WAREHOUSE
     // =====================================================
     public boolean completeBatchByManager(
             String batchId,
@@ -1290,7 +1290,7 @@ public class DryingBatchDAO {
                     && !toDate.trim().isEmpty()) {
 
                 ps.setDate(
-                        index,
+                        index++,
                         java.sql.Date.valueOf(
                                 toDate
                         )
@@ -1315,6 +1315,4 @@ public class DryingBatchDAO {
 
         return 0;
     }
-
-   
 }

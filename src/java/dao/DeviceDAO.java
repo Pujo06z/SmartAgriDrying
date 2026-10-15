@@ -719,4 +719,78 @@ public class DeviceDAO {
 
         return 0;
     }
+//check able deletion
+    public boolean canDeleteDevice(
+            String deviceId) {
+
+        String sql
+                = "SELECT "
+                + "(SELECT COUNT(*) FROM SENSOR_DATA "
+                + " WHERE device_id = ?) "
+                + "+ "
+                + "(SELECT COUNT(*) FROM EVENT_LOG "
+                + " WHERE device_id = ?) "
+                + "AS total";
+
+        try (
+                 Connection conn
+                = DBContext.getConnection();  PreparedStatement ps
+                = conn.prepareStatement(sql)) {
+
+            ps.setString(
+                    1,
+                    deviceId
+            );
+
+            ps.setString(
+                    2,
+                    deviceId
+            );
+
+            try (
+                     ResultSet rs
+                    = ps.executeQuery()) {
+
+                if (rs.next()) {
+
+                    return rs.getInt(
+                            "total"
+                    ) == 0;
+                }
+            }
+
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+// delete device
+    public boolean deleteDevice(
+            String deviceId) {
+
+        String sql
+                = "DELETE FROM DEVICE "
+                + "WHERE device_id = ?";
+
+        try (
+                 Connection conn
+                = DBContext.getConnection();  PreparedStatement ps
+                = conn.prepareStatement(sql)) {
+
+            ps.setString(
+                    1,
+                    deviceId
+            );
+
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+        }
+
+        return false;
+    }
 }

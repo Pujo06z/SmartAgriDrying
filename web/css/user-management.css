@@ -1489,4 +1489,11 @@ body {
         align-items: flex-start;
         gap: 8px;
     }
+/*    button delete*/
+    .status-delete-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
 }

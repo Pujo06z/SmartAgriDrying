@@ -62,7 +62,7 @@ public class UserManagementController extends HttpServlet {
 
         // =========================================
         // 2. CHECK ROLE
-        // ADMIN + MANAGER được vào trang
+        // ADMIN + MANAGER CAN ACCESS PAGE
         // =========================================
         if (!"ADMIN".equals(role)
                 && !"MANAGER".equals(role)) {
@@ -79,7 +79,7 @@ public class UserManagementController extends HttpServlet {
 
             // =========================================
             // 3. GET
-            // Chỉ load trang
+            // ONLY LOAD PAGE
             // =========================================
             if ("GET".equalsIgnoreCase(
                     request.getMethod())) {
@@ -94,7 +94,7 @@ public class UserManagementController extends HttpServlet {
 
             // =========================================
             // 4. POST
-            // Chỉ ADMIN được modify
+            // ONLY ADMIN CAN MODIFY
             // =========================================
             if ("POST".equalsIgnoreCase(
                     request.getMethod())) {
@@ -163,6 +163,15 @@ public class UserManagementController extends HttpServlet {
                         );
 
                         break;
+                    case "delete":
+
+                        deleteUser(
+                                request,
+                                response,
+                                loginUser
+                        );
+
+                        break;
 
                     case "assignWarehouse":
 
@@ -209,284 +218,253 @@ public class UserManagementController extends HttpServlet {
         }
     }
 
-
     private void loadPage(
-        HttpServletRequest request,
-        HttpServletResponse response)
-        throws Exception {
+            HttpServletRequest request,
+            HttpServletResponse response)
+            throws Exception {
 
-    // =========================================
-    // 1. GET SEARCH / FILTER / SORT
-    // =========================================
+        // =========================================
+        // 1. GET SEARCH / FILTER / SORT
+        // =========================================
+        String keyword
+                = request.getParameter(
+                        "keyword"
+                );
 
-    String keyword =
-            request.getParameter(
-                    "keyword"
-            );
+        String roleFilter
+                = request.getParameter(
+                        "role"
+                );
 
-    String roleFilter =
-            request.getParameter(
-                    "role"
-            );
+        String statusFilter
+                = request.getParameter(
+                        "status"
+                );
 
-    String statusFilter =
-            request.getParameter(
-                    "status"
-            );
+        String sortBy
+                = request.getParameter(
+                        "sortBy"
+                );
 
-    String sortBy =
-            request.getParameter(
-                    "sortBy"
-            );
+        String sortOrder
+                = request.getParameter(
+                        "sortOrder"
+                );
 
-    String sortOrder =
-            request.getParameter(
-                    "sortOrder"
-            );
+        if (keyword == null) {
+            keyword = "";
+        }
 
+        if (roleFilter == null) {
+            roleFilter = "";
+        }
 
-    if (keyword == null) {
-        keyword = "";
-    }
+        if (statusFilter == null) {
+            statusFilter = "";
+        }
 
-    if (roleFilter == null) {
-        roleFilter = "";
-    }
+        if (sortBy == null
+                || sortBy.trim().isEmpty()) {
 
-    if (statusFilter == null) {
-        statusFilter = "";
-    }
+            sortBy = "userId";
+        }
 
-    if (sortBy == null
-            || sortBy.trim().isEmpty()) {
+        if (!"ASC".equalsIgnoreCase(sortOrder)) {
+            sortOrder = "DESC";
+        }
 
-        sortBy = "userId";
-    }
+        // =========================================
+        // 2. PAGINATION
+        // =========================================
+        int page = 1;
 
-    if (!"ASC".equalsIgnoreCase(sortOrder)) {
-        sortOrder = "DESC";
-    }
+        int pageSize = 10;
 
+        String pageParam
+                = request.getParameter(
+                        "page"
+                );
 
-    // =========================================
-    // 2. PAGINATION
-    // =========================================
+        if (pageParam != null) {
 
-    int page = 1;
+            try {
 
-    int pageSize = 10;
+                page
+                        = Integer.parseInt(
+                                pageParam
+                        );
 
+            } catch (NumberFormatException e) {
 
-    String pageParam =
-            request.getParameter(
-                    "page"
-            );
+                page = 1;
+            }
+        }
 
-
-    if (pageParam != null) {
-
-        try {
-
-            page =
-                    Integer.parseInt(
-                            pageParam
-                    );
-
-        } catch (NumberFormatException e) {
+        if (page < 1) {
 
             page = 1;
         }
-    }
 
-
-    if (page < 1) {
-
-        page = 1;
-    }
-
-
-    // =========================================
-    // 3. COUNT FILTERED USERS
-    // =========================================
-
-    int totalRecords =
-            userDAO.countUsers(
-                    keyword,
-                    roleFilter,
-                    statusFilter
-            );
-
-
-    int totalPages =
-            (int) Math.ceil(
-                    (double) totalRecords
-                    / pageSize
-            );
-
-
-    if (totalPages < 1) {
-
-        totalPages = 1;
-    }
-
-
-    if (page > totalPages) {
-
-        page = totalPages;
-    }
-
-
-    // =========================================
-    // 4. GET USERS
-    // SEARCH + FILTER + SORT + PAGINATION
-    // =========================================
-
-    List<User> users =
-            userDAO.searchUsers(
-                    keyword,
-                    roleFilter,
-                    statusFilter,
-                    sortBy,
-                    sortOrder,
-                    page,
-                    pageSize
-            );
-
-
-    // =========================================
-    // 5. GET ALL WAREHOUSES
-    // =========================================
-
-    List<Warehouse> warehouseList =
-            warehouseDAO.getAllWarehouses();
-
-
-    // =========================================
-    // 6. USER -> WAREHOUSE MAP
-    // =========================================
-
-    Map<String, List<Warehouse>>
-            userWarehouseMap =
-            new HashMap<String, List<Warehouse>>();
-
-
-    for (User user : users) {
-
-        List<Warehouse> assignedWarehouses =
-                userWarehouseDAO.getWarehousesByUser(
-                        user.getUserId()
+        // =========================================
+        // 3. COUNT FILTERED USERS
+        // =========================================
+        int totalRecords
+                = userDAO.countUsers(
+                        keyword,
+                        roleFilter,
+                        statusFilter
                 );
 
-        userWarehouseMap.put(
-                user.getUserId(),
-                assignedWarehouses
+        int totalPages
+                = (int) Math.ceil(
+                        (double) totalRecords
+                        / pageSize
+                );
+
+        if (totalPages < 1) {
+
+            totalPages = 1;
+        }
+
+        if (page > totalPages) {
+
+            page = totalPages;
+        }
+
+        // =========================================
+        // 4. GET USERS
+        // SEARCH + FILTER + SORT + PAGINATION
+        // =========================================
+        List<User> users
+                = userDAO.searchUsers(
+                        keyword,
+                        roleFilter,
+                        statusFilter,
+                        sortBy,
+                        sortOrder,
+                        page,
+                        pageSize
+                );
+
+        // =========================================
+        // 5. GET ALL WAREHOUSES
+        // =========================================
+        List<Warehouse> warehouseList
+                = warehouseDAO.getAllWarehouses();
+
+        // =========================================
+        // 6. USER -> WAREHOUSE MAP
+        // =========================================
+        Map<String, List<Warehouse>> userWarehouseMap
+                = new HashMap<String, List<Warehouse>>();
+
+        for (User user : users) {
+
+            List<Warehouse> assignedWarehouses
+                    = userWarehouseDAO.getWarehousesByUser(
+                            user.getUserId()
+                    );
+
+            userWarehouseMap.put(
+                    user.getUserId(),
+                    assignedWarehouses
+            );
+        }
+
+        // =========================================
+        // 7. DASHBOARD COUNT
+        // =========================================
+        int totalUsers
+                = userDAO.countAll();
+
+        int activeUsers
+                = userDAO.countActive();
+
+        // =========================================
+        // 8. SEND DATA TO JSP
+        // =========================================
+        request.setAttribute(
+                "users",
+                users
+        );
+
+        request.setAttribute(
+                "warehouseList",
+                warehouseList
+        );
+
+        request.setAttribute(
+                "userWarehouseMap",
+                userWarehouseMap
+        );
+
+        request.setAttribute(
+                "totalUsers",
+                totalUsers
+        );
+
+        request.setAttribute(
+                "activeUsers",
+                activeUsers
+        );
+
+        // SEARCH / FILTER / SORT
+        request.setAttribute(
+                "keyword",
+                keyword
+        );
+
+        request.setAttribute(
+                "selectedRole",
+                roleFilter
+        );
+
+        request.setAttribute(
+                "selectedStatus",
+                statusFilter
+        );
+
+        request.setAttribute(
+                "sortBy",
+                sortBy
+        );
+
+        request.setAttribute(
+                "sortOrder",
+                sortOrder
+        );
+
+        // PAGINATION
+        request.setAttribute(
+                "currentPage",
+                page
+        );
+
+        request.setAttribute(
+                "pageSize",
+                pageSize
+        );
+
+        request.setAttribute(
+                "totalPages",
+                totalPages
+        );
+
+        request.setAttribute(
+                "totalRecords",
+                totalRecords
+        );
+
+        // =========================================
+        // 9. FORWARD
+        // =========================================
+        request.getRequestDispatcher(
+                "/WEB-INF/views/user-management.jsp"
+        ).forward(
+                request,
+                response
         );
     }
-
-
-    // =========================================
-    // 7. DASHBOARD COUNT
-    // =========================================
-
-    int totalUsers =
-            userDAO.countAll();
-
-    int activeUsers =
-            userDAO.countActive();
-
-
-    // =========================================
-    // 8. SEND DATA TO JSP
-    // =========================================
-
-    request.setAttribute(
-            "users",
-            users
-    );
-
-    request.setAttribute(
-            "warehouseList",
-            warehouseList
-    );
-
-    request.setAttribute(
-            "userWarehouseMap",
-            userWarehouseMap
-    );
-
-    request.setAttribute(
-            "totalUsers",
-            totalUsers
-    );
-
-    request.setAttribute(
-            "activeUsers",
-            activeUsers
-    );
-
-
-    // SEARCH / FILTER / SORT
-
-    request.setAttribute(
-            "keyword",
-            keyword
-    );
-
-    request.setAttribute(
-            "selectedRole",
-            roleFilter
-    );
-
-    request.setAttribute(
-            "selectedStatus",
-            statusFilter
-    );
-
-    request.setAttribute(
-            "sortBy",
-            sortBy
-    );
-
-    request.setAttribute(
-            "sortOrder",
-            sortOrder
-    );
-
-
-    // PAGINATION
-
-    request.setAttribute(
-            "currentPage",
-            page
-    );
-
-    request.setAttribute(
-            "pageSize",
-            pageSize
-    );
-
-    request.setAttribute(
-            "totalPages",
-            totalPages
-    );
-
-    request.setAttribute(
-            "totalRecords",
-            totalRecords
-    );
-
-
-    // =========================================
-    // 9. FORWARD
-    // =========================================
-
-    request.getRequestDispatcher(
-            "/WEB-INF/views/user-management.jsp"
-    ).forward(
-            request,
-            response
-    );
-}
 
     private void addUser(
             HttpServletRequest request,
@@ -739,8 +717,8 @@ public class UserManagementController extends HttpServlet {
         }
 
         // =========================================
-        // Nếu đổi thành ADMIN
-        // xóa warehouse assignment
+        // IF SWITCH TO ADMIN
+        // DELETE warehouse assignment
         // =========================================
         if ("ADMIN".equals(role)) {
 
@@ -780,7 +758,7 @@ public class UserManagementController extends HttpServlet {
         userId = userId.trim();
 
         // =========================================
-        // Không cho ADMIN tự disable chính mình
+        //  ADMIN CANNOT BE disable myself
         // =========================================
         if (userId.equals(
                 loginUser.getUserId())) {
@@ -873,6 +851,91 @@ public class UserManagementController extends HttpServlet {
         return "ADMIN".equals(role)
                 || "MANAGER".equals(role)
                 || "OPERATOR".equals(role);
+    }
+
+    private void deleteUser(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            User loginUser)
+            throws Exception {
+
+        String userId
+                = request.getParameter(
+                        "userId"
+                );
+
+        if (userId == null
+                || userId.trim().isEmpty()) {
+
+            response.sendRedirect(
+                    request.getContextPath()
+                    + "/users"
+            );
+
+            return;
+        }
+
+        userId
+                = userId.trim();
+
+        // Prevent admin from deleting their own account
+        if (userId.equals(
+                loginUser.getUserId())) {
+
+            request.setAttribute(
+                    "error",
+                    "You cannot delete your own account."
+            );
+
+            loadPage(
+                    request,
+                    response
+            );
+
+            return;
+        }
+
+        if (!userDAO.canDeleteUser(
+                userId)) {
+
+            request.setAttribute(
+                    "error",
+                    "This user has existing batch or event history. "
+                    + "Please disable the account instead."
+            );
+
+            loadPage(
+                    request,
+                    response
+            );
+
+            return;
+        }
+
+        boolean success
+                = userDAO.deleteUser(
+                        userId
+                );
+
+        if (!success) {
+
+            request.setAttribute(
+                    "error",
+                    "Unable to delete user."
+            );
+
+            loadPage(
+                    request,
+                    response
+            );
+
+            return;
+        }
+
+        response.sendRedirect(
+                request.getContextPath()
+                + "/users"
+        );
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

@@ -265,9 +265,9 @@
                                                                                 </label>
 
                                                                             </c:forEach>
-<span class="drawer-note">
-                                        Select one or more warehouses if required (Only for Manager)
-                                    </span>
+                                                                            <span class="drawer-note">
+                                                                                Select one or more warehouses if required (Only for Manager)
+                                                                            </span>
                                                                         </div>
 
                                                                         <button type="submit"
@@ -308,6 +308,31 @@
                                                                     </form>
 
                                                                 </c:if>
+                                                                <%-- delete --%>
+                                                                <c:if test="${user.userId ne sessionScope.LOGIN_USER.userId}">
+                                                                    <div class="status-delete-group">
+
+
+                                                                        <form action="${pageContext.request.contextPath}/users"
+                                                                              method="post"
+                                                                              onsubmit="return confirm('Delete this user permanently?');">
+
+                                                                            <input type="hidden"
+                                                                                   name="action"
+                                                                                   value="delete">
+
+                                                                            <input type="hidden"
+                                                                                   name="userId"
+                                                                                   value="${user.userId}">
+
+                                                                            <button type="submit"
+                                                                                    class="btn-delete">
+                                                                                Delete
+                                                                            </button>
+
+                                                                        </form>
+                                                                    </div>
+                                                                </c:if>
 
                                                             </div>
 
@@ -338,6 +363,28 @@
                                                         <form action="${pageContext.request.contextPath}/users" method="post" class="action-form-row"><input type="hidden" name="action" value="updateRole"><input type="hidden" name="userId" value="${user.userId}"><select class="select-sm-action" name="role" aria-label="Role"><option value="ADMIN" ${user.role eq 'ADMIN' ? 'selected' : ''}>ADMIN</option><option value="MANAGER" ${user.role eq 'MANAGER' ? 'selected' : ''}>MANAGER</option><option value="OPERATOR" ${user.role eq 'OPERATOR' ? 'selected' : ''}>OPERATOR</option></select><button class="btn-action-sm" type="submit">Update Role</button></form>
                                                         <c:if test="${user.role ne 'ADMIN'}"><form action="${pageContext.request.contextPath}/users" method="post" class="action-form-row"><input type="hidden" name="action" value="assignWarehouse"><input type="hidden" name="userId" value="${user.userId}"><select class="multi-select-sm" name="warehouseIds" multiple aria-label="Assign warehouses"><c:forEach var="warehouse" items="${warehouseList}"><option value="${warehouse.warehouseId}"><c:out value="${warehouse.warehouseCode}"/> - <c:out value="${warehouse.warehouseName}"/></option></c:forEach></select><button class="btn-action-sm" type="submit">Assign</button></form></c:if>
                                                         <c:if test="${user.userId ne sessionScope.LOGIN_USER.userId}"><form action="${pageContext.request.contextPath}/users" method="post"><input type="hidden" name="action" value="toggleStatus"><input type="hidden" name="userId" value="${user.userId}"><button class="btn-status-toggle ${user.status eq 'ACTIVE' ? 'btn-status-disable' : 'btn-status-enable'}" type="submit">${user.status eq 'ACTIVE' ? 'Disable' : 'Activate'}</button></form></c:if>
+                                                            <c:if test="${user.userId ne sessionScope.LOGIN_USER.userId}">
+
+                                                            <form action="${pageContext.request.contextPath}/users"
+                                                                  method="post"
+                                                                  onsubmit="return confirm('Delete this user permanently?');">
+
+                                                                <input type="hidden"
+                                                                       name="action"
+                                                                       value="delete">
+
+                                                                <input type="hidden"
+                                                                       name="userId"
+                                                                       value="${user.userId}">
+
+                                                                <button type="submit"
+                                                                        class="btn-delete w-100">
+                                                                    Delete
+                                                                </button>
+
+                                                            </form>
+
+                                                        </c:if>
                                                     </div></details></c:if>
                                             </article>
                                     </c:forEach></c:when><c:otherwise><div class="mobile-user-card"><p>No users found.</p></div></c:otherwise></c:choose>

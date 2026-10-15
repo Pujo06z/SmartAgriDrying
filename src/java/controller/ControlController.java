@@ -41,7 +41,7 @@ public class ControlController extends HttpServlet {
             throws ServletException, IOException {
 
         // ============================================
-        // 1. KIỂM TRA LOGIN
+        // 1. CHECK LOGIN
         // ============================================
         HttpSession session
                 = request.getSession(false);
@@ -57,7 +57,7 @@ public class ControlController extends HttpServlet {
         }
 
         // ============================================
-        // 2. LẤY USER
+        // 2. GET USER
         // ============================================
         User user
                 = (User) session.getAttribute(
@@ -67,7 +67,7 @@ public class ControlController extends HttpServlet {
         String role
                 = user.getRole();
 
-        // Chỉ Operator và Manager được control
+        // Only Operator and Manager are allowed to control
         if (!"OPERATOR".equals(role)
                 && !"MANAGER".equals(role)) {
 
@@ -79,7 +79,7 @@ public class ControlController extends HttpServlet {
         }
 
         // ============================================
-        // 3. LẤY ACTION
+        // 3. GET ACTION
         // ============================================
         String action
                 = request.getParameter("action");
@@ -94,7 +94,7 @@ public class ControlController extends HttpServlet {
             return;
         }
 
-        // Dùng để Manager quay lại đúng warehouse
+        // Used for Manager to return to the correct warehouse
         String redirectWarehouseId = null;
 
         try {
@@ -115,7 +115,7 @@ public class ControlController extends HttpServlet {
             // ============================================
             if ("OPERATOR".equals(role)) {
 
-                // Operator chỉ có warehouse được assign
+                // Operator only has the assigned warehouse
                 warehouse
                         = warehouseDAO.getWarehouseByUser(
                                 user.getUserId()
@@ -131,7 +131,7 @@ public class ControlController extends HttpServlet {
                     return;
                 }
 
-                // Device của warehouse Operator
+                // Device belonging to the Operator's warehouse
                 device
                         = deviceDAO.getDeviceByWarehouse(
                                 warehouse.getWarehouseId()
@@ -152,7 +152,7 @@ public class ControlController extends HttpServlet {
                                 "deviceId"
                         );
 
-                // Thiếu thông tin
+                // Missing information
                 if (warehouseId == null
                         || warehouseId.trim().isEmpty()
                         || deviceId == null
@@ -170,7 +170,7 @@ public class ControlController extends HttpServlet {
                         = warehouseId;
 
                 // ========================================
-                // Kiểm tra warehouse có thuộc Manager
+                // Check if the warehouse belongs to the Manager
                 // ========================================
                 boolean warehouseAllowed
                         = warehouseDAO.isAssignedToManager(
@@ -189,7 +189,7 @@ public class ControlController extends HttpServlet {
                 }
 
                 // ========================================
-                // Kiểm tra device có thuộc Manager
+                // Check if the device belongs to the Manager
                 // ========================================
                 boolean deviceAllowed
                         = deviceDAO.isAssignedToManager(
@@ -209,7 +209,7 @@ public class ControlController extends HttpServlet {
                 }
 
                 // ========================================
-                // Lấy đúng Device
+                // Get the correct Device
                 // ========================================
                 device
                         = deviceDAO.getById(
@@ -228,7 +228,7 @@ public class ControlController extends HttpServlet {
                 }
 
                 // ========================================
-                // Device phải đúng Warehouse đang chọn
+                // Device must belong to the currently selected Warehouse
                 // ========================================
                 if (!warehouseId.equals(
                         device.getWarehouseId())) {
@@ -244,7 +244,7 @@ public class ControlController extends HttpServlet {
             }
 
             // ============================================
-            // 6. KHÔNG CÓ DEVICE
+            // 6. NO DEVICE FOUND
             // ============================================
             if (device == null) {
 
@@ -270,7 +270,7 @@ public class ControlController extends HttpServlet {
             String eventWarehouseId
                     = device.getWarehouseId();
             // ============================================
-            // 7. XỬ LÝ ACTION
+            // 7. PROCESS ACTION
             // ============================================
             switch (action) {
 
@@ -279,7 +279,7 @@ public class ControlController extends HttpServlet {
                 // ========================================
                 case "AUTO":
 
-                    // Chỉ ghi khi mode thật sự thay đổi
+                    // Only log if the mode actually changes
                     if (!"AUTO".equals(device.getMode())) {
 
                         boolean updated
@@ -338,7 +338,7 @@ public class ControlController extends HttpServlet {
                 // ========================================
                 case "OPEN":
 
-                    // Chỉ control mái khi MANUAL
+                    // Only control the roof when in MANUAL mode
                     if ("MANUAL".equals(device.getMode())
                             && !"OPEN".equals(device.getRoofStatus())) {
 
@@ -369,7 +369,7 @@ public class ControlController extends HttpServlet {
                 // ========================================
                 case "CLOSE":
 
-                    // Chỉ control mái khi MANUAL
+                    // Only control the roof when in MANUAL mode
                     if ("MANUAL".equals(device.getMode())
                             && !"CLOSED".equals(device.getRoofStatus())) {
 
@@ -405,7 +405,7 @@ public class ControlController extends HttpServlet {
         }
 
         // ============================================
-        // 8. QUAY LẠI DASHBOARD
+        // 8. RETURN TO DASHBOARD
         // ============================================
         if ("MANAGER".equals(role)
                 && redirectWarehouseId != null) {
@@ -426,7 +426,7 @@ public class ControlController extends HttpServlet {
     }
 //    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
 //            throws ServletException, IOException {
-//        // kiem tra login
+//        // check login
 //
 //        HttpSession session = request.getSession(false);
 //
@@ -438,7 +438,7 @@ public class ControlController extends HttpServlet {
 //        }
 //
 //        // ============================
-//        // 2. lay USER
+//        // 2. get USER
 //        // ============================
 //        User user = (User) session.getAttribute("LOGIN_USER");
 //
@@ -450,7 +450,7 @@ public class ControlController extends HttpServlet {
 //            return;
 //        }
 //        // ============================
-//        // 3. lay ACTION
+//        // 3. get ACTION
 //        // ============================
 //
 //        String action = request.getParameter("action");
@@ -470,7 +470,7 @@ public class ControlController extends HttpServlet {
 //                    = new DeviceDAO();
 //
 //            // ============================
-//            // 4. LẤY WAREHOUSE
+//            // 4. GET WAREHOUSE
 //            // ============================
 //            Warehouse warehouse
 //                    = warehouseDAO.getWarehouseByUser(
@@ -486,7 +486,7 @@ public class ControlController extends HttpServlet {
 //                return;
 //            }
 //// ============================
-//            // 5. LẤY DEVICE
+//            // 5. GET DEVICE
 //            // ============================
 //
 //            Device device
@@ -504,7 +504,7 @@ public class ControlController extends HttpServlet {
 //            }
 //
 //            // ============================
-//            // 6. XỬ LÝ ACTION
+//            // 6. PROCESS ACTION
 //            // ============================
 //            switch (action) {
 //
@@ -528,7 +528,7 @@ public class ControlController extends HttpServlet {
 //
 //                case "OPEN":
 //
-//                    // Chỉ được mở mái khi MANUAL
+//                    // Only allow opening the roof in MANUAL mode
 //                    if ("MANUAL".equals(device.getMode())) {
 //
 //                        deviceDAO.updateRoofStatus(
@@ -541,7 +541,7 @@ public class ControlController extends HttpServlet {
 //
 //                case "CLOSE":
 //
-//                    // Chỉ được đóng mái khi MANUAL
+//                    // Only allow closing the roof in MANUAL mode
 //                    if ("MANUAL".equals(device.getMode())) {
 //
 //                        deviceDAO.updateRoofStatus(
@@ -562,7 +562,7 @@ public class ControlController extends HttpServlet {
 //        }
 //
 //        // ============================
-//        // 7. QUAY LẠI DASHBOARD
+//        // 7. RETURN TO DASHBOARD
 //        // ============================
 //        response.sendRedirect(
 //                request.getContextPath() + "/dashboard"

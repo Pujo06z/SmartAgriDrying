@@ -21,48 +21,13 @@ import util.PasswordUtil;
  * @author ADMIN
  */
 public class UserDAO {
-//     public User checkLogin(String username,String password){
-//            
-//            try {
-//                  String sql = "SELECT user_id, username, password, full_name, "
-//                   + "role, status, created_at "
-//                   + "FROM USERS "
-//                   + "WHERE username = ? "
-//                   + "AND password = ? "
-//                   + "AND status = 'ACTIVE'";
-//                Connection conn = DBContext.getConnection();
-//                PreparedStatement ptm = conn.prepareStatement(sql);
-//                ResultSet rs = null;
-//                
-//                ptm.setString(1, username);
-//                ptm.setString(2, password);
-//                
-//                rs= ptm.executeQuery();
-//                if (rs.next()) {
-//                    User user = new User();
-//                   user.setUserId(rs.getString("user_id"));
-//                    user.setUsername(rs.getString("username"));
-//                    user.setPassword(rs.getString("password"));
-//                    user.setFullName(rs.getString("full_name"));
-//                    user.setRole(rs.getString("role"));
-//                    user.setStatus(rs.getString("status"));
-//                    user.setCreatedAt(rs.getTimestamp("created_at"));
-//                    
-//                    return user;
-//                }
-//            } catch (SQLException ex) {
-//                 ex.printStackTrace();
-//            }
-//            return null;
-//        }
-//     
 
     private static final String BASE_SELECT
             = "SELECT user_id, username, full_name, role, status, created_at "
             + "FROM USERS ";
 
     // =========================================================
-    // LOGIN - GIỮ LOGIC CỦA BẠN
+    // LOGIN 
     // =========================================================
     public User checkLogin(String username, String password) {
 
@@ -85,8 +50,7 @@ public class UserDAO {
                     String storedPassword
                             = rs.getString("password");
 
-                    // Kiểm tra password nhập vào
-                    // với password đã hash trong database
+                    // Verify input password against the hashed password stored in the database
                     boolean passwordCorrect
                             = PasswordUtil.verifyPassword(
                                     password,
@@ -136,8 +100,8 @@ public class UserDAO {
     }
 
     // =========================================================
-// GET ALL USERS
-// =========================================================
+    // GET ALL USERS
+    // =========================================================
     public List<User> getAllUsers() throws Exception {
 
         List<User> list = new ArrayList<User>();
@@ -168,9 +132,9 @@ public class UserDAO {
         return list;
     }
 
-// =========================================================
-// CHECK USERNAME EXISTS
-// =========================================================
+    // =========================================================
+    // CHECK USERNAME EXISTS
+    // =========================================================
     public boolean existsUsername(String username)
             throws Exception {
 
@@ -195,9 +159,9 @@ public class UserDAO {
         return false;
     }
 
-// =========================================================
-// CHECK USER ID EXISTS
-// =========================================================
+    // =========================================================
+    // CHECK USER ID EXISTS
+    // =========================================================
     public boolean existsUserId(String userId)
             throws Exception {
 
@@ -222,9 +186,9 @@ public class UserDAO {
         return false;
     }
 
-// =========================================================
-// ADD USER
-// =========================================================
+    // =========================================================
+    // ADD USER
+    // =========================================================
     public boolean add(
             String userId,
             String username,
@@ -252,9 +216,9 @@ public class UserDAO {
         }
     }
 
-// =========================================================
-// UPDATE FULL NAME
-// =========================================================
+    // =========================================================
+    // UPDATE FULL NAME
+    // =========================================================
     public boolean updateFullName(
             String userId,
             String fullName)
@@ -275,9 +239,9 @@ public class UserDAO {
         }
     }
 
-// =========================================================
-// UPDATE ROLE
-// =========================================================
+    // =========================================================
+    // UPDATE ROLE
+    // =========================================================
     public boolean updateRole(
             String userId,
             String role)
@@ -298,9 +262,9 @@ public class UserDAO {
         }
     }
 
-// =========================================================
-// TOGGLE ACTIVE / INACTIVE
-// =========================================================
+    // =========================================================
+    // TOGGLE ACTIVE / INACTIVE
+    // =========================================================
     public boolean toggleStatus(String userId)
             throws Exception {
 
@@ -321,9 +285,9 @@ public class UserDAO {
         }
     }
 
-// =========================================================
-// COUNT ALL USERS
-// =========================================================
+    // =========================================================
+    // COUNT ALL USERS
+    // =========================================================
     public int countAll() throws Exception {
 
         String sql
@@ -340,9 +304,9 @@ public class UserDAO {
         return 0;
     }
 
-// =========================================================
-// COUNT ACTIVE USERS
-// =========================================================
+    // =========================================================
+    // COUNT ACTIVE USERS
+    // =========================================================
     public int countActive() throws Exception {
 
         String sql
@@ -361,7 +325,7 @@ public class UserDAO {
         return 0;
     }
 
-    // Lay danh sach
+    // Get user list with search, filter, sort and pagination
     public List<User> searchUsers(
             String keyword,
             String role,
@@ -546,7 +510,7 @@ public class UserDAO {
         return list;
     }
 
-    // dem trang
+    // Count total users matching criteria
     public int countUsers(
             String keyword,
             String role,
@@ -642,5 +606,116 @@ public class UserDAO {
         }
 
         return 0;
+    }
+
+    // Check if user is allowed to be deleted
+    public boolean canDeleteUser(String userId)
+            throws Exception {
+
+        String sql
+                = "SELECT "
+                + "(SELECT COUNT(*) FROM DRYING_BATCH "
+                + " WHERE operator_id = ?) "
+                + "+ "
+                + "(SELECT COUNT(*) FROM EVENT_LOG "
+                + " WHERE actor_user_id = ?) "
+                + "AS total";
+
+        try (
+                 Connection conn
+                = DBContext.getConnection();  PreparedStatement ps
+                = conn.prepareStatement(sql)) {
+
+            ps.setString(1, userId);
+            ps.setString(2, userId);
+
+            try ( ResultSet rs = ps.executeQuery()) {
+
+                if (rs.next()) {
+                    return rs.getInt("total") == 0;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    // DELETE USER
+    public boolean deleteUser(String userId)
+            throws Exception {
+
+        Connection conn = null;
+
+        try {
+
+            conn
+                    = DBContext.getConnection();
+
+            conn.setAutoCommit(false);
+
+            // Delete warehouse assignments first
+            String deleteWarehouse
+                    = "DELETE FROM USER_WAREHOUSE "
+                    + "WHERE user_id = ?";
+
+            try (
+                     PreparedStatement ps
+                    = conn.prepareStatement(
+                            deleteWarehouse
+                    )) {
+
+                ps.setString(
+                        1,
+                        userId
+                );
+
+                ps.executeUpdate();
+            }
+
+            // Delete user
+            String deleteUser
+                    = "DELETE FROM USERS "
+                    + "WHERE user_id = ?";
+
+            int affected;
+
+            try (
+                     PreparedStatement ps
+                    = conn.prepareStatement(
+                            deleteUser
+                    )) {
+
+                ps.setString(
+                        1,
+                        userId
+                );
+
+                affected
+                        = ps.executeUpdate();
+            }
+
+            conn.commit();
+
+            return affected > 0;
+
+        } catch (Exception e) {
+
+            if (conn != null) {
+                conn.rollback();
+            }
+
+            throw e;
+
+        } finally {
+
+            if (conn != null) {
+
+                conn.setAutoCommit(
+                        true
+                );
+
+                conn.close();
+            }
+        }
     }
 }

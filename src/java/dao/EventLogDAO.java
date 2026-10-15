@@ -131,7 +131,7 @@ public class EventLogDAO {
 
         // =====================================================
         // SAFE SORT COLUMN
-        // Không lấy trực tiếp tên column từ request
+        // Do not take column names directly from the request
         // =====================================================
         String sortColumn;
 
@@ -335,7 +335,7 @@ public class EventLogDAO {
     // =========================================================
     // COUNT EVENTS
     //
-    // Dùng để tính:
+    // Used to calculate:
     // totalRecords
     // totalPages
     // =========================================================
@@ -545,7 +545,7 @@ public class EventLogDAO {
 
     // =========================================================
     // GET LATEST EVENTS
-    // dùng cho Dashboard nếu cần
+    // Used for Dashboard if needed
     // =========================================================
     public List<EventLog> getLatestEvents(
             int limit)
@@ -590,7 +590,7 @@ public class EventLogDAO {
 
     // =========================================================
     // ADD EVENT
-    // hệ thống tự gọi khi có hành động
+    // Automatically called by the system on user actions
     // =========================================================
     public boolean addEvent(
             String warehouseId,
@@ -664,39 +664,4 @@ public class EventLogDAO {
             }
         }
     }
-//    public boolean addEvent(
-//            String eventId,
-//            String warehouseId,
-//            String deviceId,
-//            String batchId,
-//            String actorUserId,
-//            String eventType,
-//            String source,
-//            String description)
-//            throws Exception {
-//
-//        String sql
-//                = "INSERT INTO EVENT_LOG "
-//                + "(event_id, warehouse_id, device_id, "
-//                + "batch_id, actor_user_id, event_type, "
-//                + "source, description, created_at) "
-//                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, SYSDATETIME())";
-//
-//        try (
-//                 Connection conn
-//                = DBContext.getConnection();  PreparedStatement ps
-//                = conn.prepareStatement(sql)) {
-//
-//            ps.setString(1, eventId);
-//            ps.setString(2, warehouseId);
-//            ps.setString(3, deviceId);
-//            ps.setString(4, batchId);
-//            ps.setString(5, actorUserId);
-//            ps.setString(6, eventType);
-//            ps.setString(7, source);
-//            ps.setString(8, description);
-//
-//            return ps.executeUpdate() > 0;
-//        }
-//    }
 }

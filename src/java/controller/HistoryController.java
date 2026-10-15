@@ -47,7 +47,7 @@ public class HistoryController extends HttpServlet {
 
     // =========================================
     // 1. LOGIN USER
-    // AuthenticationFilter đã kiểm tra login
+    // AuthenticationFilter has already checked login
     // =========================================
 
     HttpSession session
@@ -62,7 +62,7 @@ public class HistoryController extends HttpServlet {
             = user.getRole();
 
 
-    // History chỉ dành cho Operator + Manager
+    // History is only for Operator + Manager
     if (!"OPERATOR".equals(role)
             && !"MANAGER".equals(role)) {
 
@@ -139,7 +139,7 @@ public class HistoryController extends HttpServlet {
                     );
 
 
-            // Manager đã chọn warehouse
+            // Manager has selected a warehouse
             if (selectedWarehouseId != null
                     && !selectedWarehouseId
                             .trim()
@@ -159,8 +159,8 @@ public class HistoryController extends HttpServlet {
             }
 
 
-            // Chưa chọn hoặc warehouseId sai
-            // -> lấy warehouse đầu tiên
+            // Not selected or invalid warehouseId
+            // -> default to the first warehouse
             if (warehouse == null) {
 
                 warehouse
@@ -192,7 +192,7 @@ public class HistoryController extends HttpServlet {
 
 
         // =========================================
-        // 4. KHÔNG CÓ WAREHOUSE
+        // 4. NO WAREHOUSE ASSIGNED
         // =========================================
 
         if (warehouse == null) {
@@ -269,7 +269,7 @@ public class HistoryController extends HttpServlet {
         }
 
 
-        // Chỉ nhận giá trị hợp lệ trong database
+        // Only accept valid values in the database
         if (!"NO_RAIN".equals(rainStatus)
                 && !"RAINING".equals(rainStatus)) {
 
@@ -330,7 +330,7 @@ public class HistoryController extends HttpServlet {
                 = new ArrayList<>();
 
 
-        // Có device mới có sensor history
+        // Sensor history requires an existing device
         if (device != null) {
 
             sensorTotalRecords
@@ -723,7 +723,7 @@ public class HistoryController extends HttpServlet {
 //                    );
 //
 //
-//            // 5. Tab hiện tại
+//            // 5. Current tab
 //            String tab
 //                    = request.getParameter("tab");
 //

@@ -103,7 +103,7 @@ public class UserWarehouseDAO {
             conn.setAutoCommit(false);
 
             // ==============================
-            // 1. XÓA ASSIGNMENT CŨ
+            // 1. DELETE OLD ASSIGNMENTS
             // ==============================
             String deleteSql
                     = "DELETE FROM USER_WAREHOUSE "
@@ -119,7 +119,7 @@ public class UserWarehouseDAO {
             }
 
             // ==============================
-            // 2. THÊM NHIỀU WAREHOUSE MỚI
+            // 2. ADD NEW WAREHOUSES
             // ==============================
             if (warehouseIds != null
                     && warehouseIds.length > 0) {

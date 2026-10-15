@@ -811,6 +811,24 @@ body {
     border-color: #86efac;
 }
 
+/*delete button*/
+.btn-delete {
+    border: 1px solid #dc2626;
+    background: #ffffff;
+    color: #dc2626;
+    padding: 7px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.btn-delete:hover {
+    background: #dc2626;
+    color: #ffffff;
+}
+
 /* EDIT EXPANDABLE ROW */
 .edit-warehouse-row td {
     padding: 0 !important;

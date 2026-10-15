@@ -48,8 +48,6 @@ public class DeviceManagementController extends HttpServlet {
         HttpSession session
                 = request.getSession();
 
-       
-
         User loginUser
                 = (User) session.getAttribute(
                         "LOGIN_USER"
@@ -59,7 +57,7 @@ public class DeviceManagementController extends HttpServlet {
                 = loginUser.getRole();
 
         // =====================================================
-        // 2. ADMIN + MANAGER
+        // 2. ADMIN CHECK
         // =====================================================
         if (!"ADMIN".equals(role)) {
 
@@ -144,6 +142,14 @@ public class DeviceManagementController extends HttpServlet {
                     case "toggleStatus":
 
                         toggleStatus(
+                                request,
+                                response
+                        );
+
+                        break;
+                    case "delete":
+
+                        deleteDevice(
                                 request,
                                 response
                         );
@@ -307,149 +313,6 @@ public class DeviceManagementController extends HttpServlet {
                 response
         );
     }
-//    private void loadPage(
-//            HttpServletRequest request,
-//            HttpServletResponse response,
-//            User loginUser)
-//            throws Exception {
-//
-//
-//        List<Device> deviceList;
-//
-//
-//        // =====================================================
-//        // ADMIN
-//        // =====================================================
-//
-//        if ("ADMIN".equals(
-//                loginUser.getRole())) {
-//
-//
-//            deviceList =
-//                    deviceDAO.getAllDevices();
-//        }
-//
-//
-//        // =====================================================
-//        // MANAGER
-//        // =====================================================
-//
-//        else {
-//
-//
-//            deviceList =
-//                    deviceDAO
-//                            .getDevicesByManager(
-//                                    loginUser.getUserId()
-//                            );
-//        }
-//
-//
-//        // =====================================================
-//        // WAREHOUSE LIST
-//        // Dùng cho form Add / Edit của Admin
-//        // =====================================================
-//
-//        List<Warehouse> warehouseList =
-//                warehouseDAO.getAllWarehouses();
-//
-//
-//        // =====================================================
-//        // STATISTICS
-//        // =====================================================
-//
-//        int totalDevices =
-//                deviceList.size();
-//
-//
-//        int activeDevices = 0;
-//
-//
-//        for (Device device : deviceList) {
-//
-//            if ("ACTIVE".equals(
-//                    device.getStatus())) {
-//
-//                activeDevices++;
-//            }
-//        }
-//
-//
-//        int inactiveDevices =
-//                totalDevices
-//                - activeDevices;
-//
-//
-//        int onlineDevices;
-//
-//
-//        if ("ADMIN".equals(
-//                loginUser.getRole())) {
-//
-//            onlineDevices =
-//                    deviceDAO.countOnline();
-//
-//        } else {
-//
-//            onlineDevices =
-//                    deviceDAO
-//                            .countOnlineDevicesByManager(
-//                                    loginUser.getUserId()
-//                            );
-//        }
-//
-//
-//        // =====================================================
-//        // SET ATTRIBUTE
-//        // =====================================================
-//
-//        request.setAttribute(
-//                "deviceList",
-//                deviceList
-//        );
-//
-//
-//        request.setAttribute(
-//                "warehouseList",
-//                warehouseList
-//        );
-//
-//
-//        request.setAttribute(
-//                "totalDevices",
-//                totalDevices
-//        );
-//
-//
-//        request.setAttribute(
-//                "activeDevices",
-//                activeDevices
-//        );
-//
-//
-//        request.setAttribute(
-//                "inactiveDevices",
-//                inactiveDevices
-//        );
-//
-//
-//        request.setAttribute(
-//                "onlineDevices",
-//                onlineDevices
-//        );
-//
-//
-//        // =====================================================
-//        // JSP
-//        // =====================================================
-//
-//        request.getRequestDispatcher(
-//                "/WEB-INF/views/device-management.jsp"
-//        ).forward(
-//                request,
-//                response
-//        );
-//    }
 
     // =========================================================
     // ADD DEVICE
@@ -799,6 +662,57 @@ public class DeviceManagementController extends HttpServlet {
 
         deviceDAO.updateStatus(
                 deviceId.trim()
+        );
+
+        response.sendRedirect(
+                request.getContextPath()
+                + "/devices"
+        );
+    }
+
+    private void deleteDevice(
+            HttpServletRequest request,
+            HttpServletResponse response)
+            throws Exception {
+
+        String deviceId
+                = request.getParameter(
+                        "deviceId"
+                );
+
+        if (deviceId == null
+                || deviceId.trim().isEmpty()) {
+
+            response.sendRedirect(
+                    request.getContextPath()
+                    + "/devices"
+            );
+
+            return;
+        }
+
+        deviceId
+                = deviceId.trim();
+
+        if (!deviceDAO.canDeleteDevice(
+                deviceId)) {
+
+            request.setAttribute(
+                    "error",
+                    "This device already has sensor or event history. "
+                    + "Please disable the device instead."
+            );
+
+            loadPage(
+                    request,
+                    response
+            );
+
+            return;
+        }
+
+        deviceDAO.deleteDevice(
+                deviceId
         );
 
         response.sendRedirect(

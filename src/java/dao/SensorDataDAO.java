@@ -489,8 +489,8 @@ public class SensorDataDAO {
 
     // =====================================================
     // MANAGER HISTORY
-    // LẤY SENSOR HISTORY TRONG CÁC WAREHOUSE
-    // ĐƯỢC ASSIGN CHO MANAGER
+    // GET SENSOR HISTORY IN WAREHOUSES
+    // ASSIGNED TO MANAGER
     // =====================================================
     public List<SensorData> getHistoryByManager(
             String managerId,

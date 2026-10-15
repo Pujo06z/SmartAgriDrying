@@ -107,7 +107,7 @@ public class DashboardController extends HttpServlet {
         DryingBatchDAO batchDAO = new DryingBatchDAO();
 
         // ==============================
-        // 1. LẤY WAREHOUSE
+        // 1. GET WAREHOUSE
         // ==============================
         Warehouse warehouse
                 = warehouseDAO.getWarehouseByUser(
@@ -129,7 +129,7 @@ public class DashboardController extends HttpServlet {
         }
 
         // ==============================
-        // 2. LẤY DEVICE
+        // 2. GET DEVICE
         // ==============================
         Device device
                 = deviceDAO.getDeviceByWarehouse(
@@ -144,7 +144,7 @@ public class DashboardController extends HttpServlet {
         List<SensorData> recentSensors = null;
 
         // ==============================
-        // 3. NẾU CÓ DEVICE
+        // 3. IF DEVICE EXISTS
         // ==============================
         if (device != null) {
 
@@ -238,7 +238,7 @@ public class DashboardController extends HttpServlet {
 
             } else {
 
-                // Có device nhưng chưa có sensor data
+                // Has device but no sensor data yet
                 dashboard.setWarning(
                         "NO SENSOR DATA"
                 );
@@ -247,7 +247,7 @@ public class DashboardController extends HttpServlet {
         } else {
 
             // ==============================
-            // KHÔNG CÓ DEVICE
+            // NO DEVICE
             // ==============================
             dashboard.setConnectionStatus(
                     "OFFLINE"
@@ -303,8 +303,8 @@ public class DashboardController extends HttpServlet {
     }
 
     // =========================================================
-// ADMIN DASHBOARD
-// =========================================================
+    // ADMIN DASHBOARD
+    // =========================================================
     private void loadAdminDashboard(
             HttpServletRequest request,
             HttpServletResponse response)
@@ -427,122 +427,122 @@ public class DashboardController extends HttpServlet {
                 response
         );
     }
-//    private void loadOperatorDashboard(
-//            HttpServletRequest request,
-//            HttpServletResponse response,
-//            User user) throws Exception {
+//   private void loadOperatorDashboard(
+//           HttpServletRequest request,
+//           HttpServletResponse response,
+//           User user) throws Exception {
 //
-//        WarehouseDAO warehouseDAO = new WarehouseDAO();
-//        DeviceDAO deviceDAO = new DeviceDAO();
-//        SensorDataDAO sensorDAO = new SensorDataDAO();
-//        DryingBatchDAO batchDAO = new DryingBatchDAO();
+//       WarehouseDAO warehouseDAO = new WarehouseDAO();
+//       DeviceDAO deviceDAO = new DeviceDAO();
+//       SensorDataDAO sensorDAO = new SensorDataDAO();
+//       DryingBatchDAO batchDAO = new DryingBatchDAO();
 //
-//        //lay warehouse cua operator
-//        Warehouse warehouse = warehouseDAO.getWarehouseByUser(user.getUserId());
-//        if (warehouse == null) {
-//            request.setAttribute("error", "No warehouse assigned.");
+//       // Get operator's warehouse
+//       Warehouse warehouse = warehouseDAO.getWarehouseByUser(user.getUserId());
+//       if (warehouse == null) {
+//           request.setAttribute("error", "No warehouse assigned.");
 //
-//            request.getRequestDispatcher(
-//                    "/WEB-INF/views/operator-dashboard.jsp"
-//            ).forward(request, response);
+//           request.getRequestDispatcher(
+//                   "/WEB-INF/views/operator-dashboard.jsp"
+//           ).forward(request, response);
 //
-//            return;
-//        }
+//           return;
+//       }
 //
-//        // lay device cua warehouse
-//        Device device = deviceDAO.getDeviceByWarehouse(
-//                warehouse.getWarehouseId());
-//        DashboardData dashboard = new DashboardData();
-//        SensorData latestSensor = null;
-//        List<SensorData> recentSensors = null;
-//        if (device != null) {
-//            // lay sensor
+//       // Get warehouse's device
+//       Device device = deviceDAO.getDeviceByWarehouse(
+//               warehouse.getWarehouseId());
+//       DashboardData dashboard = new DashboardData();
+//       SensorData latestSensor = null;
+//       List<SensorData> recentSensors = null;
+//       if (device != null) {
+//           // Get sensor data
 //
-//            latestSensor = sensorDAO.getLatestSensorData(device.getDeviceId());
-//            //lay 6 sensor
-//            recentSensors = sensorDAO.getRecentSensorData(device.getDeviceId(), 6);
+//           latestSensor = sensorDAO.getLatestSensorData(device.getDeviceId());
+//           // Get 6 recent sensors
+//           recentSensors = sensorDAO.getRecentSensorData(device.getDeviceId(), 6);
 //
-//            //device data
-//            dashboard.setMode(device.getMode());
-//            dashboard.setRoofStatus(device.getRoofStatus());
-//            dashboard.setLastSeen(device.getLastSeen());
+//           // Device data
+//           dashboard.setMode(device.getMode());
+//           dashboard.setRoofStatus(device.getRoofStatus());
+//           dashboard.setLastSeen(device.getLastSeen());
 //
-//            //online/offline
-//            String connectionStatus = "OFFLINE";
-//            if (device.getLastSeen() != null) {
-//                long diff = System.currentTimeMillis()
-//                        - device.getLastSeen().getTime();
+//           // Online/Offline status
+//           String connectionStatus = "OFFLINE";
+//           if (device.getLastSeen() != null) {
+//               long diff = System.currentTimeMillis()
+//                       - device.getLastSeen().getTime();
 //
-//                if (diff <= 30000) {
-//                    connectionStatus = "ONLINE";
+//               if (diff <= 30000) {
+//                   connectionStatus = "ONLINE";
 //
-//                }
-//                dashboard.setConnectionStatus(connectionStatus);
-//                //sensor data
+//               }
+//               dashboard.setConnectionStatus(connectionStatus);
+//               // Sensor data
 //
-//                if (latestSensor != null) {
-//                    dashboard.setTemperature(latestSensor.getTemperature());
-//                    dashboard.setHumidity(latestSensor.getHumidity());
-//                    dashboard.setRainStatus(latestSensor.getRainStatus());
-//                    dashboard.setLightStatus(latestSensor.getLightStatus());
-//                    dashboard.setRecordedAt(latestSensor.getRecordedAt());
+//               if (latestSensor != null) {
+//                   dashboard.setTemperature(latestSensor.getTemperature());
+//                   dashboard.setHumidity(latestSensor.getHumidity());
+//                   dashboard.setRainStatus(latestSensor.getRainStatus());
+//                   dashboard.setLightStatus(latestSensor.getLightStatus());
+//                   dashboard.setRecordedAt(latestSensor.getRecordedAt());
 //
-//                }
-//                //warning
-//                String warning = "NORMAL";
-//                if ("OFFLINE".equals(connectionStatus)) {
-//                    warning = "DEVICE OFFLINE";
+//               }
+//               // Warning
+//               String warning = "NORMAL";
+//               if ("OFFLINE".equals(connectionStatus)) {
+//                   warning = "DEVICE OFFLINE";
 //
-//                } else if ("RAINING".equals(
-//                        latestSensor.getRainStatus())) {
-//                    warning = "RAIN DETECTED";
-//                    dashboard.setWarning(warning);
-//                } else {
+//               } else if ("RAINING".equals(
+//                       latestSensor.getRainStatus())) {
+//                   warning = "RAIN DETECTED";
+//                   dashboard.setWarning(warning);
+//               } else {
 //
-//                    dashboard.setWarning(
-//                            "NO SENSOR DATA"
-//                    );
-//                }
-//            } else {
+//                   dashboard.setWarning(
+//                           "NO SENSOR DATA"
+//                   );
+//               }
+//           } else {
 //
-//                // KHONG CO DEVICE
-//                dashboard.setConnectionStatus("OFFLINE");
-//                dashboard.setWarning("NO DEVICE");
-//            }
+//               // NO DEVICE
+//               dashboard.setConnectionStatus("OFFLINE");
+//               dashboard.setWarning("NO DEVICE");
+//           }
 //
-//            DryingBatch activeBatch = batchDAO.getActiveBatchByOperator(
-//                    user.getUserId());
+//           DryingBatch activeBatch = batchDAO.getActiveBatchByOperator(
+//                   user.getUserId());
 //
-//            //SET 5 REQUEST
-//            request.setAttribute(
-//                    "warehouse",
-//                    warehouse
-//            );
+//           // Set request attributes
+//           request.setAttribute(
+//                   "warehouse",
+//                   warehouse
+//           );
 //
-//            request.setAttribute(
-//                    "device",
-//                    device
-//            );
+//           request.setAttribute(
+//                   "device",
+//                   device
+//           );
 //
-//            request.setAttribute(
-//                    "dashboard",
-//                    dashboard
-//            );
+//           request.setAttribute(
+//                   "dashboard",
+//                   dashboard
+//           );
 //
-//            request.setAttribute(
-//                    "activeBatch",
-//                    activeBatch
-//            );
+//           request.setAttribute(
+//                   "activeBatch",
+//                   activeBatch
+//           );
 //
-//            request.setAttribute(
-//                    "recentSensors",
-//                    recentSensors
-//            );
-//            request.getRequestDispatcher(
-//                    "/WEB-INF/views/operator-dashboard.jsp"
-//            ).forward(request, response);
-//        
-//    }
+//           request.setAttribute(
+//                   "recentSensors",
+//                   recentSensors
+//           );
+//           request.getRequestDispatcher(
+//                   "/WEB-INF/views/operator-dashboard.jsp"
+//           ).forward(request, response);
+//       
+//   }
 
     private void loadManagerDashboard(
             HttpServletRequest request,
@@ -563,7 +563,7 @@ public class DashboardController extends HttpServlet {
                 = new DryingBatchDAO();
 
         // ==========================================
-        // 1. LẤY DANH SÁCH WAREHOUSE CỦA MANAGER
+        // 1. GET MANAGER'S WAREHOUSE LIST
         // ==========================================
         List<Warehouse> warehouseList
                 = warehouseDAO.getWarehousesByManager(
@@ -591,7 +591,7 @@ public class DashboardController extends HttpServlet {
         }
 
         // ==========================================
-        // 2. WAREHOUSE MANAGER ĐANG XEM
+        // 2. WAREHOUSE BEING VIEWED BY MANAGER
         // ==========================================
         String selectedWarehouseId
                 = request.getParameter(
@@ -600,7 +600,7 @@ public class DashboardController extends HttpServlet {
 
         Warehouse warehouse = null;
 
-        // Nếu Manager chọn Warehouse từ dropdown
+        // If Manager selects a Warehouse from the dropdown
         if (selectedWarehouseId != null
                 && !selectedWarehouseId.trim().isEmpty()) {
 
@@ -615,8 +615,8 @@ public class DashboardController extends HttpServlet {
             }
         }
 
-        // Nếu chưa chọn
-        // mặc định lấy Warehouse đầu tiên
+        // If not selected
+        // default to the first Warehouse
         if (warehouse == null) {
 
             warehouse
@@ -624,7 +624,7 @@ public class DashboardController extends HttpServlet {
         }
 
         // ==========================================
-        // 3. DEVICE CỦA WAREHOUSE
+        // 3. WAREHOUSE DEVICE
         // ==========================================
         Device device
                 = deviceDAO.getDeviceByWarehouse(
@@ -678,7 +678,7 @@ public class DashboardController extends HttpServlet {
             );
 
             // ======================================
-            // SENSOR MỚI NHẤT
+            // LATEST SENSOR
             // ======================================
             SensorData latestSensor
                     = sensorDAO.getLatestSensorData(
@@ -686,7 +686,7 @@ public class DashboardController extends HttpServlet {
                     );
 
             // ======================================
-            // 6 SENSOR GẦN NHẤT
+            // 6 RECENT SENSORS
             // ======================================
             recentSensors
                     = sensorDAO.getRecentSensorData(
@@ -758,7 +758,7 @@ public class DashboardController extends HttpServlet {
         }
 
         // ==========================================
-        // 5. ACTIVE BATCHES CỦA WAREHOUSE
+        // 5. WAREHOUSE ACTIVE BATCHES
         // ==========================================
         List<DryingBatch> activeBatches
                 = batchDAO.getActiveBatchesByWarehouse(
@@ -766,7 +766,7 @@ public class DashboardController extends HttpServlet {
                 );
 
         // ==========================================
-        // 6. GỬI DỮ LIỆU SANG JSP
+        // 6. SEND DATA TO JSP
         // ==========================================
         request.setAttribute(
                 "warehouseList",

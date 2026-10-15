@@ -20,57 +20,45 @@ import javax.servlet.http.HttpSession;
 import model.User;
 import model.Warehouse;
 
-
 @WebServlet(
         name = "WarehouseManagementController",
         urlPatterns = {"/warehouses"}
 )
 public class WarehouseManagementController extends HttpServlet {
 
-
     private WarehouseDAO warehouseDAO;
-
 
     @Override
     public void init()
             throws ServletException {
 
-        warehouseDAO =
-                new WarehouseDAO();
+        warehouseDAO
+                = new WarehouseDAO();
     }
-
 
     // =========================================================
     // PROCESS REQUEST
     // =========================================================
-
     protected void processRequest(
             HttpServletRequest request,
             HttpServletResponse response)
             throws ServletException, IOException {
 
+        HttpSession session
+                = request.getSession();
 
-        HttpSession session =
-                request.getSession();
-
-
-
-
-        User loginUser =
-                (User) session.getAttribute(
+        User loginUser
+                = (User) session.getAttribute(
                         "LOGIN_USER"
                 );
 
-
-        String role =
-                loginUser.getRole();
-
+        String role
+                = loginUser.getRole();
 
         // =====================================================
         // 2. CHECK ROLE
-        // ADMIN + MANAGER được vào
+        // ADMIN + MANAGER can access
         // =====================================================
-
         if (!"ADMIN".equals(role)
                 && !"MANAGER".equals(role)) {
 
@@ -82,17 +70,13 @@ public class WarehouseManagementController extends HttpServlet {
             return;
         }
 
-
         try {
-
 
             // =================================================
             // 3. GET
             // =================================================
-
             if ("GET".equalsIgnoreCase(
                     request.getMethod())) {
-
 
                 loadPage(
                         request,
@@ -100,19 +84,15 @@ public class WarehouseManagementController extends HttpServlet {
                         loginUser
                 );
 
-
                 return;
             }
 
-
             // =================================================
             // 4. POST
-            // CHỈ ADMIN
+            // ADMIN ONLY
             // =================================================
-
             if ("POST".equalsIgnoreCase(
                     request.getMethod())) {
-
 
                 if (!"ADMIN".equals(role)) {
 
@@ -124,12 +104,10 @@ public class WarehouseManagementController extends HttpServlet {
                     return;
                 }
 
-
-                String action =
-                        request.getParameter(
+                String action
+                        = request.getParameter(
                                 "action"
                         );
-
 
                 if (action == null
                         || action.trim().isEmpty()) {
@@ -142,9 +120,7 @@ public class WarehouseManagementController extends HttpServlet {
                     return;
                 }
 
-
                 switch (action) {
-
 
                     case "add":
 
@@ -156,7 +132,6 @@ public class WarehouseManagementController extends HttpServlet {
 
                         break;
 
-
                     case "update":
 
                         updateWarehouse(
@@ -167,7 +142,6 @@ public class WarehouseManagementController extends HttpServlet {
 
                         break;
 
-
                     case "toggleStatus":
 
                         toggleStatus(
@@ -176,8 +150,15 @@ public class WarehouseManagementController extends HttpServlet {
                         );
 
                         break;
+                    case "delete":
 
+                        deleteWarehouse(
+                                request,
+                                response,
+                                loginUser
+                        );
 
+                        break;
                     default:
 
                         response.sendRedirect(
@@ -189,18 +170,14 @@ public class WarehouseManagementController extends HttpServlet {
                 }
             }
 
-
         } catch (Exception e) {
 
-
             e.printStackTrace();
-
 
             request.setAttribute(
                     "error",
                     "Unable to process Warehouse Management."
             );
-
 
             try {
 
@@ -219,64 +196,48 @@ public class WarehouseManagementController extends HttpServlet {
         }
     }
 
-
     // =========================================================
     // LOAD PAGE
     // =========================================================
-
     private void loadPage(
             HttpServletRequest request,
             HttpServletResponse response,
             User loginUser)
             throws Exception {
 
-
         List<Warehouse> warehouseList;
-
 
         // =====================================================
         // ADMIN
         // =====================================================
-
         if ("ADMIN".equals(
                 loginUser.getRole())) {
 
-
-            warehouseList =
-                    warehouseDAO
+            warehouseList
+                    = warehouseDAO
                             .getAllWarehouses();
-        }
-
-
-        // =====================================================
+        } // =====================================================
         // MANAGER
         // =====================================================
-
         else {
 
-
-            warehouseList =
-                    warehouseDAO
+            warehouseList
+                    = warehouseDAO
                             .getWarehousesByManager(
                                     loginUser.getUserId()
                             );
         }
 
-
         // =====================================================
         // STATISTICS
         // =====================================================
-
-        int totalWarehouses =
-                warehouseList.size();
-
+        int totalWarehouses
+                = warehouseList.size();
 
         int activeWarehouses = 0;
 
-
         for (Warehouse warehouse
                 : warehouseList) {
-
 
             if ("ACTIVE".equals(
                     warehouse.getStatus())) {
@@ -285,44 +246,36 @@ public class WarehouseManagementController extends HttpServlet {
             }
         }
 
-
-        int inactiveWarehouses =
-                totalWarehouses
+        int inactiveWarehouses
+                = totalWarehouses
                 - activeWarehouses;
-
 
         // =====================================================
         // SET ATTRIBUTE
         // =====================================================
-
         request.setAttribute(
                 "warehouseList",
                 warehouseList
         );
-
 
         request.setAttribute(
                 "totalWarehouses",
                 totalWarehouses
         );
 
-
         request.setAttribute(
                 "activeWarehouses",
                 activeWarehouses
         );
-
 
         request.setAttribute(
                 "inactiveWarehouses",
                 inactiveWarehouses
         );
 
-
         // =====================================================
         // FORWARD JSP
         // =====================================================
-
         request.getRequestDispatcher(
                 "/WEB-INF/views/warehouse-management.jsp"
         ).forward(
@@ -331,46 +284,38 @@ public class WarehouseManagementController extends HttpServlet {
         );
     }
 
-
     // =========================================================
     // ADD WAREHOUSE
     // =========================================================
-
     private void addWarehouse(
             HttpServletRequest request,
             HttpServletResponse response,
             User loginUser)
             throws Exception {
 
-
-        String warehouseId =
-                request.getParameter(
+        String warehouseId
+                = request.getParameter(
                         "warehouseId"
                 );
 
-
-        String warehouseCode =
-                request.getParameter(
+        String warehouseCode
+                = request.getParameter(
                         "warehouseCode"
                 );
 
-
-        String warehouseName =
-                request.getParameter(
+        String warehouseName
+                = request.getParameter(
                         "warehouseName"
                 );
 
-
-        String location =
-                request.getParameter(
+        String location
+                = request.getParameter(
                         "location"
                 );
-
 
         // =====================================================
         // VALIDATION
         // =====================================================
-
         if (warehouseId == null
                 || warehouseId.trim().isEmpty()
                 || warehouseCode == null
@@ -380,12 +325,10 @@ public class WarehouseManagementController extends HttpServlet {
                 || location == null
                 || location.trim().isEmpty()) {
 
-
             request.setAttribute(
                     "error",
                     "Please enter all required warehouse information."
             );
-
 
             loadPage(
                     request,
@@ -393,99 +336,82 @@ public class WarehouseManagementController extends HttpServlet {
                     loginUser
             );
 
-
             return;
         }
 
+        warehouseId
+                = warehouseId.trim();
 
-        warehouseId =
-                warehouseId.trim();
+        warehouseCode
+                = warehouseCode.trim();
 
-        warehouseCode =
-                warehouseCode.trim();
+        warehouseName
+                = warehouseName.trim();
 
-        warehouseName =
-                warehouseName.trim();
-
-        location =
-                location.trim();
-
+        location
+                = location.trim();
 
         // =====================================================
         // CHECK WAREHOUSE ID
         // =====================================================
-
         if (warehouseDAO
                 .existsWarehouseId(
                         warehouseId
                 )) {
-
 
             request.setAttribute(
                     "error",
                     "Warehouse ID already exists."
             );
 
-
             loadPage(
                     request,
                     response,
                     loginUser
             );
 
-
             return;
         }
-
 
         // =====================================================
         // CHECK WAREHOUSE CODE
         // =====================================================
-
         if (warehouseDAO
                 .existsWarehouseCode(
                         warehouseCode
                 )) {
-
 
             request.setAttribute(
                     "error",
                     "Warehouse code already exists."
             );
 
-
             loadPage(
                     request,
                     response,
                     loginUser
             );
 
-
             return;
         }
-
 
         // =====================================================
         // INSERT
         // =====================================================
-
-        boolean success =
-                warehouseDAO.add(
+        boolean success
+                = warehouseDAO.add(
                         warehouseId,
                         warehouseCode,
                         warehouseName,
                         location
                 );
 
-
         if (!success) {
-
 
             request.setAttribute(
                     "error",
                     "Unable to add warehouse."
             );
-
 
             loadPage(
                     request,
@@ -493,10 +419,8 @@ public class WarehouseManagementController extends HttpServlet {
                     loginUser
             );
 
-
             return;
         }
-
 
         response.sendRedirect(
                 request.getContextPath()
@@ -504,46 +428,38 @@ public class WarehouseManagementController extends HttpServlet {
         );
     }
 
-
     // =========================================================
     // UPDATE WAREHOUSE
     // =========================================================
-
     private void updateWarehouse(
             HttpServletRequest request,
             HttpServletResponse response,
             User loginUser)
             throws Exception {
 
-
-        String warehouseId =
-                request.getParameter(
+        String warehouseId
+                = request.getParameter(
                         "warehouseId"
                 );
 
-
-        String warehouseCode =
-                request.getParameter(
+        String warehouseCode
+                = request.getParameter(
                         "warehouseCode"
                 );
 
-
-        String warehouseName =
-                request.getParameter(
+        String warehouseName
+                = request.getParameter(
                         "warehouseName"
                 );
 
-
-        String location =
-                request.getParameter(
+        String location
+                = request.getParameter(
                         "location"
                 );
-
 
         // =====================================================
         // VALIDATION
         // =====================================================
-
         if (warehouseId == null
                 || warehouseId.trim().isEmpty()
                 || warehouseCode == null
@@ -553,12 +469,10 @@ public class WarehouseManagementController extends HttpServlet {
                 || location == null
                 || location.trim().isEmpty()) {
 
-
             request.setAttribute(
                     "error",
                     "Warehouse information cannot be empty."
             );
-
 
             loadPage(
                     request,
@@ -566,61 +480,51 @@ public class WarehouseManagementController extends HttpServlet {
                     loginUser
             );
 
-
             return;
         }
 
+        warehouseId
+                = warehouseId.trim();
 
-        warehouseId =
-                warehouseId.trim();
+        warehouseCode
+                = warehouseCode.trim();
 
-        warehouseCode =
-                warehouseCode.trim();
+        warehouseName
+                = warehouseName.trim();
 
-        warehouseName =
-                warehouseName.trim();
-
-        location =
-                location.trim();
-
+        location
+                = location.trim();
 
         // =====================================================
         // CHECK WAREHOUSE EXISTS
         // =====================================================
-
-        Warehouse currentWarehouse =
-                warehouseDAO.getById(
+        Warehouse currentWarehouse
+                = warehouseDAO.getById(
                         warehouseId
                 );
 
-
         if (currentWarehouse == null) {
-
 
             request.setAttribute(
                     "error",
                     "Warehouse not found."
             );
 
-
             loadPage(
                     request,
                     response,
                     loginUser
             );
 
-
             return;
         }
-
 
         // =====================================================
         // CHECK CODE DUPLICATE
         //
-        // Nếu code không đổi thì OK
-        // Nếu code đổi thì kiểm tra trùng
+        // If code is unchanged, it's OK
+        // If code is changed, check for duplicates
         // =====================================================
-
         if (!warehouseCode.equalsIgnoreCase(
                 currentWarehouse
                         .getWarehouseCode())
@@ -629,12 +533,10 @@ public class WarehouseManagementController extends HttpServlet {
                                 warehouseCode
                         )) {
 
-
             request.setAttribute(
                     "error",
                     "Warehouse code already exists."
             );
-
 
             loadPage(
                     request,
@@ -642,32 +544,26 @@ public class WarehouseManagementController extends HttpServlet {
                     loginUser
             );
 
-
             return;
         }
-
 
         // =====================================================
         // UPDATE
         // =====================================================
-
-        boolean success =
-                warehouseDAO.update(
+        boolean success
+                = warehouseDAO.update(
                         warehouseId,
                         warehouseCode,
                         warehouseName,
                         location
                 );
 
-
         if (!success) {
-
 
             request.setAttribute(
                     "error",
                     "Unable to update warehouse."
             );
-
 
             loadPage(
                     request,
@@ -675,10 +571,8 @@ public class WarehouseManagementController extends HttpServlet {
                     loginUser
             );
 
-
             return;
         }
-
 
         response.sendRedirect(
                 request.getContextPath()
@@ -686,41 +580,33 @@ public class WarehouseManagementController extends HttpServlet {
         );
     }
 
-
     // =========================================================
     // ACTIVE / INACTIVE
     // =========================================================
-
     private void toggleStatus(
             HttpServletRequest request,
             HttpServletResponse response)
             throws Exception {
 
-
-        String warehouseId =
-                request.getParameter(
+        String warehouseId
+                = request.getParameter(
                         "warehouseId"
                 );
 
-
         if (warehouseId == null
                 || warehouseId.trim().isEmpty()) {
-
 
             response.sendRedirect(
                     request.getContextPath()
                     + "/warehouses"
             );
 
-
             return;
         }
-
 
         warehouseDAO.toggleStatus(
                 warehouseId.trim()
         );
-
 
         response.sendRedirect(
                 request.getContextPath()
@@ -728,8 +614,82 @@ public class WarehouseManagementController extends HttpServlet {
         );
     }
 
+    private void deleteWarehouse(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            User loginUser)
+            throws Exception {
 
- 
+        String warehouseId
+                = request.getParameter(
+                        "warehouseId"
+                );
+
+        if (warehouseId == null
+                || warehouseId.trim().isEmpty()) {
+
+            response.sendRedirect(
+                    request.getContextPath()
+                    + "/warehouses"
+            );
+
+            return;
+        }
+
+        warehouseId
+                = warehouseId.trim();
+
+        // =========================================
+        // CHECK can delete
+        // =========================================
+        if (!warehouseDAO.canDeleteWarehouse(
+                warehouseId)) {
+
+            request.setAttribute(
+                    "error",
+                    "This warehouse contains devices, batches, "
+                    + "or event history. Please disable it instead."
+            );
+
+            loadPage(
+                    request,
+                    response,
+                    loginUser
+            );
+
+            return;
+        }
+
+        // =========================================
+        // DELETE
+        // =========================================
+        boolean success
+                = warehouseDAO.deleteWarehouse(
+                        warehouseId
+                );
+
+        if (!success) {
+
+            request.setAttribute(
+                    "error",
+                    "Unable to delete warehouse."
+            );
+
+            loadPage(
+                    request,
+                    response,
+                    loginUser
+            );
+
+            return;
+        }
+
+        response.sendRedirect(
+                request.getContextPath()
+                + "/warehouses"
+        );
+    }
+
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.

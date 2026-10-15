@@ -112,7 +112,7 @@ public class WarehouseDAO {
 
     // =====================================================
     // MANAGER
-    // LẤY TẤT CẢ WAREHOUSE ĐƯỢC ASSIGN
+    // GET ALL ASSIGNED WAREHOUSES
     // =====================================================
     public List<Warehouse> getWarehousesByManager(
             String managerId) {
@@ -166,7 +166,7 @@ public class WarehouseDAO {
 
     // =====================================================
     // ADMIN
-    // LẤY TẤT CẢ WAREHOUSE
+    // GET ALL WAREHOUSES
     // ACTIVE + INACTIVE
     // =====================================================
     public List<Warehouse> getAllWarehouses() {
@@ -251,7 +251,7 @@ public class WarehouseDAO {
 
     // =====================================================
     // MANAGER
-    // KIỂM TRA WAREHOUSE CÓ THUỘC MANAGER KHÔNG
+    // CHECK IF WAREHOUSE BELONGS TO MANAGER
     // =====================================================
     public boolean isAssignedToManager(
             String managerId,
@@ -300,7 +300,7 @@ public class WarehouseDAO {
         return false;
     }
 
-// =====================================================
+    // =====================================================
     // CHECK WAREHOUSE ID EXISTS
     // =====================================================
     public boolean existsWarehouseId(
@@ -581,5 +581,136 @@ public class WarehouseDAO {
         }
 
         return 0;
+    }
+
+    // Check if warehouse can be deleted
+    public boolean canDeleteWarehouse(
+            String warehouseId) {
+
+        String sql
+                = "SELECT "
+                + "(SELECT COUNT(*) FROM DEVICE "
+                + " WHERE warehouse_id = ?) "
+                + "+ "
+                + "(SELECT COUNT(*) FROM DRYING_BATCH "
+                + " WHERE warehouse_id = ?) "
+                + "+ "
+                + "(SELECT COUNT(*) FROM EVENT_LOG "
+                + " WHERE warehouse_id = ?) "
+                + "AS total";
+
+        try (
+                 Connection conn = DBContext.getConnection();  PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(
+                    1,
+                    warehouseId
+            );
+
+            ps.setString(
+                    2,
+                    warehouseId
+            );
+
+            ps.setString(
+                    3,
+                    warehouseId
+            );
+
+            try (
+                     ResultSet rs = ps.executeQuery()) {
+
+                if (rs.next()) {
+
+                    return rs.getInt(
+                            "total"
+                    ) == 0;
+                }
+            }
+
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    // DELETE WAREHOUSE
+    public boolean deleteWarehouse(
+            String warehouseId)
+            throws Exception {
+
+        Connection conn = null;
+
+        try {
+
+            conn = DBContext.getConnection();
+
+            conn.setAutoCommit(
+                    false
+            );
+
+            // Delete user assignments first
+            String deleteAssignment
+                    = "DELETE FROM USER_WAREHOUSE "
+                    + "WHERE warehouse_id = ?";
+
+            try (
+                     PreparedStatement ps = conn.prepareStatement(
+                            deleteAssignment
+                    )) {
+
+                ps.setString(
+                        1,
+                        warehouseId
+                );
+
+                ps.executeUpdate();
+            }
+
+            String deleteWarehouse
+                    = "DELETE FROM WAREHOUSE "
+                    + "WHERE warehouse_id = ?";
+
+            int affected;
+
+            try (
+                     PreparedStatement ps = conn.prepareStatement(
+                            deleteWarehouse
+                    )) {
+
+                ps.setString(
+                        1,
+                        warehouseId
+                );
+
+                affected
+                        = ps.executeUpdate();
+            }
+
+            conn.commit();
+
+            return affected > 0;
+
+        } catch (Exception e) {
+
+            if (conn != null) {
+                conn.rollback();
+            }
+
+            throw e;
+
+        } finally {
+
+            if (conn != null) {
+
+                conn.setAutoCommit(
+                        true
+                );
+
+                conn.close();
+            }
+        }
     }
 }
