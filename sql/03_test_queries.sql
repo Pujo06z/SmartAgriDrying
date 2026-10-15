@@ -87,3 +87,4 @@ WHERE user_id = 'U002';
 
 go
 SELECT*FROM USERS
+
