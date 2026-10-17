@@ -110,7 +110,8 @@ public class DeviceDAO {
                 + "WHERE device_id = ? "
                 + "AND status = 'ACTIVE'";
 
-        try ( Connection con = DBContext.getConnection();  PreparedStatement ps = con.prepareStatement(sql)) {
+        try ( Connection con = DBContext.getConnection();  
+                PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setString(1, roofStatus);
             ps.setString(2, deviceId);
@@ -123,7 +124,76 @@ public class DeviceDAO {
 
         return false;
     }
+    // =====================================================
+// UPDATE ROOF STATUS IN AUTO MODE
+// =====================================================
+public boolean updateAutoRoofStatus(
+        String deviceId,
+        String roofStatus) {
 
+    String sql
+            = "UPDATE DEVICE "
+            + "SET roof_status = ?, "
+            + "last_seen = SYSDATETIME() "
+            + "WHERE device_id = ? "
+            + "AND status = 'ACTIVE' "
+            + "AND mode = 'AUTO'";
+
+    try (
+            Connection con = DBContext.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql)
+    ) {
+
+        ps.setString(
+                1,
+                roofStatus
+        );
+
+        ps.setString(
+                2,
+                deviceId
+        );
+
+        return ps.executeUpdate() > 0;
+
+    } catch (SQLException e) {
+
+        e.printStackTrace();
+    }
+
+    return false;
+}
+// =====================================================
+// UPDATE DEVICE LAST SEEN
+// =====================================================
+public boolean updateLastSeen(
+        String deviceId) {
+
+    String sql
+            = "UPDATE DEVICE "
+            + "SET last_seen = SYSDATETIME() "
+            + "WHERE device_id = ? "
+            + "AND status = 'ACTIVE'";
+
+    try (
+            Connection con = DBContext.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql)
+    ) {
+
+        ps.setString(
+                1,
+                deviceId
+        );
+
+        return ps.executeUpdate() > 0;
+
+    } catch (SQLException e) {
+
+        e.printStackTrace();
+    }
+
+    return false;
+}
     // =====================================================
     // MAP RESULTSET -> DEVICE
     // 

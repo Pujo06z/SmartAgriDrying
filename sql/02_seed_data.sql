@@ -110,3 +110,13 @@ INSERT INTO EVENT_LOG VALUES
 ('E017','W001','D001',NULL,'U002','MODE_CHANGED','WEB',N'Manager changed system back to AUTO mode','2026-09-28T12:35:00'),
 ('E018','W001',NULL,'B004','U004','BATCH_COMPLETED','WEB',N'Tomato batch completed','2026-09-28T12:30:00');
 GO
+UPDATE SENSOR_DATA
+SET
+    temperature = 10.0,
+    rain_status = 'NO_RAIN',
+    recorded_at = SYSDATETIME()
+WHERE sensor_id = 'S9999';
+
+UPDATE DEVICE
+SET last_seen = SYSDATETIME()
+WHERE device_id = 'D001';

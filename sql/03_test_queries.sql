@@ -88,3 +88,6 @@ WHERE user_id = 'U002';
 go
 SELECT*FROM USERS
 
+UPDATE DEVICE
+SET last_seen = SYSDATETIME()
+WHERE device_id = 'D001';

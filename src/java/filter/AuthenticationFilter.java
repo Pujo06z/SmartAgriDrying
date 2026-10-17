@@ -54,7 +54,7 @@ public class AuthenticationFilter implements Filter {
 
 
         // =====================================
-        // CHƯA LOGIN
+        //  LOGIN NOT YET
         // =====================================
         if (session == null
                 || session.getAttribute("LOGIN_USER") == null) {
@@ -69,8 +69,8 @@ public class AuthenticationFilter implements Filter {
 
 
         // =====================================
-        // ĐÃ LOGIN
-        // CHO REQUEST ĐI TIẾP TỚI SERVLET
+        //  LOGED IN
+        //  REQUEST TO SERVLET
         // =====================================
         chain.doFilter(
                 request,

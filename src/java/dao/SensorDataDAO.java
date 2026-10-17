@@ -654,4 +654,176 @@ public class SensorDataDAO {
 
         return false;
     }
+
+    public boolean insertSensorData(
+            String deviceId,
+            double temperature,
+            double humidity,
+            String rainStatus,
+            String lightStatus,
+            String roofStatus) {
+
+        String getNextIdSql
+                = "SELECT ISNULL(MAX(CAST(SUBSTRING(sensor_id, 2, 9) AS INT)), 0) + 1 "
+                + "AS next_id "
+                + "FROM SENSOR_DATA";
+
+        String insertSql
+                = "INSERT INTO SENSOR_DATA "
+                + "(sensor_id, device_id, temperature, humidity, "
+                + "rain_status, light_status, roof_status, recorded_at) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, SYSDATETIME())";
+
+        try (
+                 Connection con = DBContext.getConnection()) {
+
+            String sensorId;
+
+            // =====================================
+            // Generate next sensor ID
+            // =====================================
+            try (
+                     PreparedStatement psId
+                    = con.prepareStatement(
+                            getNextIdSql
+                    );  ResultSet rs
+                    = psId.executeQuery()) {
+
+                        if (!rs.next()) {
+
+                            return false;
+                        }
+
+                        int nextId
+                                = rs.getInt(
+                                        "next_id"
+                                );
+
+                        sensorId
+                                = String.format(
+                                        "S%03d",
+                                        nextId
+                                );
+                    }
+
+                    // =====================================
+                    // Insert sensor data
+                    // =====================================
+                    try (
+                             PreparedStatement ps
+                            = con.prepareStatement(
+                                    insertSql
+                            )) {
+
+                                ps.setString(
+                                        1,
+                                        sensorId
+                                );
+
+                                ps.setString(
+                                        2,
+                                        deviceId
+                                );
+
+                                ps.setDouble(
+                                        3,
+                                        temperature
+                                );
+
+                                ps.setDouble(
+                                        4,
+                                        humidity
+                                );
+
+                                ps.setString(
+                                        5,
+                                        rainStatus
+                                );
+
+                                ps.setString(
+                                        6,
+                                        lightStatus
+                                );
+
+                                ps.setString(
+                                        7,
+                                        roofStatus
+                                );
+
+                                return ps.executeUpdate() > 0;
+                            }
+
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+    public boolean updateLatestLiveState(
+        String deviceId,
+        double temperature,
+        double humidity,
+        String rainStatus,
+        String lightStatus,
+        String roofStatus) {
+
+    String sql
+            = "UPDATE SENSOR_DATA "
+            + "SET temperature = ?, "
+            + "humidity = ?, "
+            + "rain_status = ?, "
+            + "light_status = ?, "
+            + "roof_status = ? "
+            + "WHERE sensor_id = ("
+            + "SELECT TOP 1 sensor_id "
+            + "FROM SENSOR_DATA "
+            + "WHERE device_id = ? "
+            + "ORDER BY recorded_at DESC"
+            + ")";
+
+    try (
+            Connection conn = DBContext.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql)
+    ) {
+
+        ps.setDouble(
+                1,
+                temperature
+        );
+
+        ps.setDouble(
+                2,
+                humidity
+        );
+
+        ps.setString(
+                3,
+                rainStatus
+        );
+
+        ps.setString(
+                4,
+                lightStatus
+        );
+
+        ps.setString(
+                5,
+                roofStatus
+        );
+
+        ps.setString(
+                6,
+                deviceId
+        );
+
+        return ps.executeUpdate() > 0;
+
+    } catch (Exception e) {
+
+        e.printStackTrace();
+
+        return false;
+    }
+}
 }
