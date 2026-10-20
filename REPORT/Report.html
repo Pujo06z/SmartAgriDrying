@@ -1,0 +1,2292 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>IoT-Based Smart Agricultural Drying System – Project Report</title>
+    <style>
+        :root {
+            --ink: #1f2a1f;
+            --mute: #5d6b5a;
+            --paper: #fbfaf4;
+            --page: #f1efe4;
+            --line: #d9d6c3;
+            --leaf: #2f6b3a;
+            --leaf2: #e2eedb;
+            --grain: #c98d1a;
+            --grain2: #f7ebcb;
+            --sky: #2a6f8f;
+            --rain: #3a5fa8;
+            --bad: #a6382b;
+            --serif: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+            --sans: "Segoe UI", system-ui, -apple-system, sans-serif;
+            --mono: ui-monospace, Consolas, monospace
+        }
+
+        @media(prefers-color-scheme:dark) {
+            :root {
+                --ink: #e6ebdd;
+                --mute: #9db095;
+                --paper: #1b221a;
+                --page: #141a13;
+                --line: #334031;
+                --leaf: #8cc58a;
+                --leaf2: #23331f;
+                --grain: #e0b04f;
+                --grain2: #35301a;
+                --sky: #7fb8d4;
+                --rain: #8fa9e0;
+                --bad: #e28578
+            }
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 20px
+        }
+
+        body {
+            margin: 0;
+            background: var(--page);
+            color: var(--ink);
+            font: 17px/1.7 var(--serif);
+            display: flex
+        }
+
+        a {
+            color: var(--leaf)
+        }
+
+        #toc {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            width: 280px;
+            flex: none;
+            overflow: auto;
+            padding: 26px 18px;
+            background: var(--paper);
+            border-right: 1px solid var(--line);
+            font-family: var(--sans)
+        }
+
+        #toc b {
+            display: block;
+            font-size: 14px;
+            line-height: 1.3;
+            margin-bottom: 4px
+        }
+
+        #toc small {
+            color: var(--mute);
+            display: block;
+            margin-bottom: 18px;
+            font-size: 12px
+        }
+
+        #toc a {
+            display: flex;
+            gap: 10px;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 13.5px;
+            color: var(--mute);
+            text-decoration: none;
+            border-left: 3px solid transparent
+        }
+
+        #toc a span {
+            min-width: 20px;
+            font-variant-numeric: tabular-nums;
+            color: var(--grain)
+        }
+
+        #toc a:hover {
+            background: var(--leaf2)
+        }
+
+        #toc a.on {
+            color: var(--ink);
+            font-weight: 600;
+            background: var(--leaf2);
+            border-left-color: var(--leaf)
+        }
+
+        #bar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 3px;
+            background: var(--grain);
+            width: 0;
+            z-index: 50
+        }
+
+        #menu {
+            display: none
+        }
+
+        main {
+            flex: 1;
+            min-width: 0;
+            padding: 0 28px 80px
+        }
+
+        .wrap {
+            max-width: 820px;
+            margin: 0 auto
+        }
+
+        section {
+            padding: 54px 0 12px;
+            border-bottom: 1px solid var(--line)
+        }
+
+        h2 {
+            font: 700 29px/1.2 var(--serif);
+            margin: 0 0 6px
+        }
+
+        h2 i {
+            font: 600 14px var(--sans);
+            color: var(--grain);
+            display: block;
+            margin-bottom: 6px;
+            font-style: normal
+        }
+
+        h3 {
+            font: 700 15px var(--sans);
+            margin: 28px 0 8px;
+            color: var(--leaf)
+        }
+
+        p {
+            margin: 12px 0
+        }
+
+        .cover {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 50px 0;
+            border-bottom: 1px solid var(--line)
+        }
+
+        .cover .tag {
+            font: 600 13px var(--sans);
+            color: var(--leaf);
+            margin-bottom: 18px
+        }
+
+        .cover h1 {
+            font: 800 clamp(34px, 6vw, 58px)/1.05 var(--serif);
+            margin: 0 0 16px;
+            letter-spacing: -.5px
+        }
+
+        .cover h1 em {
+            display: block;
+            font-size: .5em;
+            font-weight: 500;
+            color: var(--mute);
+            margin-top: 10px;
+            letter-spacing: 0
+        }
+
+        .meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 4px 24px;
+            font: 14px var(--sans);
+            margin: 26px 0;
+            padding-top: 16px;
+            border-top: 2px solid var(--ink)
+        }
+
+        .meta dt {
+            color: var(--mute);
+            font-size: 12px
+        }
+
+        .meta dd {
+            margin: 0 0 10px;
+            font-weight: 600
+        }
+
+        .live {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            font: 13px var(--mono)
+        }
+
+        .live span {
+            padding: 5px 10px;
+            border: 1px solid var(--line);
+            background: var(--paper);
+            border-radius: 4px
+        }
+
+        .live b {
+            color: var(--leaf)
+        }
+
+        .note {
+            background: var(--grain2);
+            border-left: 4px solid var(--grain);
+            padding: 10px 16px;
+            font: 14px/1.6 var(--sans);
+            margin: 16px 0;
+            border-radius: 0 6px 6px 0
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font: 14px/1.5 var(--sans);
+            margin: 14px 0
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 8px 10px;
+            border-bottom: 1px solid var(--line);
+            vertical-align: top
+        }
+
+        th {
+            background: var(--leaf2);
+            font-weight: 700
+        }
+
+        .tw {
+            overflow-x: auto
+        }
+
+        caption {
+            caption-side: bottom;
+            text-align: left;
+            color: var(--mute);
+            font-size: 12.5px;
+            padding-top: 6px
+        }
+
+        .pill {
+            display: inline-block;
+            padding: 1px 9px;
+            border-radius: 99px;
+            font: 600 12px var(--sans);
+            background: var(--leaf2);
+            color: var(--leaf)
+        }
+
+        .pill.w {
+            background: var(--grain2);
+            color: var(--grain)
+        }
+
+        .pill.r {
+            background: #f5dcd8;
+            color: var(--bad)
+        }
+
+        @media(prefers-color-scheme:dark) {
+            .pill.r {
+                background: #3d1f1b
+            }
+        }
+
+        ul,
+        ol {
+            padding-left: 22px
+        }
+
+        li {
+            margin: 5px 0
+        }
+
+        .fig {
+            margin: 20px 0;
+            padding: 16px;
+            background: var(--paper);
+            border: 1px solid var(--line);
+            border-radius: 8px
+        }
+
+        .fig figcaption {
+            font: 13px var(--sans);
+            color: var(--mute);
+            margin-top: 10px
+        }
+
+        .imgph {
+            display: grid;
+            place-items: center;
+            min-height: 190px;
+            border: 2px dashed var(--line);
+            border-radius: 6px;
+            color: var(--mute);
+            font: 14px var(--sans);
+            text-align: center;
+            padding: 10px;
+            background: repeating-linear-gradient(135deg, transparent 0 12px, var(--leaf2) 12px 13px)
+        }
+
+        pre {
+            background: #1d261c;
+            color: #dfe8d2;
+            padding: 14px 16px;
+            border-radius: 8px;
+            overflow: auto;
+            font: 13px/1.55 var(--mono);
+            margin: 12px 0
+        }
+
+        pre .c {
+            color: #8fa584
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 14px
+        }
+
+        .card {
+            border: 1px solid var(--line);
+            background: var(--paper);
+            border-radius: 8px;
+            padding: 14px 16px;
+            font: 14px/1.55 var(--sans)
+        }
+
+        .card h4 {
+            margin: 0 0 4px;
+            font-size: 15px
+        }
+
+        .stat {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin: 16px 0
+        }
+
+        .stat div {
+            background: var(--paper);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 10px 12px;
+            font: 12px var(--sans);
+            color: var(--mute)
+        }
+
+        .stat strong {
+            display: block;
+            font: 700 22px var(--serif);
+            color: var(--ink)
+        }
+
+        .sim {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            align-items: center;
+            font: 14px var(--sans)
+        }
+
+        .sim label {
+            display: flex;
+            gap: 6px;
+            align-items: center
+        }
+
+        .sim select,
+        .sim button {
+            font: inherit;
+            padding: 5px 8px;
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            background: var(--paper);
+            color: var(--ink)
+        }
+
+        .out {
+            font: 600 15px var(--mono);
+            padding: 6px 12px;
+            border-radius: 6px;
+            background: var(--leaf2);
+            color: var(--leaf)
+        }
+
+        .out.closed {
+            background: #f5dcd8;
+            color: var(--bad)
+        }
+
+        @media(prefers-color-scheme:dark) {
+            .out.closed {
+                background: #3d1f1b
+            }
+        }
+
+        .perm td:not(:first-child),
+        .perm th:not(:first-child) {
+            text-align: center
+        }
+
+        .ok {
+            color: var(--leaf);
+            font-weight: 700
+        }
+
+        .no {
+            color: var(--mute)
+        }
+
+        ol.refs li {
+            font: 14px/1.55 var(--sans)
+        }
+
+        footer {
+            text-align: center;
+            font: 13px var(--sans);
+            color: var(--mute);
+            padding: 34px 0
+        }
+
+        button:focus-visible,
+        a:focus-visible,
+        select:focus-visible {
+            outline: 3px solid var(--grain);
+            outline-offset: 2px
+        }
+
+        @media(max-width:900px) {
+            #toc {
+                position: fixed;
+                z-index: 40;
+                left: 0;
+                transform: translateX(-100%);
+                transition: transform .2s;
+                box-shadow: 6px 0 24px rgba(0, 0, 0, .2)
+            }
+
+            #toc.open {
+                transform: none
+            }
+
+            #menu {
+                display: block;
+                position: fixed;
+                right: 14px;
+                top: 12px;
+                z-index: 45;
+                border: 1px solid var(--line);
+                background: var(--paper);
+                color: var(--ink);
+                border-radius: 8px;
+                padding: 8px 14px;
+                font: 600 14px var(--sans)
+            }
+
+            main {
+                padding: 0 18px 60px
+            }
+
+            body {
+                font-size: 16px
+            }
+        }
+
+        @media(prefers-reduced-motion:reduce) {
+            html {
+                scroll-behavior: auto
+            }
+
+            #toc {
+                transition: none
+            }
+        }
+
+        @media print {
+
+            #toc,
+            #menu,
+            #bar {
+                display: none
+            }
+
+            body {
+                background: #fff
+            }
+
+            section {
+                break-inside: avoid-page
+            }
+        }
+
+        /* css cho picture */
+        .figure-block {
+            margin: 24px 0;
+            text-align: center;
+        }
+
+        .report-image {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .figure-caption {
+            margin-top: 10px;
+            font-size: 14px;
+            font-style: italic;
+            color: #666;
+        }
+
+
+        .report-image {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="bar"></div>
+    <button id="menu" aria-expanded="false" aria-controls="toc">Mục lục</button>
+    <nav id="toc" aria-label="Mục lục báo cáo">
+        <b>Smart Agricultural Drying System</b><small>Báo cáo đồ án · Java Web + IoT</small>
+        <div id="links"></div>
+    </nav>
+
+    <main>
+        <div class="wrap">
+
+            <header class="cover" id="cover">
+                <div class="tag">Báo cáo đồ án · Java Web &amp; IoT · Học kỳ Fall 2026</div>
+                <h1>IoT-Based Smart Agricultural Drying System<em>Hệ thống giám sát và điều khiển phơi/sấy nông sản bằng
+                        ESP32-CAM và Java Web</em></h1>
+                <dl class="meta">
+                    <div>
+                        <dt>Sinh viên thực hiện</dt>
+                        <dd>Võ Thiện Phúc – SE201634<br>Đoàn Dương Tấn Phát – SE203558</dd>
+                    </div>
+                    <div>
+                        <dt>Giảng viên hướng dẫn</dt>
+                        <dd>Lê Võ Minh Thư</dd>
+                    </div>
+                    <div>
+                        <dt>Môn học / Lớp</dt>
+                        <dd>PRJ301 – SE2022</dd>
+                    </div>
+                    <div>
+                        <dt>Ngày nộp</dt>
+                        <dd>20/10/2026</dd>
+                    </div>
+                </dl>
+                <p style="font:13px var(--sans);color:var(--mute);margin-bottom:8px">Trạng thái mẫu ở lần đo gần nhất
+                    của hệ thống:</p>
+                <div class="live"><span>Temperature <b>31.5°C</b></span><span>Humidity <b>68%</b></span><span>Rain
+                        <b>NO_RAIN</b></span><span>Light <b>BRIGHT</b></span><span>Roof <b>OPEN</b></span><span>Mode
+                        <b>AUTO</b></span><span>Device <b>ONLINE</b></span></div>
+            </header>
+
+            <section id="introduction">
+                <h2><i>1</i>Introduction</h2>
+                <p>Nông sản Việt Nam – Chất lượng bị đe dọa ngay từ sân phơi.</p>
+                <p>Phơi sấy là công đoạn quyết định "sinh mệnh" của lúa, ngô, cà phê, hồ tiêu hay hạt điều sau thu
+                    hoạch. Thế nhưng, hàng triệu nông hộ và chủ kho nhỏ hiện vẫn phải canh chừng thời tiết từng giờ, túc
+                    trực vất vả để che chắn mỗi khi trời đổ mưa hay mở mái khi nắng lên. Chỉ một cơn mưa rào bất chợt
+                    cũng đủ làm hỏng cả mẻ nông sản giá trị hàng chục triệu đồng do ẩm mốc.</p>
+                <p>IoT-Based Smart Agricultural Drying System được xây dựng nhằm hiện đại hóa công đoạn này. Hệ thống sử
+                    dụng nút vi điều khiển ESP32-CAM tích hợp cảm biến môi trường để "cảm nhận" thời tiết thực tế, gửi
+                    dữ liệu liên tục về ứng dụng Java Web qua thức HTTP. Ngay khi phát hiện mưa hoặc độ ẩm tăng cao, hệ
+                    thống tự động điều khiển mái che đóng lại thông qua cơ chế Servo chính xác. Đồng thời, nền tảng
+                    Website đi kèm cho phép chủ trang trại theo dõi và điều khiển toàn bộ quá trình từ bất kỳ đâu, mang
+                    lại sự an tâm tuyệt đối và nâng cao giá trị hạt nông sản Việt.</p>
+                <p>Đề tài xây dựng hệ thống <b>IoT-Based Smart Agricultural Drying System</b>: một nút ESP32-CAM gắn cảm
+                    biến đo môi trường tại kho, gửi dữ liệu qua HTTP đến ứng dụng Java Web. Hệ thống tự điều khiển mái
+                    che bằng servo và cho phép quản lý từ xa qua website.</p>
+                <figure class="fig">
+                    <img src="img/img1.png" alt="Mô hình sân phơi nông sản"
+                        style="width:100%; height:auto; border-radius:6px; display:block;">
+
+                    <figcaption>
+                        Hình 1.1. Khu vực phơi nông sản dùng cho mô hình thử nghiệm.
+                    </figcaption>
+                </figure>
+            </section>
+
+
+            <!-- ==================== SECTION 2: PROBLEM STATEMENT ==================== -->
+            <section id="problem">
+                <h2><i>2</i>Problem Statement</h2>
+
+                <p>
+                    Trong sản xuất nông nghiệp, phơi là một công đoạn quan trọng
+                    nhưng vẫn phụ thuộc chủ yếu vào công sức và sự theo dõi thủ công.
+                    Thực tế này phát sinh nhiều hạn chế và rủi ro trong quá trình vận hành:
+                </p>
+
+                <ul>
+                    <li>
+                        <b>Tác động từ thời tiết bất thường:</b>
+                        Mưa đột ngột hoặc điều kiện ánh sáng thay đổi khi trời chuyển tối
+                        đòi hỏi người quản lý phải có mặt kịp thời để che chắn.
+                        Nếu phản ứng chậm, nông sản có thể bị ngấm nước, ẩm mốc
+                        và suy giảm giá trị thương phẩm.
+                    </li>
+
+                    <li>
+                        <b>Khó khăn trong giám sát và truy vết chất lượng:</b>
+                        Các thông số nhiệt độ, độ ẩm, trạng thái mưa và ánh sáng
+                        chưa được ghi nhận liên tục, tự động.
+                        Việc thiếu dữ liệu lịch sử gây khó khăn khi đánh giá
+                        điều kiện phơi của từng mẻ nông sản (Drying Batch).
+                    </li>
+
+                    <li>
+                        <b>Bất cập trong quản lý tập trung:</b>
+                        Khi quy mô mở rộng ra nhiều kho hoặc khu vực phơi,
+                        việc giám sát thiết bị và phân quyền vận hành thủ công
+                        trở nên phức tạp, dễ xảy ra sai sót.
+                    </li>
+
+                    <li>
+                        <b>Rủi ro do gián đoạn kết nối:</b>
+                        Khi thiết bị thu thập dữ liệu mất kết nối mà không có
+                        cơ chế cảnh báo, người quản lý có thể không phát hiện
+                        được tình trạng bất thường kịp thời.
+                    </li>
+                </ul>
+
+                <div class="note">
+                    <b>Proposed Solution:</b>
+                    Xây dựng hệ thống IoT tích hợp nền tảng Java Web,
+                    hỗ trợ tự động đóng/mở mái che theo điều kiện môi trường,
+                    giám sát dữ liệu gần thời gian thực và quản lý tập trung
+                    nhiều kho phơi nông sản.
+                </div>
+            </section>
+
+
+            <!-- ==================== SECTION 3: OBJECTIVES ==================== -->
+            <section id="objectives">
+                <h2><i>3</i>Objectives</h2>
+
+                <h3>3.1. General Objective</h3>
+
+                <p>
+                    Thiết kế và xây dựng hệ thống phơi nông sản thông minh
+                    dựa trên công nghệ IoT, cho phép giám sát môi trường,
+                    điều khiển mái che và quản lý quá trình phơi nông sản
+                    tập trung thông qua nền tảng Java Web.
+                </p>
+
+                <h3>3.2. Specific Objectives</h3>
+
+                <div class="grid">
+
+                    <div class="card">
+                        <h4>Environmental Monitoring</h4>
+                        Thu thập nhiệt độ, độ ẩm, trạng thái mưa và ánh sáng
+                        từ cảm biến; hiển thị dữ liệu trên Web theo thời gian
+                        gần thực (Near Real-time).
+                    </div>
+
+                    <div class="card">
+                        <h4>Automatic Roof Control</h4>
+                        Xây dựng thuật toán AUTO tự động đóng mái khi có mưa
+                        hoặc trời tối, mở mái khi điều kiện khô ráo và đủ sáng.
+                    </div>
+
+                    <div class="card">
+                        <h4>Manual Control</h4>
+                        Cho phép người vận hành chuyển sang chế độ MANUAL
+                        và chủ động gửi lệnh OPEN/CLOSE từ giao diện Web
+                        để điều khiển mái che.
+                    </div>
+
+                    <div class="card">
+                        <h4>Centralized Management</h4>
+                        Quản lý User, Warehouse, Device và Drying Batch;
+                        phân quyền theo ba vai trò ADMIN, MANAGER và OPERATOR.
+                    </div>
+
+                    <div class="card">
+                        <h4>Monitoring & Traceability</h4>
+                        Lưu lịch sử dữ liệu cảm biến, trạng thái thiết bị
+                        và nhật ký sự kiện (Event Log), phục vụ tra cứu
+                        và đánh giá quá trình phơi.
+                    </div>
+
+                </div>
+            </section>
+
+
+            <!-- ==================== SECTION 4: SCOPE ==================== -->
+            <section id="scope">
+                <h2><i>4</i>Scope</h2>
+
+                <p>
+                    Đề tài tập trung xây dựng và thực nghiệm hệ thống
+                    ở quy mô Prototype nhằm kiểm chứng khả năng
+                    giám sát, điều khiển và quản lý quá trình phơi nông sản.
+                </p>
+
+                <h3>4.1. In Scope</h3>
+
+                <div class="grid">
+
+                    <div class="card">
+                        <h4>Hardware & IoT</h4>
+                        <ul>
+                            <li>ESP32-CAM làm nút IoT trung tâm.</li>
+                            <li>DHT11 đo nhiệt độ và độ ẩm.</li>
+                            <li>Rain Sensor phát hiện trạng thái mưa.</li>
+                            <li>LDR nhận biết điều kiện sáng/tối.</li>
+                            <li>Servo Motor mô phỏng đóng/mở mái che.</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h4>Network & Communication</h4>
+                        <ul>
+                            <li>Giao tiếp ESP32-CAM và Java Web Server.</li>
+                            <li>Truyền nhận dữ liệu qua HTTP/HTTPS.</li>
+                            <li>Sử dụng RESTful API.</li>
+                            <li>Theo dõi Online/Offline dựa trên Heartbeat hoặc Last Seen.</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h4>Software & Database</h4>
+                        <ul>
+                            <li>Java Web: JSP, Servlet, JDBC, JavaScript.</li>
+                            <li>Application Server: Apache Tomcat 9.</li>
+                            <li>Database: Microsoft SQL Server.</li>
+                            <li>Dashboard giám sát môi trường và mái che.</li>
+                            <li>Điều khiển AUTO/MANUAL và OPEN/CLOSE.</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h4>Management & Traceability</h4>
+                        <ul>
+                            <li>Phân quyền ADMIN, MANAGER, OPERATOR.</li>
+                            <li>Quản lý người dùng và kho phơi.</li>
+                            <li>Quản lý thiết bị IoT và mẻ phơi.</li>
+                            <li>Lưu Sensor History và Event Log.</li>
+                            <li>Tra cứu quá trình vận hành hệ thống.</li>
+                        </ul>
+                    </div>
+
+                </div>
+
+                <h3>4.2. Out of Scope</h3>
+
+                <ul>
+                    <li>
+                        Không triển khai quạt thông gió, lò sấy nhiệt
+                        hoặc hệ thống gia nhiệt tự động.
+                    </li>
+                    <li>
+                        Không sử dụng AI/Machine Learning để dự đoán
+                        độ ẩm nông sản hoặc thời gian phơi tối ưu.
+                    </li>
+                    <li>
+                        Không phát triển ứng dụng Mobile Native;
+                        chỉ tập trung vào Responsive Web.
+                    </li>
+                    <li>
+                        Không sử dụng MQTT hoặc IoT Broker trung gian.
+                    </li>
+                    <li>
+                        Chưa triển khai trên nông trại quy mô lớn
+                        với nhiều thiết bị vật lý hoạt động đồng thời.
+                    </li>
+                    <li>
+                        Không tích hợp dự báo thời tiết nâng cao
+                        hoặc phân tích dữ liệu lớn dài hạn.
+                    </li>
+                </ul>
+            </section>
+
+
+            <!-- ==================== SECTION 5: EXPECTED OUTCOMES ==================== -->
+            <section id="expected-outcomes">
+                <h2><i>5</i>Expected Outcomes</h2>
+
+                <p>
+                    Sau khi hoàn thiện mô hình thử nghiệm, đề tài kỳ vọng
+                    đạt được những kết quả kỹ thuật và vận hành sau:
+                </p>
+
+                <div class="grid">
+
+                    <div class="card">
+                        <h4>5.1. Automated Response</h4>
+                        Hệ thống hoạt động ổn định ở chế độ AUTO:
+                        tự động đóng mái khi phát hiện mưa hoặc trời tối
+                        và mở lại khi điều kiện khô ráo, đủ sáng.
+                    </div>
+
+                    <div class="card">
+                        <h4>5.2. Real-Time Dashboard</h4>
+                        Dashboard hiển thị nhiệt độ, độ ẩm, trạng thái mưa,
+                        ánh sáng, mái che, chế độ AUTO/MANUAL
+                        và kết nối Online/Offline của thiết bị.
+                    </div>
+
+                    <div class="card">
+                        <h4>5.3. Remote Manual Control</h4>
+                        Cho phép tài khoản MANAGER và OPERATOR
+                        chuyển sang MANUAL, gửi lệnh OPEN/CLOSE
+                        từ Web đến ESP32-CAM để điều khiển Servo
+                        với độ trễ thấp.
+                    </div>
+
+                    <div class="card">
+                        <h4>5.4. Centralized Traceability</h4>
+                        Quản lý tập trung User, Warehouse, Device
+                        và Drying Batch; lưu Sensor History và Event Log
+                        để hỗ trợ tra cứu, truy vết và xuất báo cáo
+                        khi có chức năng tương ứng.
+                    </div>
+
+                    <div class="card">
+                        <h4>5.5. Improved System Awareness</h4>
+                        Hỗ trợ phát hiện mất kết nối thiết bị,
+                        mưa đột ngột và các thông số môi trường
+                        vượt ngưỡng thông qua Warning/Event Log,
+                        giúp giảm nhu cầu kiểm tra thủ công.
+                    </div>
+
+                </div>
+
+                <div class="note">
+                    <b>Expected Impact:</b>
+                    Hệ thống hướng đến giảm sự phụ thuộc vào thao tác
+                    kiểm tra thủ công, tăng khả năng phản ứng với
+                    biến động môi trường và nâng cao hiệu quả quản lý
+                    các mẻ phơi nông sản.
+                </div>
+            </section>
+
+
+            <section id="requirements">
+                <h2><i>5</i>Requirement Analysis</h2>
+
+                <p>
+                    Phần này xác định các yêu cầu chính của Smart Agricultural Drying System,
+                    bao gồm yêu cầu chức năng theo từng đối tượng sử dụng, yêu cầu phi chức năng
+                    và các actor tham gia tương tác với hệ thống.
+                </p>
+
+                <h3>5.1 Functional Requirements</h3>
+
+                <p>
+                    Các chức năng của hệ thống được phân chia dựa trên vai trò của người dùng
+                    và thiết bị IoT.
+                </p>
+
+                <h4>Admin</h4>
+
+                <div class="tw">
+                    <table>
+                        <tr>
+                            <th>Mã</th>
+                            <th>Yêu cầu chức năng</th>
+                            <th>Ưu tiên</th>
+                        </tr>
+
+                        <tr>
+                            <td>FR-A01</td>
+                            <td>Đăng nhập và đăng xuất khỏi hệ thống.</td>
+                            <td><span class="pill r">Cao</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-A02</td>
+                            <td>
+                                Xem tổng quan số lượng User, Warehouse, Device
+                                và Drying Batch trên Admin Dashboard.
+                            </td>
+                            <td><span class="pill w">Trung bình</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-A03</td>
+                            <td>
+                                Quản lý tài khoản người dùng:
+                                thêm, cập nhật, kích hoạt hoặc vô hiệu hóa tài khoản.
+                            </td>
+                            <td><span class="pill r">Cao</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-A04</td>
+                            <td>
+                                Quản lý Warehouse:
+                                thêm, cập nhật và thay đổi trạng thái hoạt động.
+                            </td>
+                            <td><span class="pill r">Cao</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-A05</td>
+                            <td>
+                                Quản lý Device và gán thiết bị IoT vào Warehouse.
+                            </td>
+                            <td><span class="pill r">Cao</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-A06</td>
+                            <td>
+                                Theo dõi trạng thái Online/Offline của các thiết bị.
+                            </td>
+                            <td><span class="pill w">Trung bình</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-A07</td>
+                            <td>
+                                Xem Event Log và theo dõi hoạt động tổng thể của hệ thống.
+                            </td>
+                            <td><span class="pill w">Trung bình</span></td>
+                        </tr>
+                    </table>
+                </div>
+
+
+                <h4>Manager</h4>
+
+                <div class="tw">
+                    <table>
+                        <tr>
+                            <th>Mã</th>
+                            <th>Yêu cầu chức năng</th>
+                            <th>Ưu tiên</th>
+                        </tr>
+
+                        <tr>
+                            <td>FR-M01</td>
+                            <td>
+                                Xem danh sách và lựa chọn các Warehouse được phân quyền.
+                            </td>
+                            <td><span class="pill r">Cao</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-M02</td>
+                            <td>
+                                Theo dõi gần thời gian thực Temperature, Humidity,
+                                Rain Status và Light Status.
+                            </td>
+                            <td><span class="pill r">Cao</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-M03</td>
+                            <td>
+                                Theo dõi Roof Status, chế độ AUTO/MANUAL
+                                và trạng thái Online/Offline của thiết bị.
+                            </td>
+                            <td><span class="pill r">Cao</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-M04</td>
+                            <td>
+                                Chuyển đổi giữa chế độ AUTO và MANUAL.
+                            </td>
+                            <td><span class="pill r">Cao</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-M05</td>
+                            <td>
+                                Điều khiển OPEN/CLOSE mái che trong chế độ MANUAL.
+                            </td>
+                            <td><span class="pill r">Cao</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-M06</td>
+                            <td>
+                                Tạo Drying Batch mới tại các Warehouse được phân quyền.
+                            </td>
+                            <td><span class="pill w">Trung bình</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-M07</td>
+                            <td>
+                                Theo dõi và hoàn thành Drying Batch đang hoạt động.
+                            </td>
+                            <td><span class="pill w">Trung bình</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-M08</td>
+                            <td>
+                                Xem Sensor History và Event Log
+                                của các Warehouse được phân công.
+                            </td>
+                            <td><span class="pill w">Trung bình</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-M09</td>
+                            <td>
+                                Xem thông tin User và Warehouse thuộc phạm vi được phân quyền.
+                            </td>
+                            <td><span class="pill w">Trung bình</span></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <h4>Operator</h4>
+
+                <div class="tw">
+                    <table>
+                        <tr>
+                            <th>Mã</th>
+                            <th>Yêu cầu chức năng</th>
+                            <th>Ưu tiên</th>
+                        </tr>
+
+                        <tr>
+                            <td>FR-O01</td>
+                            <td>
+                                Theo dõi Warehouse được gán cho tài khoản.
+                            </td>
+                            <td><span class="pill r">Cao</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-O02</td>
+                            <td>
+                                Theo dõi Temperature, Humidity, Rain,
+                                Light, Roof Status và Device Connection.
+                            </td>
+                            <td><span class="pill r">Cao</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-O03</td>
+                            <td>
+                                Chuyển đổi chế độ AUTO/MANUAL
+                                và điều khiển mái trong chế độ MANUAL.
+                            </td>
+                            <td><span class="pill r">Cao</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-O04</td>
+                            <td>
+                                Tạo Drying Batch mới và theo dõi batch đang hoạt động.
+                            </td>
+                            <td><span class="pill w">Trung bình</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-O05</td>
+                            <td>
+                                Hoàn thành Drying Batch khi quá trình phơi kết thúc.
+                            </td>
+                            <td><span class="pill w">Trung bình</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-O06</td>
+                            <td>
+                                Xem Sensor History và Event Log
+                                thuộc Warehouse được phân công.
+                            </td>
+                            <td><span class="pill w">Trung bình</span></td>
+                        </tr>
+                    </table>
+                </div>
+
+
+                <h4>ESP32-CAM / IoT Device</h4>
+
+                <div class="tw">
+                    <table>
+                        <tr>
+                            <th>Mã</th>
+                            <th>Yêu cầu chức năng</th>
+                            <th>Ưu tiên</th>
+                        </tr>
+
+                        <tr>
+                            <td>FR-I01</td>
+                            <td>
+                                Kết nối Wi-Fi và giao tiếp với Java Web Server thông qua HTTP.
+                            </td>
+                            <td><span class="pill r">Cao</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-I02</td>
+                            <td>
+                                Đọc nhiệt độ và độ ẩm từ DHT11.
+                            </td>
+                            <td><span class="pill r">Cao</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-I03</td>
+                            <td>
+                                Đọc trạng thái mưa từ Rain Sensor
+                                và trạng thái sáng/tối từ LDR.
+                            </td>
+                            <td><span class="pill r">Cao</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-I04</td>
+                            <td>
+                                Tự động điều khiển Servo Motor theo luật AUTO.
+                            </td>
+                            <td><span class="pill r">Cao</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-I05</td>
+                            <td>
+                                Nhận MODE và Roof Command từ server trong chế độ MANUAL.
+                            </td>
+                            <td><span class="pill r">Cao</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-I06</td>
+                            <td>
+                                Gửi dữ liệu cảm biến đến
+                                <code>/api/sensor</code>.
+                            </td>
+                            <td><span class="pill r">Cao</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-I07</td>
+                            <td>
+                                Gửi heartbeat và trạng thái mái thông qua
+                                <code>/api/device-state</code>.
+                            </td>
+                            <td><span class="pill r">Cao</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-I08</td>
+                            <td>
+                                Gửi dữ liệu ngay khi phát hiện thay đổi quan trọng
+                                và lưu dữ liệu định kỳ phục vụ Sensor History.
+                            </td>
+                            <td><span class="pill w">Trung bình</span></td>
+                        </tr>
+                    </table>
+                </div>
+
+
+                <h3>5.2 Non-functional Requirements</h3>
+
+                <div class="tw">
+                    <table>
+                        <tr>
+                            <th>Mã</th>
+                            <th>Yêu cầu</th>
+                            <th>Mô tả</th>
+                        </tr>
+
+                        <tr>
+                            <td>NFR-01</td>
+                            <td>Real-time Monitoring</td>
+                            <td>
+                                Dashboard phải cập nhật Temperature, Humidity,
+                                Rain, Light, Roof Status, Mode, Device Connection
+                                và Warning mà không yêu cầu tải lại toàn bộ trang.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>NFR-02</td>
+                            <td>Reliability</td>
+                            <td>
+                                Trong chế độ AUTO, ESP32-CAM phải có khả năng
+                                tự xử lý điều kiện môi trường và điều khiển mái
+                                mà không phụ thuộc vào thao tác trực tiếp trên website.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>NFR-03</td>
+                            <td>Response Time</td>
+                            <td>
+                                Dashboard phải cập nhật dữ liệu cảm biến và trạng thái thiết bị trong khoảng tối đa 2
+                                giây đối với màn hình Operator/Manager. Trạng thái Online/Offline trên Admin Dashboard
+                                được cập nhật mỗi 5 giây.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>NFR-04</td>
+                            <td>Security</td>
+                            <td>
+                                Hệ thống phải kiểm tra đăng nhập, session
+                                và quyền truy cập theo vai trò
+                                ADMIN, MANAGER và OPERATOR.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>NFR-05</td>
+                            <td>Availability</td>
+                            <td>
+                                Website vẫn phải cho phép truy cập dữ liệu lịch sử khi thiết bị IoT tạm thời mất kết
+                                nối. Nếu thiết bị không gửi heartbeat trong hơn 30 giây, hệ thống phải nhận diện thiết
+                                bị là OFFLINE.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>NFR-06</td>
+                            <td>Data Consistency</td>
+                            <td>
+                                Trạng thái hiển thị trên Dashboard phải phản ánh
+                                dữ liệu gần nhất mà server nhận được từ thiết bị
+                                và dữ liệu được lưu trong database.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>NFR-07</td>
+                            <td>Responsive Interface</td>
+                            <td>
+                                Giao diện web phải có thể sử dụng trên laptop và thiết bị di động.
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+
+                <h3>5.3 System Actors</h3>
+
+                <div class="tw">
+                    <table>
+                        <tr>
+                            <th>Actor</th>
+                            <th>Vai trò</th>
+                            <th>Tương tác chính</th>
+                        </tr>
+
+                        <tr>
+                            <td><strong>ADMIN</strong></td>
+                            <td>Quản trị toàn bộ hệ thống</td>
+                            <td>
+                                Manage Users, Manage Warehouses,
+                                Manage Devices, Monitor Device Status,
+                                View System Overview và View Event Log.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>MANAGER</strong></td>
+                            <td>
+                                Quản lý một hoặc nhiều Warehouse được phân quyền
+                            </td>
+                            <td>
+                                Select Warehouse, Monitor Sensors,
+                                Control Roof, Monitor Drying Batch,
+                                View History và Event Log.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>OPERATOR</strong></td>
+                            <td>
+                                Trực tiếp vận hành tại một Warehouse
+                            </td>
+                            <td>
+                                Monitor Sensors, Control Roof,
+                                Start Batch, Complete Batch,
+                                View History và Event Log.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>ESP32-CAM</strong></td>
+                            <td>
+                                IoT Device kết nối hệ thống vật lý với Java Web Server
+                            </td>
+                            <td>
+                                Read Sensors, Control Servo,
+                                Send Sensor Data, Send Heartbeat,
+                                Receive Command và Report Device State.
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+
+                <h3>5.4 Use Case Diagram</h3>
+
+                <p>
+                    Use Case Diagram mô tả mối quan hệ giữa các actor
+                    và các chức năng chính của Smart Agricultural Drying System.
+                    Hệ thống gồm bốn actor chính: ADMIN, MANAGER, OPERATOR
+                    và ESP32-CAM.
+                </p>
+
+                <div class="figure-block">
+                    <img src="img/usecase.png" alt="Use Case Diagram - Smart Agricultural Drying System"
+                        class="report-image">
+
+                    <p class="figure-caption">
+                        Figure 5.1. Use Case Diagram of Smart Agricultural Drying System
+                    </p>
+                </div>
+
+                <p>
+                    ADMIN chịu trách nhiệm quản trị tổng thể hệ thống;
+                    MANAGER giám sát và vận hành các warehouse được phân quyền;
+                    OPERATOR thực hiện các tác vụ vận hành tại warehouse được gán;
+                    trong khi ESP32-CAM đảm nhiệm việc đọc cảm biến,
+                    thực hiện điều khiển tự động và trao đổi dữ liệu với Java Web Server.
+                </p>
+            
+                <section id="architecture">
+
+                    <h2><i>6</i>System Architecture</h2>
+
+                    <p>
+                        Smart Agricultural Drying System được xây dựng theo kiến trúc nhiều lớp,
+                        kết hợp giữa thiết bị IoT, Java Web Server, cơ sở dữ liệu và giao diện web.
+                        Kiến trúc này cho phép dữ liệu môi trường được thu thập từ cảm biến,
+                        xử lý tại ESP32-CAM, truyền đến server và hiển thị trên dashboard.
+                        Đồng thời, các lệnh điều khiển từ người dùng có thể được truyền theo chiều ngược lại
+                        từ website đến thiết bị vật lý.
+                    </p>
+
+
+                    <!-- 6.1 Overall System Architecture -->
+
+                    <h3>6.1 Overall System Architecture</h3>
+
+                    <p>
+                        Kiến trúc tổng thể của hệ thống gồm năm thành phần chính:
+                        Physical Layer, Device Layer, Communication Layer,
+                        Application & Database Layer và Presentation Layer.
+                        Các lớp phối hợp với nhau để tạo thành một chu trình hoàn chỉnh từ
+                        thu thập dữ liệu, xử lý, lưu trữ đến giám sát và điều khiển.
+                    </p>
+
+                    <figure class="fig">
+                        <img src="img/6.1.png" alt="Overall System Architecture of Smart Agricultural Drying System"
+                            class="report-image">
+
+                        <figcaption>
+                            Hình 6.1. Overall System Architecture of Smart Agricultural Drying System.
+                        </figcaption>
+                    </figure>
+
+
+
+                    <!-- 6.2 Architecture Layers -->
+
+                    <h3>6.2 Architecture Layers</h3>
+
+                    <div class="tw">
+                        <table>
+                            <tr>
+                                <th>Layer</th>
+                                <th>Thành phần</th>
+                                <th>Vai trò chính</th>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <strong>Physical Layer</strong>
+                                </td>
+                                <td>
+                                    DHT11, Rain Sensor, LDR, Servo Motor
+                                </td>
+                                <td>
+                                    Thu thập điều kiện môi trường và thực hiện
+                                    chuyển động đóng/mở mái che.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <strong>Device Layer</strong>
+                                </td>
+                                <td>
+                                    ESP32-CAM
+                                </td>
+                                <td>
+                                    Đọc dữ liệu cảm biến, xử lý logic AUTO,
+                                    điều khiển servo và giao tiếp với Java Server.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <strong>Communication Layer</strong>
+                                </td>
+                                <td>
+                                    Wi-Fi, HTTP, REST-like API
+                                </td>
+                                <td>
+                                    Truyền dữ liệu cảm biến, heartbeat,
+                                    trạng thái mái và lệnh điều khiển giữa ESP32-CAM
+                                    và Java Web Server.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <strong>Application Layer</strong>
+                                </td>
+                                <td>
+                                    Servlet, Controller, DAO, Filter
+                                </td>
+                                <td>
+                                    Xử lý request, kiểm tra quyền truy cập,
+                                    xử lý business logic, điều khiển thiết bị
+                                    và truy xuất dữ liệu.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <strong>Database Layer</strong>
+                                </td>
+                                <td>
+                                    Microsoft SQL Server
+                                </td>
+                                <td>
+                                    Lưu User, Warehouse, Device,
+                                    Sensor Data, Drying Batch và Event Log.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <strong>Presentation Layer</strong>
+                                </td>
+                                <td>
+                                    JSP, JSTL, HTML, CSS, JavaScript
+                                </td>
+                                <td>
+                                    Hiển thị dữ liệu gần thời gian thực,
+                                    cung cấp giao diện quản lý và điều khiển cho người dùng.
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+
+                    <!-- 6.3 Device and Physical Layer -->
+
+                    <h3>6.3 Device and Physical Layer</h3>
+
+                    <p>
+                        ESP32-CAM đóng vai trò là bộ điều khiển trung tâm của phần cứng.
+                        Thiết bị nhận dữ liệu từ các cảm biến và thực hiện điều khiển mái che
+                        thông qua Servo Motor.
+                    </p>
+
+                    <div class="tw">
+                        <table>
+                            <tr>
+                                <th>Component</th>
+                                <th>Chức năng</th>
+                            </tr>
+
+                            <tr>
+                                <td>DHT11</td>
+                                <td>
+                                    Đo nhiệt độ và độ ẩm môi trường.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Rain Sensor</td>
+                                <td>
+                                    Xác định trạng thái RAINING hoặc NO_RAIN.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>LDR</td>
+                                <td>
+                                    Xác định điều kiện BRIGHT hoặc DARK.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Servo Motor</td>
+                                <td>
+                                    Thực hiện đóng hoặc mở mái che.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>ESP32-CAM</td>
+                                <td>
+                                    Đọc cảm biến, điều khiển servo,
+                                    thực hiện AUTO logic và giao tiếp với Java Server.
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+
+                    <!-- 6.4 Communication Architecture -->
+
+                    <h3>6.4 Communication Architecture</h3>
+
+                    <p>
+                        ESP32-CAM và Java Web Server giao tiếp thông qua HTTP trên mạng Wi-Fi.
+                        Hệ thống sử dụng các API riêng cho dữ liệu cảm biến,
+                        trạng thái thiết bị và dữ liệu dashboard.
+                    </p>
+
+                    <div class="tw">
+                        <table>
+                            <tr>
+                                <th>API</th>
+                                <th>Direction</th>
+                                <th>Vai trò</th>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <code>/api/sensor</code>
+                                </td>
+                                <td>
+                                    ESP32-CAM → Server
+                                </td>
+                                <td>
+                                    Gửi Temperature, Humidity,
+                                    Rain Status, Light Status và Roof Status
+                                    để lưu vào SENSOR_DATA.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <code>/api/device-state</code>
+                                </td>
+                                <td>
+                                    ESP32-CAM ↔ Server
+                                </td>
+                                <td>
+                                    Cập nhật heartbeat và trạng thái mái;
+                                    đồng thời nhận Mode và Roof Command từ server.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <code>/api/dashboard-data</code>
+                                </td>
+                                <td>
+                                    Browser ← Server
+                                </td>
+                                <td>
+                                    Trả dữ liệu mới nhất cho Dashboard của
+                                    Manager và Operator.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <code>/api/admin-dashboard-data</code>
+                                </td>
+                                <td>
+                                    Browser ← Server
+                                </td>
+                                <td>
+                                    Cung cấp số lượng thiết bị Online/Offline
+                                    cho Admin Dashboard.
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+
+                    <!-- 6.5 Application Architecture -->
+
+                    <h3>6.5 Application Architecture</h3>
+
+                    <p>
+                        Phần mềm Java Web được tổ chức theo mô hình gần với MVC,
+                        trong đó JSP chịu trách nhiệm hiển thị,
+                        Servlet xử lý request và business logic,
+                        DAO thực hiện giao tiếp với database.
+                    </p>
+
+                    <figure class="fig">
+                        <img src="img/6.5.png" alt="Application Architecture of Smart Agricultural Drying System"
+                            class="report-image">
+
+                        <figcaption>
+                            Hình 6.2. Application Architecture of Smart Agricultural Drying System.
+                        </figcaption>
+                    </figure>
+                    <p>
+                        Với request từ người dùng, hệ thống kiểm tra session và role
+                        trước khi thực hiện chức năng. Với request từ ESP32-CAM,
+                        server tiếp nhận dữ liệu thiết bị, cập nhật database
+                        và trả về trạng thái hoặc lệnh điều khiển cần thiết.
+                    </p>
+
+
+                    <!-- 6.6 Database Layer -->
+
+                    <h3>6.6 Database Layer</h3>
+
+                    <p>
+                        Microsoft SQL Server được sử dụng để lưu trữ dữ liệu quản lý
+                        và dữ liệu vận hành của toàn hệ thống.
+                        Database liên kết thông tin người dùng, warehouse,
+                        thiết bị IoT, dữ liệu cảm biến và drying batch
+                        để hỗ trợ quá trình giám sát và truy vết.
+                    </p>
+
+                    <figure class="fig">
+                        <img src="img/6.6.png" alt="Database Diagram of Smart Agricultural Drying System"
+                            class="report-image">
+
+                        <figcaption>
+                            Hình 6.3. Database Diagram of Smart Agricultural Drying System.
+                        </figcaption>
+                    </figure>
+
+                    <div class="tw">
+                        <table>
+                            <tr>
+                                <th>Table</th>
+                                <th>Vai trò</th>
+                            </tr>
+
+                            <tr>
+                                <td>USER</td>
+                                <td>
+                                    Lưu tài khoản, thông tin người dùng và vai trò.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>WAREHOUSE</td>
+                                <td>
+                                    Lưu thông tin các khu vực/kho phơi.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>USER_WAREHOUSE</td>
+                                <td>
+                                    Quản lý việc phân quyền Manager với Warehouse.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>DEVICE</td>
+                                <td>
+                                    Lưu thiết bị, mode, roof status,
+                                    last_seen và trạng thái hoạt động.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>SENSOR_DATA</td>
+                                <td>
+                                    Lưu Temperature, Humidity,
+                                    Rain Status, Light Status và Roof Status theo thời gian.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>DRYING_BATCH</td>
+                                <td>
+                                    Lưu thông tin và trạng thái của từng mẻ phơi.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>EVENT_LOG</td>
+                                <td>
+                                    Lưu các sự kiện và hoạt động quan trọng của hệ thống.
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+
+                    <!-- 6.7 Presentation Layer -->
+
+                    <h3>6.7 Presentation Layer</h3>
+
+                    <p>
+                        Presentation Layer cung cấp giao diện web khác nhau
+                        dựa trên vai trò của người dùng.
+                    </p>
+
+                    <div class="tw">
+                        <table>
+                            <tr>
+                                <th>Role</th>
+                                <th>Giao diện và chức năng chính</th>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <strong>ADMIN</strong>
+                                </td>
+                                <td>
+                                    System Overview, User Management,
+                                    Warehouse Management, Device Management
+                                    và Event Log.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <strong>MANAGER</strong>
+                                </td>
+                                <td>
+                                    Warehouse Selection, Sensor Monitoring,
+                                    Roof Control, Drying Batch,
+                                    Sensor History và Event Log.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <strong>OPERATOR</strong>
+                                </td>
+                                <td>
+                                    Assigned Warehouse Monitoring,
+                                    Roof Control, Drying Batch,
+                                    Sensor History và Event Log.
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+
+                    <!-- 6.8 Data and Command Direction -->
+
+                    <h3>6.8 Data and Command Direction</h3>
+
+                    <p>
+                        Hệ thống tồn tại hai hướng giao tiếp chính:
+                        luồng dữ liệu từ thiết bị lên hệ thống
+                        và luồng lệnh điều khiển từ người dùng xuống thiết bị.
+                    </p>
+
+                    <div class="tw">
+                        <table>
+                            <tr>
+                                <th>Flow</th>
+                                <th>Direction</th>
+                                <th>Mục đích</th>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <strong>Sensor Data Flow</strong>
+                                </td>
+                                <td>
+                                    Sensors → ESP32-CAM → Server → Database → Dashboard
+                                </td>
+                                <td>
+                                    Thu thập, lưu trữ và hiển thị dữ liệu môi trường.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <strong>Device State Flow</strong>
+                                </td>
+                                <td>
+                                    ESP32-CAM → Server → DEVICE → Dashboard
+                                </td>
+                                <td>
+                                    Cập nhật heartbeat, roof status
+                                    và trạng thái Online/Offline.
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <strong>Control Command Flow</strong>
+                                </td>
+                                <td>
+                                    User → Dashboard → Server → ESP32-CAM → Servo
+                                </td>
+                                <td>
+                                    Thực hiện lệnh điều khiển mái
+                                    trong chế độ MANUAL.
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                   
+                </section>
+
+                <section id="hardware">
+                    <h2><i>7</i>Hardware Design</h2>
+                    <div class="tw">
+                        <table>
+                            <tr>
+                                <th>Component</th>
+                                <th>Chức năng</th>
+                                <th>Tín hiệu</th>
+                                <th>Chân (ví dụ)</th>
+                            </tr>
+                            <tr>
+                                <td>ESP32-CAM</td>
+                                <td>Vi điều khiển, Wi-Fi, gửi HTTP</td>
+                                <td>3.3V logic</td>
+                                <td>–</td>
+                            </tr>
+                            <tr>
+                                <td>DHT11</td>
+                                <td>Nhiệt độ 0–50°C, độ ẩm 20–90%</td>
+                                <td>Digital 1-wire</td>
+                                <td>GPIO 14</td>
+                            </tr>
+                            <tr>
+                                <td>Rain Sensor</td>
+                                <td>Phát hiện mưa</td>
+                                <td>Digital (DO)</td>
+                                <td>GPIO 13</td>
+                            </tr>
+                            <tr>
+                                <td>LDR</td>
+                                <td>Phân biệt sáng/tối</td>
+                                <td>Digital (DO qua so sánh)</td>
+                                <td>GPIO 15</td>
+                            </tr>
+                            <tr>
+                                <td>Servo Motor</td>
+                                <td>Đóng/mở mái che</td>
+                                <td>PWM 50 Hz</td>
+                                <td>GPIO 12</td>
+                            </tr>
+                        </table>
+                        <caption>Bảng 7.1. Danh sách linh kiện. Số chân chỉ là ví dụ, cần đối chiếu sơ đồ thực tế.
+                        </caption>
+                    </div>
+                    <figure class="fig">
+                        <div class="imgph">[Image placeholder] Sơ đồ nối dây (Fritzing) và ảnh mạch thực tế</div>
+                        <figcaption>Hình 7.1. Sơ đồ đấu nối ESP32-CAM với bốn linh kiện. Servo nên cấp nguồn 5V riêng.
+                        </figcaption>
+                    </figure>
+                    <div class="note">Cảm biến mưa và LDR đọc dạng digital để tránh xung đột ADC2 với Wi-Fi trên ESP32.
+                    </div>
+                </section>
+
+                <section id="software">
+                    <h2><i>8</i>Software Design</h2>
+                    <p>Ứng dụng web theo mô hình MVC: Servlet là Controller, JSP/JSTL là View, lớp DAO và model truy cập
+                        SQL
+                        Server. Luật AUTO được áp dụng cả ở firmware và ở Servlet để dữ liệu hiển thị luôn khớp trạng
+                        thái
+                        mái.</p>
+                    <h3>Thử luật AUTO</h3>
+                    <div class="sim">
+                        <label>Rain <select id="sr">
+                                <option>NO_RAIN</option>
+                                <option>RAIN</option>
+                            </select></label>
+                        <label>Light <select id="sl">
+                                <option>BRIGHT</option>
+                                <option>DARK</option>
+                            </select></label>
+                        <span>→ Roof:</span><span class="out" id="so">OPEN</span>
+                    </div>
+                    <h3>Code placeholder: Firmware gửi dữ liệu</h3>
+                    <pre><span class="c">// ESP32-CAM: POST sensor data every 5 seconds</span>
+HTTPClient http;
+http.begin("http://&lt;server&gt;:8080/drying/api/sensor");
+http.addHeader("Content-Type", "application/json");
+http.POST("{\"deviceCode\":\"DRY-01\",\"temp\":31.5,\"hum\":68,\"rain\":false,\"light\":\"BRIGHT\"}");</pre>
+                    <h3>Code placeholder: Servlet nhận dữ liệu</h3>
+                    <pre>@WebServlet("/api/sensor")
+<span class="c">// TODO: parse JSON → SensorData → SensorDao.insert()</span>
+<span class="c">// TODO: RoofController.applyAuto(device, data) → EventLogDao.log(...)</span></pre>
+                </section>
+
+                <section id="database">
+                    <h2><i>9</i>Database Design</h2>
+                    <figure class="fig">
+                        <div class="imgph">[Image placeholder] ERD của 7 bảng trên SQL Server</div>
+                        <figcaption>Hình 9.1. Sơ đồ thực thể liên kết.</figcaption>
+                    </figure>
+                    <div class="tw">
+                        <table>
+                            <tr>
+                                <th>Bảng</th>
+                                <th>Trường chính</th>
+                                <th>Quan hệ</th>
+                            </tr>
+                            <tr>
+                                <td>USER</td>
+                                <td>user_id, username, password_hash, role, status</td>
+                                <td>N–N Warehouse qua USER_WAREHOUSE</td>
+                            </tr>
+                            <tr>
+                                <td>WAREHOUSE</td>
+                                <td>warehouse_id, name, location</td>
+                                <td>1–N Device, 1–N Drying_Batch</td>
+                            </tr>
+                            <tr>
+                                <td>USER_WAREHOUSE</td>
+                                <td>user_id, warehouse_id</td>
+                                <td>Bảng trung gian phân công</td>
+                            </tr>
+                            <tr>
+                                <td>DEVICE</td>
+                                <td>device_id, code, warehouse_id, mode, roof_state, last_seen</td>
+                                <td>1–N Sensor_Data</td>
+                            </tr>
+                            <tr>
+                                <td>SENSOR_DATA</td>
+                                <td>id, device_id, temperature, humidity, rain, light, created_at</td>
+                                <td>N–1 Device</td>
+                            </tr>
+                            <tr>
+                                <td>DRYING_BATCH</td>
+                                <td>batch_id, warehouse_id, product, start_time, end_time, status</td>
+                                <td>N–1 Warehouse</td>
+                            </tr>
+                            <tr>
+                                <td>EVENT_LOG</td>
+                                <td>id, device_id, type, message, created_at</td>
+                                <td>N–1 Device</td>
+                            </tr>
+                        </table>
+                    </div>
+                </section>
+
+                <section id="features">
+                    <h2><i>10</i>Main Features</h2>
+                    <div class="grid">
+                        <div class="card">
+                            <h4>Realtime monitoring</h4>Nhiệt độ, độ ẩm, mưa, ánh sáng cập nhật mỗi 5 giây.
+                        </div>
+                        <div class="card">
+                            <h4>Roof control</h4>AUTO theo cảm biến hoặc MANUAL bằng nút Open/Close trên web.
+                        </div>
+                        <div class="card">
+                            <h4>Drying batch</h4>Mở mẻ phơi, theo dõi thời gian và đóng mẻ khi đạt yêu cầu.
+                        </div>
+                        <div class="card">
+                            <h4>Alerts &amp; Event Log</h4>Rain Detected, High/Low Temperature, Device Offline.
+                        </div>
+                        <div class="card">
+                            <h4>Sensor history</h4>Lưu và lọc lịch sử theo thiết bị, theo ngày.
+                        </div>
+                        <div class="card">
+                            <h4>Admin console</h4>CRUD User, Warehouse, Device và gán user vào kho.
+                        </div>
+                    </div>
+                </section>
+
+                <section id="dataflow">
+                    <h2><i>11</i>IoT Data Flow</h2>
+                    <ol>
+                        <li>ESP32-CAM đọc DHT11, rain sensor và LDR mỗi 5 giây.</li>
+                        <li>Firmware áp dụng luật AUTO và quay servo nếu cần.</li>
+                        <li>ESP32 gửi JSON bằng HTTP POST đến <code>/api/sensor</code>.</li>
+                        <li>Servlet kiểm tra mã thiết bị, lưu <code>SENSOR_DATA</code>, cập nhật <code>last_seen</code>.
+                        </li>
+                        <li>Servlet sinh cảnh báo và ghi <code>EVENT_LOG</code> khi vượt ngưỡng.</li>
+                        <li>Dashboard JSP gọi API định kỳ để vẽ lại số liệu và biểu đồ.</li>
+                    </ol>
+                    <div class="note">Thiết bị bị coi là OFFLINE nếu <code>last_seen</code> cách hiện tại quá 30 giây
+                        (giá
+                        trị ví dụ, cấu hình được).</div>
+                </section>
+
+                <section id="roles">
+                    <h2><i>12</i>User Roles and Permissions</h2>
+                    <div class="tw">
+                        <table class="perm">
+                            <tr>
+                                <th>Chức năng</th>
+                                <th>ADMIN</th>
+                                <th>MANAGER</th>
+                                <th>OPERATOR</th>
+                            </tr>
+                            <tr>
+                                <td>Quản lý User</td>
+                                <td class="ok">✓</td>
+                                <td class="no">–</td>
+                                <td class="no">–</td>
+                            </tr>
+                            <tr>
+                                <td>Quản lý Warehouse / Device</td>
+                                <td class="ok">✓</td>
+                                <td class="no">–</td>
+                                <td class="no">–</td>
+                            </tr>
+                            <tr>
+                                <td>Xem tổng quan toàn hệ thống</td>
+                                <td class="ok">✓</td>
+                                <td class="no">–</td>
+                                <td class="no">–</td>
+                            </tr>
+                            <tr>
+                                <td>Xem sensor realtime</td>
+                                <td class="ok">✓</td>
+                                <td class="ok">✓ (kho được giao)</td>
+                                <td class="ok">✓ (1 kho)</td>
+                            </tr>
+                            <tr>
+                                <td>Điều khiển mái</td>
+                                <td class="no">–</td>
+                                <td class="ok">✓</td>
+                                <td class="ok">✓</td>
+                            </tr>
+                            <tr>
+                                <td>Quản lý drying batch</td>
+                                <td class="no">–</td>
+                                <td class="ok">Theo dõi</td>
+                                <td class="ok">✓</td>
+                            </tr>
+                            <tr>
+                                <td>Xem history</td>
+                                <td class="ok">✓</td>
+                                <td class="ok">✓</td>
+                                <td class="ok">✓</td>
+                            </tr>
+                            <tr>
+                                <td>Xem Event Log</td>
+                                <td class="ok">✓</td>
+                                <td class="ok">✓</td>
+                                <td class="ok">✓</td>
+                            </tr>
+                        </table>
+                    </div>
+                </section>
+
+                <section id="testing">
+                    <h2><i>13</i>Testing</h2>
+                    <div class="tw">
+                        <table>
+                            <tr>
+                                <th>Mã</th>
+                                <th>Kịch bản</th>
+                                <th>Kết quả mong đợi</th>
+                                <th>Kết quả</th>
+                            </tr>
+                            <tr>
+                                <td>TC-01</td>
+                                <td>AUTO, rain = RAIN</td>
+                                <td>Mái đóng, ghi log Rain Detected</td>
+                                <td><span class="pill">Pass</span></td>
+                            </tr>
+                            <tr>
+                                <td>TC-02</td>
+                                <td>AUTO, light = DARK</td>
+                                <td>Mái đóng</td>
+                                <td><span class="pill">Pass</span></td>
+                            </tr>
+                            <tr>
+                                <td>TC-03</td>
+                                <td>AUTO, BRIGHT và NO_RAIN</td>
+                                <td>Mái mở</td>
+                                <td><span class="pill">Pass</span></td>
+                            </tr>
+                            <tr>
+                                <td>TC-04</td>
+                                <td>MANUAL, bấm Close trên web</td>
+                                <td>Servo đóng mái trong vài giây</td>
+                                <td><span class="pill">Pass</span></td>
+                            </tr>
+                            <tr>
+                                <td>TC-05</td>
+                                <td>Ngắt nguồn ESP32</td>
+                                <td>Trạng thái Offline, cảnh báo Device Offline</td>
+                                <td><span class="pill">Pass</span></td>
+                            </tr>
+                            <tr>
+                                <td>TC-06</td>
+                                <td>OPERATOR truy cập trang quản lý User</td>
+                                <td>Bị từ chối (403)</td>
+                                <td><span class="pill">Pass</span></td>
+                            </tr>
+                            <tr>
+                                <td>TC-07</td>
+                                <td>Mất Wi-Fi 2 phút rồi có lại</td>
+                                <td>Tự kết nối lại, tiếp tục gửi</td>
+                                <td><span class="pill w">Cần theo dõi</span></td>
+                            </tr>
+                        </table>
+                        <caption>Bảng 13.1. Kết quả kiểm thử mẫu, thay bằng số liệu thực tế của nhóm.</caption>
+                    </div>
+                </section>
+
+                <section id="results">
+                    <h2><i>14</i>Results</h2>
+                    <div class="stat">
+                        <div>Temperature<strong>31.5°C</strong></div>
+                        <div>Humidity<strong>68%</strong></div>
+                        <div>Rain<strong>NO_RAIN</strong></div>
+                        <div>Light<strong>BRIGHT</strong></div>
+                        <div>Roof<strong>OPEN</strong></div>
+                        <div>Mode<strong>AUTO</strong></div>
+                        <div>Device<strong>ONLINE</strong></div>
+                    </div>
+                    <figure class="fig"><svg id="chart" viewBox="0 0 720 260" width="100%" role="img"
+                            aria-label="Biểu đồ nhiệt độ và độ ẩm trong ngày"></svg>
+                        <figcaption>Hình 14.1. Nhiệt độ (xanh lá) và độ ẩm (xanh dương) từ 06:00 đến 18:00. Dữ liệu minh
+                            họa.</figcaption>
+                    </figure>
+                    <h3>Event Log mẫu</h3>
+                    <div class="tw">
+                        <table>
+                            <tr>
+                                <th>Thời gian</th>
+                                <th>Device</th>
+                                <th>Sự kiện</th>
+                                <th>Chi tiết</th>
+                            </tr>
+                            <tr>
+                                <td>13:42:10</td>
+                                <td>DRY-01</td>
+                                <td><span class="pill r">Rain Detected</span></td>
+                                <td>Mái chuyển OPEN → CLOSED</td>
+                            </tr>
+                            <tr>
+                                <td>14:05:33</td>
+                                <td>DRY-01</td>
+                                <td><span class="pill">Roof Opened</span></td>
+                                <td>Hết mưa, trời sáng (AUTO)</td>
+                            </tr>
+                            <tr>
+                                <td>14:20:00</td>
+                                <td>DRY-01</td>
+                                <td><span class="pill w">High Temperature</span></td>
+                                <td>Nhiệt độ vượt ngưỡng cấu hình</td>
+                            </tr>
+                            <tr>
+                                <td>15:02:48</td>
+                                <td>DRY-02</td>
+                                <td><span class="pill r">Device Offline</span></td>
+                                <td>Quá 30 giây không có dữ liệu</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <figure class="fig">
+                        <div class="imgph">[Image placeholder] Ảnh chụp Dashboard OPERATOR</div>
+                        <figcaption>Hình 14.2. Giao diện theo dõi realtime.</figcaption>
+                    </figure>
+                </section>
+
+                <section id="limitations">
+                    <h2><i>15</i>Limitations</h2>
+                    <ul>
+                        <li>DHT11 có sai số khoảng ±2°C và ±5% RH, chưa phù hợp yêu cầu đo chính xác.</li>
+                        <li>Dữ liệu qua HTTP thuần, chưa mã hóa; chưa có cơ chế xác thực thiết bị mạnh.</li>
+                        <li>Hệ thống phụ thuộc Wi-Fi tại kho, chưa có bộ nhớ đệm khi mất mạng.</li>
+                        <li>ESP32-CAM chưa tận dụng camera để giám sát hình ảnh.</li>
+                    </ul>
+                </section>
+
+                <section id="future">
+                    <h2><i>16</i>Future Improvements</h2>
+                    <ul>
+                        <li>Thay DHT11 bằng SHT31 hoặc DHT22 để tăng độ chính xác.</li>
+                        <li>Dùng HTTPS kèm API key riêng cho từng thiết bị, hoặc chuyển sang MQTT.</li>
+                        <li>Tận dụng camera chụp ảnh định kỳ để đánh giá độ khô.</li>
+                        <li>Thêm quạt/lò sấy và gửi thông báo qua Telegram hoặc email.</li>
+                        <li>Dự đoán thời điểm kết thúc mẻ phơi từ lịch sử dữ liệu.</li>
+                    </ul>
+                </section>
+
+                <section id="conclusion">
+                    <h2><i>17</i>Conclusion</h2>
+                    <p>Đề tài đã xây dựng được hệ thống khép kín từ cảm biến, ESP32-CAM, Java Servlet, SQL Server đến
+                        dashboard JSP. Mái che đóng/mở đúng theo luật AUTO, có thể điều khiển MANUAL từ web, và mọi sự
+                        kiện
+                        được lưu lại để truy vết. Hệ thống giúp giảm rủi ro mất mẻ phơi do mưa và cho nhiều vai trò cùng
+                        theo dõi nhiều kho.</p>
+                    <p>[Nhóm bổ sung bài học kinh nghiệm và đóng góp của từng thành viên.]</p>
+                </section>
+
+                <section id="references" style="border:0">
+                    <h2><i>18</i>References</h2>
+                    <ol class="refs">
+                        <li>Espressif Systems. <i>ESP32 Technical Reference Manual</i>. [URL/ngày truy cập]</li>
+                        <li>Aosong. <i>DHT11 Humidity &amp; Temperature Sensor Datasheet</i>.</li>
+                        <li>Oracle. <i>Jakarta Servlet Specification</i> / Apache Tomcat 9 Documentation.</li>
+                        <li>Microsoft. <i>SQL Server Documentation</i> và JDBC Driver for SQL Server.</li>
+                        <li>[Tài liệu khác của nhóm]</li>
+                    </ol>
+                </section>
+
+                <footer>IoT-Based Smart Agricultural Drying System · Báo cáo mẫu</footer>
+        </div>
+    </main>
+
+    <script>
+        (function () {
+            var secs = [["cover", "Cover Page", "•"], ["introduction", "Introduction", "1"], ["problem", "Problem Statement", "2"], ["objectives", "Objectives", "3"], ["scope", "Scope", "4"], ["requirements", "Requirement Analysis", "5"], ["architecture", "System Architecture", "6"], ["hardware", "Hardware Design", "7"], ["software", "Software Design", "8"], ["database", "Database Design", "9"], ["features", "Main Features", "10"], ["dataflow", "IoT Data Flow", "11"], ["roles", "Roles and Permissions", "12"], ["testing", "Testing", "13"], ["results", "Results", "14"], ["limitations", "Limitations", "15"], ["future", "Future Improvements", "16"], ["conclusion", "Conclusion", "17"], ["references", "References", "18"]];
+            var L = document.getElementById("links"), toc = document.getElementById("toc"), mb = document.getElementById("menu");
+            secs.forEach(function (s) { var a = document.createElement("a"); a.href = "#" + s[0]; a.innerHTML = "<span>" + s[2] + "</span>" + s[1]; a.onclick = function () { toc.classList.remove("open"); mb.setAttribute("aria-expanded", "false") }; L.appendChild(a) });
+            mb.onclick = function () { var o = toc.classList.toggle("open"); mb.setAttribute("aria-expanded", o) };
+            var links = L.querySelectorAll("a"), els = secs.map(function (s) { return document.getElementById(s[0]) }), bar = document.getElementById("bar");
+            function spy() {
+                var y = window.scrollY + 120, i = 0; els.forEach(function (e, k) { if (e.offsetTop <= y) i = k });
+                links.forEach(function (a, k) { a.classList.toggle("on", k === i) });
+                var h = document.documentElement.scrollHeight - innerHeight; bar.style.width = (h > 0 ? scrollY / h * 100 : 0) + "%"
+            }
+            addEventListener("scroll", spy, { passive: true }); spy();
+
+            function sim() {
+                var r = document.getElementById("sr").value, l = document.getElementById("sl").value, o = document.getElementById("so"), c = r === "RAIN" || l === "DARK";
+                o.textContent = c ? "CLOSED" : "OPEN"; o.className = "out" + (c ? " closed" : "")
+            }
+            document.getElementById("sr").onchange = sim; document.getElementById("sl").onchange = sim;
+
+            var h = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18], T = [26.0, 27.2, 28.9, 30.1, 31.0, 32.4, 33.1, 31.5, 32.0, 31.2, 30.0, 28.4, 27.1], H = [78, 76, 73, 71, 69, 66, 63, 68, 65, 67, 70, 73, 75];
+            var s = document.getElementById("chart"), W = 720, Ht = 260, m = { l: 40, r: 40, t: 16, b: 30 }, ns = "http://www.w3.org/2000/svg";
+            function X(i) { return m.l + i * (W - m.l - m.r) / (h.length - 1) }
+            function yT(v) { return Ht - m.b - (v - 24) / (36 - 24) * (Ht - m.t - m.b) }
+            function yH(v) { return Ht - m.b - (v - 50) / (90 - 50) * (Ht - m.t - m.b) }
+            var o = "";
+            for (var g = 24; g <= 36; g += 4) { o += '<line x1="' + m.l + '" x2="' + (W - m.r) + '" y1="' + yT(g) + '" y2="' + yT(g) + '" stroke="var(--line)"/><text x="' + (m.l - 6) + '" y="' + (yT(g) + 4) + '" text-anchor="end" font-size="11" fill="var(--leaf)">' + g + '°</text>' }
+            [50, 70, 90].forEach(function (g) { o += '<text x="' + (W - m.r + 6) + '" y="' + (yH(g) + 4) + '" font-size="11" fill="var(--rain)">' + g + '%</text>' });
+            h.forEach(function (v, i) { if (i % 2 == 0) o += '<text x="' + X(i) + '" y="' + (Ht - 8) + '" text-anchor="middle" font-size="11" fill="var(--mute)">' + v + ':00</text>' });
+            function pl(a, f, c) { return '<polyline fill="none" stroke="' + c + '" stroke-width="2.5" stroke-linejoin="round" points="' + a.map(function (v, i) { return X(i) + "," + f(v) }).join(" ") + '"/>' }
+            o += pl(T, yT, "var(--leaf)") + pl(H, yH, "var(--rain)");
+            o += '<circle cx="' + X(7) + '" cy="' + yT(T[7]) + '" r="5" fill="var(--grain)"/><text x="' + (X(7) + 8) + '" y="' + (yT(T[7]) - 8) + '" font-size="11" fill="var(--ink)">13:00 mưa, mái đóng</text>';
+            s.innerHTML = o;
+        })();
+    </script>
+</body>
+
+</html>
