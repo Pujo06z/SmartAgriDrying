@@ -103,7 +103,9 @@
                             <div class="stat-card">
                                 <div class="stat-content">
                                     <span class="stat-label">Total Users</span>
-                                    <strong class="stat-number">${totalUsers}</strong>
+                                    <strong 
+
+                                        class="stat-number">${totalUsers}</strong>
                                     <span class="stat-pill-sub">Registered accounts</span>
                                 </div>
                                 <div class="stat-icon-watermark">
@@ -276,7 +278,9 @@
                             <div class="stat-card stat-success">
                                 <div class="stat-content">
                                     <span class="stat-label">Online Devices</span>
-                                    <strong class="stat-number">${onlineDevices}</strong>
+                                    <strong 
+                                        id="onlineDevices"
+                                        class="stat-number">${onlineDevices}</strong>
                                     <span class="stat-pill-sub">Transmitting live data</span>
                                 </div>
                                 <div class="stat-icon-watermark">
@@ -293,7 +297,9 @@
                             <div class="stat-card stat-danger">
                                 <div class="stat-content">
                                     <span class="stat-label">Offline Devices</span>
-                                    <strong class="stat-number">${offlineDevices}</strong>
+                                    <strong 
+                                        id="offlineDevices"
+                                        class="stat-number">${offlineDevices}</strong>
                                     <span class="stat-pill-sub">Signal lost or disconnected</span>
                                 </div>
                                 <div class="stat-icon-watermark">
@@ -377,5 +383,80 @@
                 </div>
             </main>
         </div>
+        <script>
+// =====================================
+// Load live admin device status
+// =====================================
+
+            function loadAdminDashboardData() {
+
+                fetch(
+                        "${pageContext.request.contextPath}"
+                        + "/api/admin-dashboard-data"
+                        )
+                        .then(function (response) {
+
+                            if (!response.ok) {
+
+                                throw new Error(
+                                        "HTTP error: "
+                                        + response.status
+                                        );
+                            }
+
+                            return response.json();
+                        })
+                        .then(function (data) {
+
+                            var onlineDevices =
+                                    document.getElementById(
+                                            "onlineDevices"
+                                            );
+
+                            var offlineDevices =
+                                    document.getElementById(
+                                            "offlineDevices"
+                                            );
+
+
+                            if (onlineDevices) {
+
+                                onlineDevices.textContent =
+                                        data.onlineDevices;
+                            }
+
+
+                            if (offlineDevices) {
+
+                                offlineDevices.textContent =
+                                        data.offlineDevices;
+                            }
+                        })
+                        .catch(function (error) {
+
+                            console.error(
+                                    "Failed to refresh admin dashboard:",
+                                    error
+                                    );
+                        });
+            }
+
+
+// =====================================
+// Load immediately
+// =====================================
+
+            loadAdminDashboardData();
+
+
+// =====================================
+// Refresh every 5 seconds
+// =====================================
+
+            setInterval(
+                    loadAdminDashboardData,
+                    5000
+                    );
+        </script>
     </body>
 </html>

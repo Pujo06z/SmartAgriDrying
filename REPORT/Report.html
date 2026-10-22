@@ -1,0 +1,4797 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>IoT-Based Smart Agricultural Drying System – Project Report</title>
+    <style>
+        :root {
+            --ink: #1f2a1f;
+            --mute: #5d6b5a;
+            --paper: #fbfaf4;
+            --page: #f1efe4;
+            --line: #d9d6c3;
+            --leaf: #2f6b3a;
+            --leaf2: #e2eedb;
+            --grain: #c98d1a;
+            --grain2: #f7ebcb;
+            --sky: #2a6f8f;
+            --rain: #3a5fa8;
+            --bad: #a6382b;
+            --serif: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+            --sans: "Segoe UI", system-ui, -apple-system, sans-serif;
+            --mono: ui-monospace, Consolas, monospace
+        }
+
+        @media(prefers-color-scheme:dark) {
+            :root {
+                --ink: #e6ebdd;
+                --mute: #9db095;
+                --paper: #1b221a;
+                --page: #141a13;
+                --line: #334031;
+                --leaf: #8cc58a;
+                --leaf2: #23331f;
+                --grain: #e0b04f;
+                --grain2: #35301a;
+                --sky: #7fb8d4;
+                --rain: #8fa9e0;
+                --bad: #e28578
+            }
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 20px
+        }
+
+        body {
+            margin: 0;
+            background: var(--page);
+            color: var(--ink);
+            font: 17px/1.7 var(--serif);
+            display: flex
+        }
+
+        a {
+            color: var(--leaf)
+        }
+
+        #toc {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            width: 280px;
+            flex: none;
+            overflow: auto;
+            padding: 26px 18px;
+            background: var(--paper);
+            border-right: 1px solid var(--line);
+            font-family: var(--sans)
+        }
+
+        #toc b {
+            display: block;
+            font-size: 14px;
+            line-height: 1.3;
+            margin-bottom: 4px
+        }
+
+        #toc small {
+            color: var(--mute);
+            display: block;
+            margin-bottom: 18px;
+            font-size: 12px
+        }
+
+        #toc a {
+            display: flex;
+            gap: 10px;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 13.5px;
+            color: var(--mute);
+            text-decoration: none;
+            border-left: 3px solid transparent
+        }
+
+        #toc a span {
+            min-width: 20px;
+            font-variant-numeric: tabular-nums;
+            color: var(--grain)
+        }
+
+        #toc a:hover {
+            background: var(--leaf2)
+        }
+
+        #toc a.on {
+            color: var(--ink);
+            font-weight: 600;
+            background: var(--leaf2);
+            border-left-color: var(--leaf)
+        }
+
+        #bar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 3px;
+            background: var(--grain);
+            width: 0;
+            z-index: 50
+        }
+
+        #menu {
+            display: none
+        }
+
+        main {
+            flex: 1;
+            min-width: 0;
+            padding: 0 28px 80px
+        }
+
+        .wrap {
+            max-width: 820px;
+            margin: 0 auto
+        }
+
+        section {
+            padding: 54px 0 12px;
+            border-bottom: 1px solid var(--line)
+        }
+
+        h2 {
+            font: 700 29px/1.2 var(--serif);
+            margin: 0 0 6px
+        }
+
+        h2 i {
+            font: 600 14px var(--sans);
+            color: var(--grain);
+            display: block;
+            margin-bottom: 6px;
+            font-style: normal
+        }
+
+        h3 {
+            font: 700 15px var(--sans);
+            margin: 28px 0 8px;
+            color: var(--leaf)
+        }
+
+        p {
+            margin: 12px 0
+        }
+
+        .cover {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 50px 0;
+            border-bottom: 1px solid var(--line)
+        }
+
+        .cover .tag {
+            font: 600 13px var(--sans);
+            color: var(--leaf);
+            margin-bottom: 18px
+        }
+
+        .cover h1 {
+            font: 800 clamp(34px, 6vw, 58px)/1.05 var(--serif);
+            margin: 0 0 16px;
+            letter-spacing: -.5px
+        }
+
+        .cover h1 em {
+            display: block;
+            font-size: .5em;
+            font-weight: 500;
+            color: var(--mute);
+            margin-top: 10px;
+            letter-spacing: 0
+        }
+
+        .meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 4px 24px;
+            font: 14px var(--sans);
+            margin: 26px 0;
+            padding-top: 16px;
+            border-top: 2px solid var(--ink)
+        }
+
+        .meta dt {
+            color: var(--mute);
+            font-size: 12px
+        }
+
+        .meta dd {
+            margin: 0 0 10px;
+            font-weight: 600
+        }
+
+        .live {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            font: 13px var(--mono)
+        }
+
+        .live span {
+            padding: 5px 10px;
+            border: 1px solid var(--line);
+            background: var(--paper);
+            border-radius: 4px
+        }
+
+        .live b {
+            color: var(--leaf)
+        }
+
+        .note {
+            background: var(--grain2);
+            border-left: 4px solid var(--grain);
+            padding: 10px 16px;
+            font: 14px/1.6 var(--sans);
+            margin: 16px 0;
+            border-radius: 0 6px 6px 0
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font: 14px/1.5 var(--sans);
+            margin: 14px 0
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 8px 10px;
+            border-bottom: 1px solid var(--line);
+            vertical-align: top
+        }
+
+        th {
+            background: var(--leaf2);
+            font-weight: 700
+        }
+
+        .tw {
+            overflow-x: auto
+        }
+
+        caption {
+            caption-side: bottom;
+            text-align: left;
+            color: var(--mute);
+            font-size: 12.5px;
+            padding-top: 6px
+        }
+
+        .pill {
+            display: inline-block;
+            padding: 1px 9px;
+            border-radius: 99px;
+            font: 600 12px var(--sans);
+            background: var(--leaf2);
+            color: var(--leaf)
+        }
+
+        .pill.w {
+            background: var(--grain2);
+            color: var(--grain)
+        }
+
+        .pill.r {
+            background: #f5dcd8;
+            color: var(--bad)
+        }
+
+        @media(prefers-color-scheme:dark) {
+            .pill.r {
+                background: #3d1f1b
+            }
+        }
+
+        ul,
+        ol {
+            padding-left: 22px
+        }
+
+        li {
+            margin: 5px 0
+        }
+
+        .fig {
+            margin: 20px 0;
+            padding: 16px;
+            background: var(--paper);
+            border: 1px solid var(--line);
+            border-radius: 8px
+        }
+
+        .fig figcaption {
+            font: 13px var(--sans);
+            color: var(--mute);
+            margin-top: 10px
+        }
+
+        .imgph {
+            display: grid;
+            place-items: center;
+            min-height: 190px;
+            border: 2px dashed var(--line);
+            border-radius: 6px;
+            color: var(--mute);
+            font: 14px var(--sans);
+            text-align: center;
+            padding: 10px;
+            background: repeating-linear-gradient(135deg, transparent 0 12px, var(--leaf2) 12px 13px)
+        }
+
+        pre {
+            background: #1d261c;
+            color: #dfe8d2;
+            padding: 14px 16px;
+            border-radius: 8px;
+            overflow: auto;
+            font: 13px/1.55 var(--mono);
+            margin: 12px 0
+        }
+
+        pre .c {
+            color: #8fa584
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 14px
+        }
+
+        .card {
+            border: 1px solid var(--line);
+            background: var(--paper);
+            border-radius: 8px;
+            padding: 14px 16px;
+            font: 14px/1.55 var(--sans)
+        }
+
+        .card h4 {
+            margin: 0 0 4px;
+            font-size: 15px
+        }
+
+        .stat {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin: 16px 0
+        }
+
+        .stat div {
+            background: var(--paper);
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 10px 12px;
+            font: 12px var(--sans);
+            color: var(--mute)
+        }
+
+        .stat strong {
+            display: block;
+            font: 700 22px var(--serif);
+            color: var(--ink)
+        }
+
+        .sim {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            align-items: center;
+            font: 14px var(--sans)
+        }
+
+        .sim label {
+            display: flex;
+            gap: 6px;
+            align-items: center
+        }
+
+        .sim select,
+        .sim button {
+            font: inherit;
+            padding: 5px 8px;
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            background: var(--paper);
+            color: var(--ink)
+        }
+
+        .out {
+            font: 600 15px var(--mono);
+            padding: 6px 12px;
+            border-radius: 6px;
+            background: var(--leaf2);
+            color: var(--leaf)
+        }
+
+        .out.closed {
+            background: #f5dcd8;
+            color: var(--bad)
+        }
+
+        @media(prefers-color-scheme:dark) {
+            .out.closed {
+                background: #3d1f1b
+            }
+        }
+
+        .perm td:not(:first-child),
+        .perm th:not(:first-child) {
+            text-align: center
+        }
+
+        .ok {
+            color: var(--leaf);
+            font-weight: 700
+        }
+
+        .no {
+            color: var(--mute)
+        }
+
+        ol.refs li {
+            font: 14px/1.55 var(--sans)
+        }
+
+        footer {
+            text-align: center;
+            font: 13px var(--sans);
+            color: var(--mute);
+            padding: 34px 0
+        }
+
+        button:focus-visible,
+        a:focus-visible,
+        select:focus-visible {
+            outline: 3px solid var(--grain);
+            outline-offset: 2px
+        }
+
+        @media(max-width:900px) {
+            #toc {
+                position: fixed;
+                z-index: 40;
+                left: 0;
+                transform: translateX(-100%);
+                transition: transform .2s;
+                box-shadow: 6px 0 24px rgba(0, 0, 0, .2)
+            }
+
+            #toc.open {
+                transform: none
+            }
+
+            #menu {
+                display: block;
+                position: fixed;
+                right: 14px;
+                top: 12px;
+                z-index: 45;
+                border: 1px solid var(--line);
+                background: var(--paper);
+                color: var(--ink);
+                border-radius: 8px;
+                padding: 8px 14px;
+                font: 600 14px var(--sans)
+            }
+
+            main {
+                padding: 0 18px 60px
+            }
+
+            body {
+                font-size: 16px
+            }
+        }
+
+        @media(prefers-reduced-motion:reduce) {
+            html {
+                scroll-behavior: auto
+            }
+
+            #toc {
+                transition: none
+            }
+        }
+
+        @media print {
+
+            #toc,
+            #menu,
+            #bar {
+                display: none
+            }
+
+            body {
+                background: #fff
+            }
+
+            section {
+                break-inside: avoid-page
+            }
+        }
+
+        /* css cho picture */
+        .figure-block {
+            margin: 24px 0;
+            text-align: center;
+        }
+
+        .report-image {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .figure-caption {
+            margin-top: 10px;
+            font-size: 14px;
+            font-style: italic;
+            color: #666;
+        }
+
+
+        .report-image {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="bar"></div>
+    <button id="menu" aria-expanded="false" aria-controls="toc">Table of Contents</button>
+    <nav id="toc" aria-label="Report Table of Contents">
+        <b>Smart Agricultural Drying System</b>
+        <small>Project Report · Java Web + IoT</small>
+        <div id="links"></div>
+    </nav>
+
+    <main>
+        <div class="wrap">
+
+            <header class="cover" id="cover">
+                <div class="tag">Project Report · Java Web &amp; IoT · Fall Semester 2026</div>
+
+                <h1>
+                    IoT-Based Smart Agricultural Drying System
+                    <em>
+                        Agricultural Drying Monitoring and Control System
+                        Using ESP32-CAM and Java Web
+                    </em>
+                </h1>
+
+                <dl class="meta">
+                    <div>
+                        <dt>Students</dt>
+                        <dd>
+                            Vo Thien Phuc – SE201634<br>
+                            Doan Duong Tan Phat – SE203558
+                        </dd>
+                    </div>
+                    <div>
+                        <dt>Supervisor</dt>
+                        <dd>Le Vo Minh Thu</dd>
+                    </div>
+                    <div>
+                        <dt>Course / Class</dt>
+                        <dd>PRJ301 – SE2022</dd>
+                    </div>
+                    <div>
+                        <dt>Submission Date</dt>
+                        <dd>October 20, 2026</dd>
+                    </div>
+                </dl>
+
+                <p style="font:13px var(--sans);color:var(--mute);margin-bottom:8px">
+                    Latest recorded system status:
+                </p>
+
+                <div class="live">
+                    <span>Temperature <b>31.5°C</b></span>
+                    <span>Humidity <b>68%</b></span>
+                    <span>Rain <b>NO_RAIN</b></span>
+                    <span>Light <b>BRIGHT</b></span>
+                    <span>Roof <b>OPEN</b></span>
+                    <span>Mode <b>AUTO</b></span>
+                    <span>Device <b>ONLINE</b></span>
+                </div>
+            </header>
+
+            <section id="introduction">
+                <h2><i>1</i>Introduction</h2>
+
+                <p>
+                    Vietnamese Agricultural Products – Quality Risks Begin
+                    During the Drying Process.
+                </p>
+
+                <p>
+                    Drying is a critical post-harvest process that directly
+                    affects the quality and preservation of agricultural
+                    products such as rice, corn, coffee, pepper, and cashew
+                    nuts. However, many farmers and small-scale warehouse
+                    operators in Vietnam still rely on manual methods to
+                    monitor weather conditions and protect their products.
+                    They must regularly check the weather, close protective
+                    roofs when it rains, and reopen them when sunlight
+                    returns. Unexpected rainfall can increase moisture
+                    levels, cause mold growth, reduce product quality,
+                    and lead to significant economic losses.
+                </p>
+
+                <p>
+                    The <b>IoT-Based Smart Agricultural Drying System</b>
+                    is developed to address these challenges by applying
+                    Internet of Things (IoT) technology to agricultural
+                    drying management. The system uses an ESP32-CAM
+                    microcontroller connected to environmental sensors
+                    to monitor real-time conditions, including temperature,
+                    humidity, rainfall, and light intensity.
+                </p>
+
+                <p>
+                    Sensor data is transmitted to a Java Web application
+                    through HTTP communication, allowing users to monitor
+                    environmental conditions and system operations remotely.
+                    Based on predefined control rules, the system can
+                    automatically close the protective roof when rainfall
+                    is detected or when environmental conditions become
+                    unsuitable for drying. When conditions are favorable,
+                    the roof can be reopened automatically.
+                    A servo motor is used to control the roof mechanism.
+                </p>
+
+                <p>
+                    In addition to automatic operation, the web application
+                    provides a centralized interface for monitoring sensor
+                    readings, managing drying batches, reviewing operation
+                    history, and manually controlling the roof when necessary.
+                    The system aims to reduce manual intervention,
+                    minimize weather-related risks, improve drying
+                    efficiency, and support the digital transformation
+                    of small-scale agricultural operations.
+                </p>
+
+                <figure class="fig">
+                    <img src="img/img1.png" alt="Prototype of the smart agricultural drying system"
+                        style="width:100%; height:auto; border-radius:6px; display:block;">
+
+                    <figcaption>
+                        Figure 1.1. Prototype agricultural drying area
+                        used for system testing.
+                    </figcaption>
+                </figure>
+            </section>
+
+
+            <!-- ==================== SECTION 2: PROBLEM STATEMENT ==================== -->
+            <section id="problem">
+                <h2><i>2</i>Problem Statement</h2>
+
+                <p>
+                    In agricultural production, sun drying is an essential
+                    post-harvest process. However, traditional drying methods
+                    still depend heavily on manual labor and continuous human
+                    supervision. This approach presents several operational
+                    limitations and risks:
+                </p>
+
+                <ul>
+                    <li>
+                        <b>Unpredictable Weather Conditions:</b>
+                        Sudden rainfall or changes in light conditions,
+                        especially when it becomes dark, require operators
+                        to respond quickly and protect agricultural products.
+                        Delayed responses may expose products to moisture,
+                        resulting in mold growth, reduced quality, and
+                        economic losses.
+                    </li>
+
+                    <li>
+                        <b>Limited Monitoring and Quality Traceability:</b>
+                        Environmental parameters such as temperature,
+                        humidity, rainfall status, and light conditions
+                        are often not recorded continuously or automatically.
+                        The lack of historical data makes it difficult
+                        to evaluate the drying conditions of individual
+                        drying batches.
+                    </li>
+
+                    <li>
+                        <b>Challenges in Centralized Management:</b>
+                        As agricultural operations expand across multiple
+                        warehouses or drying areas, manually monitoring
+                        devices and managing user permissions become
+                        increasingly complex and prone to operational errors.
+                    </li>
+
+                    <li>
+                        <b>Device Connectivity Risks:</b>
+                        When a data collection device loses its connection
+                        without a proper status monitoring mechanism,
+                        operators may fail to identify system abnormalities
+                        or interruptions in a timely manner.
+                    </li>
+                </ul>
+
+                <div class="note">
+                    <b>Proposed Solution:</b>
+                    Develop an IoT-based agricultural drying system
+                    integrated with a Java Web platform.
+                    The system supports automatic roof opening and closing
+                    based on environmental conditions, near real-time
+                    sensor monitoring, and centralized management
+                    of multiple agricultural drying warehouses.
+                </div>
+            </section>
+
+
+            <!-- ==================== SECTION 3: OBJECTIVES ==================== -->
+            <section id="objectives">
+                <h2><i>3</i>Objectives</h2>
+
+                <h3>3.1. General Objective</h3>
+
+                <p>
+                    To design and develop an IoT-based smart agricultural
+                    drying system that enables environmental monitoring,
+                    automated and manual roof control, and centralized
+                    management of agricultural drying processes
+                    through a Java Web application.
+                </p>
+
+                <h3>3.2. Specific Objectives</h3>
+
+                <div class="grid">
+
+                    <div class="card">
+                        <h4>Environmental Monitoring</h4>
+                        Collect temperature, humidity, rainfall status,
+                        and light conditions from environmental sensors.
+                        Display the collected data on the web dashboard
+                        with near real-time updates.
+                    </div>
+
+                    <div class="card">
+                        <h4>Automatic Roof Control</h4>
+                        Implement an AUTO control algorithm that
+                        automatically closes the protective roof
+                        when rainfall is detected or when it becomes dark.
+                        The roof automatically opens when conditions
+                        are dry and sufficiently bright.
+                    </div>
+
+                    <div class="card">
+                        <h4>Manual Control</h4>
+                        Allow authorized operators to switch to
+                        MANUAL mode and send OPEN/CLOSE commands
+                        through the web interface to control
+                        the protective roof.
+                    </div>
+
+                    <div class="card">
+                        <h4>Centralized Management</h4>
+                        Manage users, warehouses, devices, and drying
+                        batches through a centralized web application.
+                        Implement role-based access control (RBAC)
+                        with three roles: ADMIN, MANAGER, and OPERATOR.
+                    </div>
+
+                    <div class="card">
+                        <h4>Monitoring &amp; Traceability</h4>
+                        Store historical sensor readings, device
+                        status records, and control event logs
+                        to support data retrieval, operational
+                        tracking, and evaluation of drying processes.
+                    </div>
+
+                </div>
+            </section>
+
+
+
+            <!-- ==================== SECTION 4: SCOPE ==================== -->
+            <section id="scope">
+                <h2><i>4</i>Scope</h2>
+
+                <p>
+                    This project focuses on developing and testing a
+                    prototype-scale smart agricultural drying system
+                    to evaluate its capabilities in environmental
+                    monitoring, roof control, and agricultural drying
+                    process management.
+                </p>
+
+                <h3>4.1. In Scope</h3>
+
+                <div class="grid">
+
+                    <div class="card">
+                        <h4>Hardware &amp; IoT</h4>
+                        <ul style="list-style: none; padding-left: 0;">
+                            <li> ESP32-CAM as the central IoT controller.</li>
+                            <li> DHT11 sensor for temperature and humidity measurement.</li>
+                            <li> Rain sensor for rainfall detection.</li>
+                            <li> LDR sensor for detecting bright and dark conditions.</li>
+                            <li> Servo motor for simulating roof opening and closing.</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h4>Network &amp; Communication</h4>
+                        <ul>
+                            <li> Communication between the ESP32-CAM and Java Web Server.</li>
+                            <li> Data transmission and reception via HTTP/HTTPS.</li>
+                            <li> RESTful API-based communication.</li>
+                            <li> Online/Offline status monitoring based on heartbeat signals or last-seen timestamps.
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h4>Software &amp; Database</h4>
+                        <ul>
+                            <li> Java Web technologies: JSP, Servlet, JDBC, and JavaScript.</li>
+                            <li> Application Server: Apache Tomcat 9.</li>
+                            <li> Database: Microsoft SQL Server.</li>
+                            <li> Dashboard for monitoring environmental conditions and roof status.</li>
+                            <li> Support for AUTO/MANUAL modes and OPEN/CLOSE roof commands.</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h4>Management &amp; Traceability</h4>
+                        <ul>
+                            <li> Role-based access control for ADMIN, MANAGER, and OPERATOR.</li>
+                            <li> User and drying warehouse management.</li>
+                            <li> IoT device and drying batch management.</li>
+                            <li> Storage of sensor history and event logs.</li>
+                            <li> Retrieval and review of system operation history.</li>
+                        </ul>
+                    </div>
+
+                </div>
+
+                <h3>4.2. Out of Scope</h3>
+
+                <ul>
+                    <li>
+                        The system does not include ventilation fans,
+                        thermal drying equipment, or automatic heating systems.
+                    </li>
+                    <li>
+                        Artificial Intelligence (AI) and Machine Learning (ML)
+                        are not implemented to predict agricultural product
+                        moisture levels or optimal drying duration.
+                    </li>
+                    <li>
+                        Native mobile application development is excluded;
+                        the project focuses only on a responsive web application.
+                    </li>
+                    <li>
+                        MQTT protocols and intermediate IoT brokers
+                        are not implemented.
+                    </li>
+                    <li>
+                        Large-scale agricultural deployment involving
+                        multiple physical IoT devices operating simultaneously
+                        is not included in the current project scope.
+                    </li>
+                    <li>
+                        Advanced weather forecasting and long-term
+                        big data analytics are not integrated.
+                    </li>
+                </ul>
+            </section>
+
+
+            <!-- ==================== SECTION 5: EXPECTED OUTCOMES ==================== -->
+            <section id="expected-outcomes">
+                <h2><i>5</i>Expected Outcomes</h2>
+
+                <p>
+                    Upon completion of the prototype, the project
+                    is expected to achieve the following technical
+                    and operational outcomes:
+                </p>
+
+                <div class="grid">
+
+                    <div class="card">
+                        <h4>5.1. Automated Response</h4>
+                        The system is expected to operate reliably
+                        in AUTO mode by automatically closing the
+                        protective roof when rainfall is detected
+                        or when it becomes dark, and reopening it
+                        when conditions are dry and sufficiently bright.
+                    </div>
+
+                    <div class="card">
+                        <h4>5.2. Real-Time Dashboard</h4>
+                        The web dashboard is expected to display
+                        temperature, humidity, rainfall status,
+                        light conditions, roof status, AUTO/MANUAL
+                        control mode, and device Online/Offline
+                        connection status.
+                    </div>
+
+                    <div class="card">
+                        <h4>5.3. Remote Manual Control</h4>
+                        Authorized MANAGER and OPERATOR accounts
+                        are expected to switch the system to MANUAL
+                        mode and send OPEN/CLOSE commands from
+                        the web interface to the ESP32-CAM,
+                        enabling low-latency servo motor control.
+                    </div>
+
+                    <div class="card">
+                        <h4>5.4. Centralized Traceability</h4>
+                        The system is expected to provide centralized
+                        management of users, warehouses, devices,
+                        and drying batches. Sensor history and event
+                        logs will be stored to support data retrieval,
+                        operational traceability, and report generation
+                        when the corresponding functionality is available.
+                    </div>
+
+                    <div class="card">
+                        <h4>5.5. Improved System Awareness</h4>
+                        The system is expected to support the detection
+                        of device disconnections, sudden rainfall,
+                        and environmental parameters exceeding
+                        predefined thresholds through warnings
+                        and event logs, reducing the need for
+                        continuous manual monitoring.
+                    </div>
+
+                </div>
+
+                <div class="note">
+                    <b>Expected Impact:</b>
+                    The proposed system aims to reduce dependence
+                    on manual monitoring, improve responsiveness
+                    to changing environmental conditions, and
+                    enhance the efficiency of agricultural drying
+                    batch management.
+                </div>
+            </section>
+
+
+
+            <!-- ==================== SECTION 6: REQUIREMENT ANALYSIS ==================== -->
+            <section id="requirements">
+                <h2><i>6</i>Requirement Analysis</h2>
+
+                <p>
+                    This section defines the main requirements of the
+                    Smart Agricultural Drying System, including functional
+                    requirements for different user roles and IoT devices,
+                    non-functional requirements, and the actors that
+                    interact with the system.
+                </p>
+
+                <h3>6.1 Functional Requirements</h3>
+
+                <p>
+                    The system's functionalities are categorized based
+                    on user roles and the responsibilities of the IoT device.
+                </p>
+
+                <h4>Admin</h4>
+
+                <div class="tw">
+                    <table>
+                        <tr>
+                            <th>ID</th>
+                            <th>Functional Requirement</th>
+                            <th>Priority</th>
+                        </tr>
+
+                        <tr>
+                            <td>FR-A01</td>
+                            <td>Log in to and log out of the system.</td>
+                            <td><span class="pill r">High</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-A02</td>
+                            <td>
+                                View an overview of the total number of users,
+                                warehouses, devices, and drying batches
+                                on the Admin Dashboard.
+                            </td>
+                            <td><span class="pill w">Medium</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-A03</td>
+                            <td>
+                                Manage user accounts, including creating,
+                                updating, activating, and deactivating accounts.
+                            </td>
+                            <td><span class="pill r">High</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-A04</td>
+                            <td>
+                                Manage warehouses, including adding,
+                                updating, and changing their operational status.
+                            </td>
+                            <td><span class="pill r">High</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-A05</td>
+                            <td>
+                                Manage IoT devices and assign devices
+                                to specific warehouses.
+                            </td>
+                            <td><span class="pill r">High</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-A06</td>
+                            <td>
+                                Monitor the Online/Offline status
+                                of registered IoT devices.
+                            </td>
+                            <td><span class="pill w">Medium</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-A07</td>
+                            <td>
+                                View event logs and monitor
+                                overall system activities.
+                            </td>
+                            <td><span class="pill w">Medium</span></td>
+                        </tr>
+                    </table>
+                </div>
+
+
+                <h4>Manager</h4>
+
+                <div class="tw">
+                    <table>
+                        <tr>
+                            <th>ID</th>
+                            <th>Functional Requirement</th>
+                            <th>Priority</th>
+                        </tr>
+
+                        <tr>
+                            <td>FR-M01</td>
+                            <td>
+                                View and select warehouses
+                                within the manager's assigned access permissions.
+                            </td>
+                            <td><span class="pill r">High</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-M02</td>
+                            <td>
+                                Monitor temperature, humidity, rainfall status,
+                                and light conditions in near real time.
+                            </td>
+                            <td><span class="pill r">High</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-M03</td>
+                            <td>
+                                Monitor roof status, AUTO/MANUAL control mode,
+                                and the Online/Offline status of IoT devices.
+                            </td>
+                            <td><span class="pill r">High</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-M04</td>
+                            <td>
+                                Switch between AUTO and MANUAL control modes.
+                            </td>
+                            <td><span class="pill r">High</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-M05</td>
+                            <td>
+                                Send OPEN/CLOSE commands to control
+                                the protective roof in MANUAL mode.
+                            </td>
+                            <td><span class="pill r">High</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-M06</td>
+                            <td>
+                                Create new drying batches
+                                in authorized warehouses.
+                            </td>
+                            <td><span class="pill w">Medium</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-M07</td>
+                            <td>
+                                Monitor active drying batches
+                                and mark them as completed
+                                when the drying process finishes.
+                            </td>
+                            <td><span class="pill w">Medium</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-M08</td>
+                            <td>
+                                View sensor history and event logs
+                                of assigned warehouses.
+                            </td>
+                            <td><span class="pill w">Medium</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-M09</td>
+                            <td>
+                                View user and warehouse information
+                                within the manager's authorized scope.
+                            </td>
+                            <td><span class="pill w">Medium</span></td>
+                        </tr>
+                    </table>
+                </div>
+
+
+                <h4>Operator</h4>
+
+                <div class="tw">
+                    <table>
+                        <tr>
+                            <th>ID</th>
+                            <th>Functional Requirement</th>
+                            <th>Priority</th>
+                        </tr>
+
+                        <tr>
+                            <td>FR-O01</td>
+                            <td>
+                                Monitor the warehouse assigned
+                                to the operator's account.
+                            </td>
+                            <td><span class="pill r">High</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-O02</td>
+                            <td>
+                                Monitor temperature, humidity, rainfall,
+                                light conditions, roof status,
+                                and device connection status.
+                            </td>
+                            <td><span class="pill r">High</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-O03</td>
+                            <td>
+                                Switch between AUTO and MANUAL modes
+                                and control the protective roof
+                                when MANUAL mode is enabled.
+                            </td>
+                            <td><span class="pill r">High</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-O04</td>
+                            <td>
+                                Create new drying batches
+                                and monitor currently active batches.
+                            </td>
+                            <td><span class="pill w">Medium</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-O05</td>
+                            <td>
+                                Mark a drying batch as completed
+                                when the drying process has finished.
+                            </td>
+                            <td><span class="pill w">Medium</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-O06</td>
+                            <td>
+                                View sensor history and event logs
+                                associated with the assigned warehouse.
+                            </td>
+                            <td><span class="pill w">Medium</span></td>
+                        </tr>
+                    </table>
+                </div>
+
+
+                <h4>ESP32-CAM / IoT Device</h4>
+
+                <div class="tw">
+                    <table>
+                        <tr>
+                            <th>ID</th>
+                            <th>Functional Requirement</th>
+                            <th>Priority</th>
+                        </tr>
+
+                        <tr>
+                            <td>FR-I01</td>
+                            <td>
+                                Connect to a Wi-Fi network
+                                and communicate with the Java Web Server
+                                using HTTP.
+                            </td>
+                            <td><span class="pill r">High</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-I02</td>
+                            <td>
+                                Read temperature and humidity
+                                measurements from the DHT11 sensor.
+                            </td>
+                            <td><span class="pill r">High</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-I03</td>
+                            <td>
+                                Detect rainfall status using the rain sensor
+                                and bright/dark conditions using the LDR sensor.
+                            </td>
+                            <td><span class="pill r">High</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-I04</td>
+                            <td>
+                                Automatically control the servo motor
+                                according to predefined AUTO control rules.
+                            </td>
+                            <td><span class="pill r">High</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-I05</td>
+                            <td>
+                                Receive control mode settings and roof commands
+                                from the server for MANUAL operation.
+                            </td>
+                            <td><span class="pill r">High</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-I06</td>
+                            <td>
+                                Send environmental sensor data
+                                to the <code>/api/sensor</code> endpoint.
+                            </td>
+                            <td><span class="pill r">High</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-I07</td>
+                            <td>
+                                Send heartbeat signals and report roof status
+                                through the <code>/api/device-state</code> endpoint.
+                            </td>
+                            <td><span class="pill r">High</span></td>
+                        </tr>
+
+                        <tr>
+                            <td>FR-I08</td>
+                            <td>
+                                Transmit data immediately when significant
+                                changes are detected and periodically
+                                record sensor data for historical tracking.
+                            </td>
+                            <td><span class="pill w">Medium</span></td>
+                        </tr>
+                    </table>
+                </div>
+
+
+                <h3>6.2 Non-functional Requirements</h3>
+
+                <div class="tw">
+                    <table>
+                        <tr>
+                            <th>ID</th>
+                            <th>Requirement</th>
+                            <th>Description</th>
+                        </tr>
+
+                        <tr>
+                            <td>NFR-01</td>
+                            <td>Real-time Monitoring</td>
+                            <td>
+                                The dashboard shall update temperature,
+                                humidity, rainfall status, light conditions,
+                                roof status, control mode, device connection
+                                status, and warnings without requiring
+                                a full page reload.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>NFR-02</td>
+                            <td>Reliability</td>
+                            <td>
+                                In AUTO mode, the ESP32-CAM shall
+                                independently evaluate environmental
+                                conditions and control the protective roof
+                                without requiring direct interaction
+                                through the web application.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>NFR-03</td>
+                            <td>Response Time</td>
+                            <td>
+                                The Operator and Manager dashboards shall
+                                update sensor readings and device status
+                                within a maximum interval of 2 seconds.
+                                Online/Offline device status on the
+                                Admin Dashboard shall be refreshed
+                                every 5 seconds.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>NFR-04</td>
+                            <td>Security</td>
+                            <td>
+                                The system shall implement user
+                                authentication, session validation,
+                                and role-based access control (RBAC)
+                                for ADMIN, MANAGER, and OPERATOR.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>NFR-05</td>
+                            <td>Availability</td>
+                            <td>
+                                The web application shall remain capable
+                                of providing access to historical data
+                                when an IoT device temporarily loses
+                                connectivity. If no heartbeat is received
+                                from a device for more than 30 seconds,
+                                the system shall classify the device
+                                as OFFLINE.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>NFR-06</td>
+                            <td>Data Consistency</td>
+                            <td>
+                                The dashboard shall display the latest
+                                device information received by the server,
+                                consistent with the data stored
+                                in the database.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>NFR-07</td>
+                            <td>Responsive Interface</td>
+                            <td>
+                                The web interface shall be responsive
+                                and accessible on both laptop computers
+                                and mobile devices.
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+
+                <h3>6.3 System Actors</h3>
+
+                <div class="tw">
+                    <table>
+                        <tr>
+                            <th>Actor</th>
+                            <th>Role</th>
+                            <th>Main Interactions</th>
+                        </tr>
+
+                        <tr>
+                            <td><strong>ADMIN</strong></td>
+                            <td>
+                                Responsible for overall system administration.
+                            </td>
+                            <td>
+                                Manage Users, Manage Warehouses,
+                                Manage Devices, Monitor Device Status,
+                                View System Overview, and View Event Log.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>MANAGER</strong></td>
+                            <td>
+                                Manages one or multiple warehouses
+                                within the assigned access permissions.
+                            </td>
+                            <td>
+                                Select Warehouse, Monitor Sensors,
+                                Control Roof, Monitor Drying Batch,
+                                View History, and View Event Log.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>OPERATOR</strong></td>
+                            <td>
+                                Performs daily operational tasks
+                                at an assigned warehouse.
+                            </td>
+                            <td>
+                                Monitor Sensors, Control Roof,
+                                Start Batch, Complete Batch,
+                                View History, and View Event Log.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td><strong>ESP32-CAM</strong></td>
+                            <td>
+                                Acts as an IoT device connecting
+                                the physical drying system
+                                to the Java Web Server.
+                            </td>
+                            <td>
+                                Read Sensors, Control Servo,
+                                Send Sensor Data, Send Heartbeat,
+                                Receive Commands, and Report Device State.
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+
+                <h3>6.4 Use Case Diagram</h3>
+
+                <p>
+                    The Use Case Diagram illustrates the relationships
+                    between system actors and the main functionalities
+                    of the Smart Agricultural Drying System.
+                    The system consists of four primary actors:
+                    ADMIN, MANAGER, OPERATOR, and ESP32-CAM.
+                </p>
+
+                <div class="figure-block">
+                    <img src="img/usecase.png" alt="Use Case Diagram - Smart Agricultural Drying System"
+                        class="report-image">
+
+                    <p class="figure-caption">
+                        Figure 6.1. Use Case Diagram of the
+                        Smart Agricultural Drying System
+                    </p>
+                </div>
+
+                <p>
+                    The ADMIN is responsible for overall system
+                    administration, including user, warehouse,
+                    and device management. The MANAGER monitors
+                    and manages operations across authorized
+                    warehouses, while the OPERATOR performs
+                    daily drying activities at an assigned warehouse.
+                    Meanwhile, the ESP32-CAM is responsible for
+                    collecting sensor data, executing automatic
+                    roof control, receiving control commands,
+                    and exchanging information with the
+                    Java Web Server.
+                </p>
+
+            </section>
+
+
+            <!-- ==================== SECTION 7: SYSTEM ARCHITECTURE ==================== -->
+            <section id="architecture">
+
+                <h2><i>7</i>System Architecture</h2>
+
+                <p>
+                    The Smart Agricultural Drying System is designed using
+                    a multi-layer architecture that integrates IoT devices,
+                    a Java Web Server, a database, and a web-based user interface.
+                    This architecture enables environmental data to be collected
+                    from sensors, processed by the ESP32-CAM, transmitted to the
+                    server, and displayed on the dashboard.
+                    Additionally, user control commands can be transmitted
+                    in the opposite direction, from the web application
+                    to the physical device.
+                </p>
+
+
+                <!-- 7.1 Overall System Architecture -->
+
+                <h3>7.1 Overall System Architecture</h3>
+
+                <p>
+                    The overall system architecture consists of five main
+                    architectural components: Physical Layer, Device Layer,
+                    Communication Layer, Application &amp; Database Layer,
+                    and Presentation Layer.
+                    These layers work together to establish a complete
+                    workflow for data collection, processing, storage,
+                    monitoring, and control.
+                </p>
+
+                <figure class="fig">
+                    <img src="img/6.1.png" alt="Overall System Architecture of Smart Agricultural Drying System"
+                        class="report-image">
+
+                    <figcaption>
+                        Figure 7.1. Overall System Architecture of the
+                        Smart Agricultural Drying System.
+                    </figcaption>
+                </figure>
+
+
+                <!-- 7.2 Architecture Layers -->
+
+                <h3>7.2 Architecture Layers</h3>
+
+                <div class="tw">
+                    <table>
+                        <tr>
+                            <th>Layer</th>
+                            <th>Components</th>
+                            <th>Main Responsibilities</th>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <strong>Physical Layer</strong>
+                            </td>
+                            <td>
+                                DHT11, Rain Sensor, LDR, Servo Motor
+                            </td>
+                            <td>
+                                Collect environmental measurements
+                                and perform the physical opening
+                                and closing movements of the protective roof.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <strong>Device Layer</strong>
+                            </td>
+                            <td>
+                                ESP32-CAM
+                            </td>
+                            <td>
+                                Read sensor data, execute AUTO control logic,
+                                operate the servo motor, and communicate
+                                with the Java Web Server.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <strong>Communication Layer</strong>
+                            </td>
+                            <td>
+                                Wi-Fi, HTTP, REST-like API
+                            </td>
+                            <td>
+                                Transmit sensor readings, heartbeat signals,
+                                roof status updates, and control commands
+                                between the ESP32-CAM and Java Web Server.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <strong>Application Layer</strong>
+                            </td>
+                            <td>
+                                Servlet, Controller, DAO, Filter
+                            </td>
+                            <td>
+                                Process HTTP requests, validate access
+                                permissions, execute business logic,
+                                handle device control operations,
+                                and access application data.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <strong>Database Layer</strong>
+                            </td>
+                            <td>
+                                Microsoft SQL Server
+                            </td>
+                            <td>
+                                Store user, warehouse, device,
+                                sensor data, drying batch,
+                                and event log records.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <strong>Presentation Layer</strong>
+                            </td>
+                            <td>
+                                JSP, JSTL, HTML, CSS, JavaScript
+                            </td>
+                            <td>
+                                Display near real-time system information
+                                and provide user interfaces for monitoring,
+                                management, and roof control.
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+
+                <!-- 7.3 Device and Physical Layer -->
+
+                <h3>7.3 Device and Physical Layer</h3>
+
+                <p>
+                    The ESP32-CAM serves as the central hardware controller
+                    of the system. It receives data from environmental sensors
+                    and controls the protective roof through a servo motor.
+                </p>
+
+                <div class="tw">
+                    <table>
+                        <tr>
+                            <th>Component</th>
+                            <th>Function</th>
+                        </tr>
+
+                        <tr>
+                            <td>DHT11</td>
+                            <td>
+                                Measures ambient temperature and humidity.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Rain Sensor</td>
+                            <td>
+                                Detects rainfall conditions and determines
+                                whether the status is RAINING or NO_RAIN.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>LDR</td>
+                            <td>
+                                Detects light conditions and determines
+                                whether the environment is BRIGHT or DARK.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Servo Motor</td>
+                            <td>
+                                Performs the physical opening and closing
+                                movements of the protective roof.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>ESP32-CAM</td>
+                            <td>
+                                Reads sensor data, controls the servo motor,
+                                executes AUTO control logic, and communicates
+                                with the Java Web Server.
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+
+                <!-- 7.4 Communication Architecture -->
+
+                <h3>7.4 Communication Architecture</h3>
+
+                <p>
+                    The ESP32-CAM communicates with the Java Web Server
+                    through HTTP over a Wi-Fi network.
+                    The system provides dedicated API endpoints
+                    for sensor data transmission, device status
+                    synchronization, and dashboard data retrieval.
+                </p>
+
+                <div class="tw">
+                    <table>
+                        <tr>
+                            <th>API</th>
+                            <th>Direction</th>
+                            <th>Purpose</th>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <code>/api/sensor</code>
+                            </td>
+                            <td>
+                                ESP32-CAM → Server
+                            </td>
+                            <td>
+                                Transmits temperature, humidity,
+                                rainfall status, light status,
+                                and roof status to the server
+                                for storage in the SENSOR_DATA table.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <code>/api/device-state</code>
+                            </td>
+                            <td>
+                                ESP32-CAM ↔ Server
+                            </td>
+                            <td>
+                                Updates heartbeat information
+                                and roof status while receiving
+                                control mode settings and roof
+                                commands from the server.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <code>/api/dashboard-data</code>
+                            </td>
+                            <td>
+                                Browser ← Server
+                            </td>
+                            <td>
+                                Returns the latest system information
+                                for the Manager and Operator dashboards.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <code>/api/admin-dashboard-data</code>
+                            </td>
+                            <td>
+                                Browser ← Server
+                            </td>
+                            <td>
+                                Provides the number of Online
+                                and Offline devices for the
+                                Admin Dashboard.
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+
+                <!-- 7.5 Application Architecture -->
+
+                <h3>7.5 Application Architecture</h3>
+
+                <p>
+                    The Java Web application follows an architecture
+                    similar to the Model-View-Controller (MVC) pattern.
+                    JSP pages are responsible for presenting information
+                    to users, Servlets handle HTTP requests and business
+                    logic, and Data Access Objects (DAOs) manage
+                    communication with the database.
+                </p>
+
+                <figure class="fig">
+                    <img src="img/6.5.png" alt="Application Architecture of Smart Agricultural Drying System"
+                        class="report-image">
+
+                    <figcaption>
+                        Figure 7.2. Application Architecture of the
+                        Smart Agricultural Drying System.
+                    </figcaption>
+                </figure>
+
+                <p>
+                    For user requests, the system validates the active
+                    session and user role before executing the requested
+                    functionality. For requests originating from the
+                    ESP32-CAM, the server receives device information,
+                    updates the database, and returns the appropriate
+                    device status or control commands when required.
+                </p>
+
+            </section>
+
+
+
+
+            <!-- 7.6 Database Layer -->
+
+            <h3>7.6 Database Layer</h3>
+
+            <p>
+                Microsoft SQL Server is used to store management
+                and operational data for the entire system.
+                The database establishes relationships between
+                users, warehouses, IoT devices, sensor readings,
+                and drying batches to support system monitoring,
+                data management, and operational traceability.
+            </p>
+
+            <figure class="fig">
+                <img src="img/6.6.png" alt="Database Diagram of Smart Agricultural Drying System" class="report-image">
+
+                <figcaption>
+                    Figure 7.3. Database Diagram of the
+                    Smart Agricultural Drying System.
+                </figcaption>
+            </figure>
+
+            <div class="tw">
+                <table>
+                    <tr>
+                        <th>Table</th>
+                        <th>Purpose</th>
+                    </tr>
+
+                    <tr>
+                        <td>USER</td>
+                        <td>
+                            Stores user accounts, personal information,
+                            and assigned system roles.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>WAREHOUSE</td>
+                        <td>
+                            Stores information about agricultural
+                            drying warehouses and drying areas.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>USER_WAREHOUSE</td>
+                        <td>
+                            Manages the assignment of managers
+                            to authorized warehouses.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>DEVICE</td>
+                        <td>
+                            Stores IoT device information, control mode,
+                            roof status, last-seen timestamp,
+                            and operational status.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>SENSOR_DATA</td>
+                        <td>
+                            Stores timestamped temperature, humidity,
+                            rainfall status, light conditions,
+                            and roof status measurements.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>DRYING_BATCH</td>
+                        <td>
+                            Stores information and operational status
+                            of individual agricultural drying batches.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>EVENT_LOG</td>
+                        <td>
+                            Records significant system events
+                            and operational activities.
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+
+            <!-- 7.7 Presentation Layer -->
+
+            <h3>7.7 Presentation Layer</h3>
+
+            <p>
+                The Presentation Layer provides role-based web
+                interfaces that allow users to access system
+                functions according to their assigned permissions.
+            </p>
+
+            <div class="tw">
+                <table>
+                    <tr>
+                        <th>Role</th>
+                        <th>Main Interfaces and Functions</th>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <strong>ADMIN</strong>
+                        </td>
+                        <td>
+                            System Overview, User Management,
+                            Warehouse Management, Device Management,
+                            and Event Log.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <strong>MANAGER</strong>
+                        </td>
+                        <td>
+                            Warehouse Selection, Sensor Monitoring,
+                            Roof Control, Drying Batch Management,
+                            Sensor History, and Event Log.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <strong>OPERATOR</strong>
+                        </td>
+                        <td>
+                            Assigned Warehouse Monitoring,
+                            Roof Control, Drying Batch Management,
+                            Sensor History, and Event Log.
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+
+            <!-- 7.8 Data and Command Direction -->
+
+            <h3>7.8 Data and Command Direction</h3>
+
+            <p>
+                The system supports two primary communication
+                directions: data transmission from IoT devices
+                to the server and control command transmission
+                from users to physical devices.
+                These communication processes are organized
+                into three main flows.
+            </p>
+
+            <div class="tw">
+                <table>
+                    <tr>
+                        <th>Flow</th>
+                        <th>Direction</th>
+                        <th>Purpose</th>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <strong>Sensor Data Flow</strong>
+                        </td>
+                        <td>
+                            Sensors → ESP32-CAM → Server →
+                            Database → Dashboard
+                        </td>
+                        <td>
+                            Collects, stores, and displays
+                            environmental sensor data
+                            for system monitoring.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <strong>Device State Flow</strong>
+                        </td>
+                        <td>
+                            ESP32-CAM → Server → DEVICE → Dashboard
+                        </td>
+                        <td>
+                            Updates heartbeat information,
+                            roof status, and device
+                            Online/Offline connection status.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            <strong>Control Command Flow</strong>
+                        </td>
+                        <td>
+                            User → Dashboard → Server →
+                            ESP32-CAM → Servo
+                        </td>
+                        <td>
+                            Transmits and executes roof
+                            control commands in MANUAL mode.
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            </section>
+            <!-- section 8 System Flow Analysis -->
+
+            <!-- ==================== SECTION 8: SYSTEM FLOW ANALYSIS ==================== -->
+            <section id="flow">
+                <h2><i>8</i>System Flow Analysis</h2>
+
+                <p>
+                    This section describes the overall operational flow of the
+                    <b>IoT-Based Smart Agricultural Drying System</b>,
+                    from environmental data collection by the ESP32-CAM
+                    to data processing at the Java Web Server, storage in
+                    Microsoft SQL Server, and information display through
+                    the web-based user interface.
+                </p>
+
+                <p>
+                    The system operates through two main communication flows:
+                    <b>Data Flow</b> and <b>Control Flow</b>.
+                    Data Flow transfers sensor information from IoT devices
+                    to users, while Control Flow transmits control commands
+                    from the Manager or Operator to the ESP32-CAM
+                    to operate the protective roof.
+                </p>
+
+
+                <!-- 8.1 Overall System Flow -->
+
+                <h3>8.1 Overall End-to-End System Flow</h3>
+
+                <p>
+                    The overall system flow begins when the ESP32-CAM
+                    starts up, connects to the Wi-Fi network, and reads
+                    environmental data from the DHT11, Rain Sensor,
+                    and LDR sensor.
+                    Depending on the selected operating mode,
+                    either AUTO or MANUAL, the ESP32-CAM determines
+                    the required roof status and controls the servo motor.
+                </p>
+
+                <p>
+                    Sensor readings and device status information
+                    are then transmitted to the Java Web Server
+                    through HTTP API endpoints.
+                    The server processes the received data,
+                    interacts with the Data Access Object (DAO) Layer,
+                    and stores the necessary information in SQL Server.
+                    The web application retrieves the latest data
+                    from the server and displays relevant information
+                    to Admin, Manager, and Operator users.
+                </p>
+
+                <figure class="fig">
+                    <img src="img/8.1.png" alt="Overall End-to-End System Flow" class="report-image">
+
+                    <figcaption>
+                        Figure 8.1. Overall End-to-End System Flow
+                        of the Smart Agricultural Drying System.
+                    </figcaption>
+                </figure>
+                <!-- 8.2 AUTO Control Flow -->
+
+                <h3>8.2 Automatic Roof Control Flow</h3>
+
+                <p>
+                    In AUTO mode, the ESP32-CAM automatically
+                    determines the required roof position
+                    based on readings from the Rain Sensor
+                    and LDR sensor.
+                    If rainfall is detected or the surrounding
+                    environment becomes dark, the system
+                    automatically closes the protective roof.
+                    When no rainfall is detected and sufficient
+                    daylight is available, the system
+                    automatically opens the roof.
+                </p>
+
+                <figure class="fig">
+                    <img src="img/8.2.png" alt="Automatic Roof Control Flow" class="report-image">
+
+                    <figcaption>
+                        Figure 8.2. Automatic Roof Control Flow.
+                    </figcaption>
+                </figure>
+
+
+
+                <h3>8.3 MANUAL Control Flow</h3>
+
+                <p>
+                    In MANUAL mode, the Manager or Operator can select the desired roof state
+                    from the web application. The control request is processed by the Java Server,
+                    which updates the required device mode and roof status.
+                </p>
+
+                <p>
+                    The ESP32-CAM periodically requests the current device state through
+                    <code>/api/device-state</code>. After receiving the MANUAL mode and
+                    the required roof command, the ESP32-CAM controls the Servo Motor
+                    to open or close the roof and reports the actual roof status back to the server.
+                </p>
+
+                <figure class="fig">
+                    <img src="img/8.3.png" alt="MANUAL Roof Control Flow" class="report-image">
+
+                    <figcaption>
+                        Figure 8.3. MANUAL Roof Control Flow.
+                    </figcaption>
+                </figure>
+                <!-- 8.4 Device Heartbeat Flow -->
+
+                <h3>8.4 Device Heartbeat and Online/Offline Flow</h3>
+
+                <p>
+                    The ESP32-CAM periodically sends heartbeat
+                    signals to the Java Web Server to update
+                    the device's <code>last_seen</code> timestamp.
+                    If the server does not receive a heartbeat
+                    from the device for more than 30 seconds,
+                    the device is classified as OFFLINE.
+                    Once heartbeat communication is restored,
+                    the device status is updated to ONLINE.
+                </p>
+
+                <figure class="fig">
+                    <img src="img/8.4.png" alt="Device Heartbeat and Online/Offline Flow" class="report-image">
+
+                    <figcaption>
+                        Figure 8.4. Device Heartbeat and Online/Offline Flow.
+                    </figcaption>
+                </figure>
+
+
+                <!-- 8.5 Dashboard Flow -->
+
+                <h3>8.5 Real-Time Dashboard Update Flow</h3>
+
+                <p>
+                    The web dashboard uses JavaScript to send
+                    periodic HTTP requests to the Java Web Server's
+                    API endpoints.
+                    The server retrieves the latest sensor readings
+                    and device information from the database
+                    and returns the requested data in JSON format.
+                    JavaScript then processes the response
+                    and dynamically updates the dashboard
+                    without requiring a full page reload.
+                </p>
+
+                <figure class="fig">
+                    <img src="img/8.5.png" alt="Real-Time Dashboard Update Flow" class="report-image">
+
+                    <figcaption>
+                        Figure 8.5. Real-Time Dashboard Update Flow.
+                    </figcaption>
+                </figure>
+                <!-- 8.6 System Timing and Synchronization Policy -->
+                <h3>8.6 System Timing and Synchronization Policy</h3>
+
+                <p>
+                    Different components of the system use different update intervals
+                    depending on their operational purpose.
+                    Device communication and dashboard monitoring require frequent updates,
+                    while historical sensor data is stored at a lower frequency
+                    to reduce unnecessary database writes.
+                </p>
+
+                <div class="tw">
+                    <table>
+                        <tr>
+                            <th>Function</th>
+                            <th>Interval / Trigger</th>
+                            <th>Purpose</th>
+                        </tr>
+
+                        <tr>
+                            <td>ESP32 Device State / Heartbeat</td>
+                            <td>Approximately every 2 seconds</td>
+                            <td>
+                                Updates <code>last_seen</code>, reports the physical roof state,
+                                and retrieves the latest MODE and ROOF command.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Sensor Data on Important State Change</td>
+                            <td>Immediately</td>
+                            <td>
+                                Sends new sensor data when an important environmental
+                                state changes, such as rain or light status.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Periodic Sensor Data Storage</td>
+                            <td>Approximately every 5 minutes</td>
+                            <td>
+                                Stores historical sensor data when no important state
+                                change occurs, avoiding unnecessary database inserts.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Manager / Operator Dashboard</td>
+                            <td>Approximately every 2 seconds</td>
+                            <td>
+                                Refreshes current sensor data, device state,
+                                roof status, operating mode, and warnings.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Admin Device Status</td>
+                            <td>Approximately every 5 seconds</td>
+                            <td>
+                                Refreshes Online and Offline device information.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Event Log</td>
+                            <td>Approximately every 10 seconds</td>
+                            <td>
+                                Refreshes newly recorded system events.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Sensor History</td>
+                            <td>Approximately every 30 seconds</td>
+                            <td>
+                                Refreshes historical sensor records without requiring
+                                a full page reload.
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Device Offline Detection</td>
+                            <td>No heartbeat for more than 30 seconds</td>
+                            <td>
+                                Classifies the device as OFFLINE when communication
+                                is lost beyond the defined timeout.
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <p>
+                    These intervals balance realtime monitoring requirements
+                    with communication and database efficiency.
+                    High-frequency updates are used for operational monitoring,
+                    while historical data is stored at a lower frequency.
+                </p>
+
+            </section>
+
+            <!-- section 9: hardware  -->
+            <section id="hardware">
+                <h2><i>9</i>Hardware Design</h2>
+                <div class="tw">
+                    <table>
+                        <tr>
+                            <th>Component</th>
+                            <th>Chức năng</th>
+                            <th>Tín hiệu</th>
+                            <th>Chân (ví dụ)</th>
+                        </tr>
+                        <tr>
+                            <td>ESP32-CAM</td>
+                            <td>Vi điều khiển, Wi-Fi, gửi HTTP</td>
+                            <td>3.3V logic</td>
+                            <td>–</td>
+                        </tr>
+                        <tr>
+                            <td>DHT11</td>
+                            <td>Nhiệt độ 0–50°C, độ ẩm 20–90%</td>
+                            <td>Digital 1-wire</td>
+                            <td>GPIO 14</td>
+                        </tr>
+                        <tr>
+                            <td>Rain Sensor</td>
+                            <td>Phát hiện mưa</td>
+                            <td>Digital (DO)</td>
+                            <td>GPIO 13</td>
+                        </tr>
+                        <tr>
+                            <td>LDR</td>
+                            <td>Phân biệt sáng/tối</td>
+                            <td>Digital (DO qua so sánh)</td>
+                            <td>GPIO 15</td>
+                        </tr>
+                        <tr>
+                            <td>Servo Motor</td>
+                            <td>Đóng/mở mái che</td>
+                            <td>PWM 50 Hz</td>
+                            <td>GPIO 12</td>
+                        </tr>
+                    </table>
+                    <caption>Bảng 8.1. Danh sách linh kiện. Số chân chỉ là ví dụ, cần đối chiếu sơ đồ thực tế.
+                    </caption>
+                </div>
+                <figure class="fig">
+                    <div class="imgph">[Image placeholder] Sơ đồ nối dây (Fritzing) và ảnh mạch thực tế</div>
+                    <figcaption>Hình 7.1. Sơ đồ đấu nối ESP32-CAM với bốn linh kiện. Servo nên cấp nguồn 5V riêng.
+                    </figcaption>
+                </figure>
+                <div class="note">Cảm biến mưa và LDR đọc dạng digital để tránh xung đột ADC2 với Wi-Fi trên ESP32.
+                </div>
+            </section>
+            <!-- Section 10: Software Design -->
+            <section id="software">
+                <h2><i>10</i>Software Design</h2>
+
+                <p>
+                    The Smart Agricultural Drying System is developed as a Java Web application
+                    using JSP, Servlet, JDBC, JavaScript, and SQL Server.
+                    The software is organized into separate components to reduce dependencies
+                    between the user interface, request processing, application data,
+                    and database access.
+                </p>
+
+                <!-- 10.1 Java Web Application Structure -->
+                <h3>10.1 Java Web Application Structure</h3>
+
+                <p>
+                    The Java Web application is organized into four main software components:
+                    View, Controller, Model, and Data Access.
+                    Each component has a specific responsibility and communicates with other
+                    components through a clearly defined structure.
+                </p>
+
+
+
+                <!-- 10.1.1 View Layer -->
+                <h4>10.1.1 View Layer</h4>
+
+                <p>
+                    The View Layer is responsible for displaying system information
+                    and receiving user interactions.
+                    It is implemented using JSP, JSTL, HTML, CSS, and JavaScript.
+                </p>
+
+                <p>
+                    JSP pages are stored under
+                    <code>/WEB-INF/views/</code>,
+                    which prevents users from accessing JSP files directly through a URL.
+                    Instead, page requests must be processed through the corresponding
+                    Servlet or Controller.
+                </p>
+
+                <p>
+                    The main interfaces in the View Layer include:
+                </p>
+
+                <ul>
+                    <li>Admin Dashboard</li>
+                    <li>Manager Dashboard</li>
+                    <li>Operator Dashboard</li>
+                    <li>User Management</li>
+                    <li>Warehouse Management</li>
+                    <li>Device Management</li>
+                    <li>Drying Batch</li>
+                    <li>Sensor History</li>
+                    <li>Event Log</li>
+                </ul>
+
+                <p>
+                    The View Layer does not directly execute SQL statements
+                    or communicate with the physical ESP32-CAM device.
+                    Its main responsibilities are displaying data,
+                    receiving user actions, submitting HTTP requests,
+                    receiving server responses, and updating page content.
+                </p>
+
+                <!-- 10.1.2 Controller Layer -->
+                <h4>10.1.2 Controller Layer</h4>
+
+                <p>
+                    The Controller Layer is implemented using Java Servlet.
+                    Controllers receive requests from the browser or external devices,
+                    validate request information, communicate with DAO components,
+                    and determine the appropriate response.
+                </p>
+
+                <p>
+                    The main responsibilities of the Controller Layer include:
+                </p>
+
+                <ul>
+                    <li>Receiving HTTP requests</li>
+                    <li>Checking the login session</li>
+                    <li>Checking the user role</li>
+                    <li>Reading request parameters</li>
+                    <li>Validating input data</li>
+                    <li>Calling DAO methods</li>
+                    <li>Processing returned results</li>
+                    <li>Returning JSP, text, or JSON responses</li>
+                </ul>
+
+                <p>
+                    Controllers in the system can be divided into three main categories:
+                    Page Controllers, Action Controllers, and API Controllers.
+                </p>
+
+                <h5>Page Controllers</h5>
+
+                <p>
+                    Page Controllers are used to load web pages.
+                    Typical examples include:
+                    <code>/dashboard</code>,
+                    <code>/history</code>,
+                    <code>/events</code>,
+                    <code>/users</code>,
+                    <code>/warehouses</code>,
+                    and <code>/devices</code>.
+                </p>
+
+                <h5>Action Controllers</h5>
+
+                <p>
+                    Action Controllers process user operations such as starting
+                    or completing a drying batch, changing the device mode,
+                    opening or closing the roof, and updating management data.
+                </p>
+
+                <h5>API Controllers</h5>
+
+                <p>
+                    API Controllers are used when the response is not a complete JSP page.
+                    Important API endpoints include
+                    <code>/api/sensor</code>,
+                    <code>/api/device-state</code>,
+                    <code>/api/dashboard-data</code>,
+                    and <code>/api/admin-dashboard-data</code>.
+                    Depending on the API purpose, the response may be returned as text or JSON.
+                </p>
+
+                <!-- 10.1.3 Model Layer -->
+                <h4>10.1.3 Model Layer</h4>
+
+                <p>
+                    The Model Layer represents the main data objects used by the application.
+                    The primary model classes include User, Warehouse, Device,
+                    SensorData, DryingBatch, and EventLog.
+                </p>
+
+                <p>
+                    Each model class contains properties corresponding to its system entity,
+                    together with constructors, getters, and setters.
+                    For example, the Device model stores information such as
+                    device ID, warehouse ID, device code, device name,
+                    operating mode, roof status, last seen time, and device status.
+                </p>
+
+                <p>
+                    The SensorData model represents environmental readings including
+                    temperature, humidity, rain status, light status,
+                    roof status, and recorded time.
+                </p>
+
+                <p>
+                    The Model Layer does not execute SQL queries.
+                    It is used to transfer structured data between DAO,
+                    Controller, and View components.
+                </p>
+
+                <!-- 10.1.4 Data Access Layer -->
+                <h4>10.1.4 Data Access Layer</h4>
+
+                <p>
+                    The Data Access Layer is implemented using the DAO pattern.
+                    The main DAO classes include UserDAO, WarehouseDAO,
+                    DeviceDAO, SensorDAO, DryingBatchDAO, and EventLogDAO.
+                </p>
+
+                <p>
+                    DAO classes are responsible for executing SQL queries,
+                    inserting data, updating data, deleting data,
+                    retrieving data, and mapping database results
+                    to Model objects.
+                </p>
+
+                <p>
+                    Database connections are created through JDBC and DBContext.
+                    This design keeps SQL logic out of Servlet classes
+                    and improves code readability, reusability,
+                    maintainability, and separation of concerns.
+                </p>
+                <!-- 10.2 MVC Structure -->
+                <h3>10.2 MVC Structure</h3>
+
+                <p>
+                    The Smart Agricultural Drying System follows an MVC-oriented
+                    software structure to separate data representation,
+                    user interface, and request-processing responsibilities.
+                </p>
+
+                <p>
+                    The system does not use a complete framework-based MVC architecture.
+                    Instead, the main responsibilities are organized using
+                    Model, View, and Controller components, while DAO classes
+                    support database access.
+                </p>
+
+                <figure class="fig">
+                    <img src="img/10.1.png" alt="MVC Structure of the Smart Agricultural Drying System"
+                        class="report-image">
+
+                    <figcaption>
+                        Figure 10.2. MVC Structure of the Smart Agricultural Drying System.
+                    </figcaption>
+                </figure>
+
+
+                <!-- 10.2.1 Model -->
+                <h4>10.2.1 Model</h4>
+
+                <p>
+                    The Model component represents the main data objects
+                    used by the application.
+                    The primary models include User, Warehouse, Device,
+                    SensorData, DryingBatch, and EventLog.
+                </p>
+
+                <p>
+                    Model objects are used to transfer structured data
+                    between DAO classes, Controllers, and Views.
+                    They do not directly execute SQL queries
+                    or contain user-interface logic.
+                </p>
+
+                <p>
+                    A typical data path is:
+                </p>
+
+                <div class="flow-box">
+                    SQL Result
+                    &rarr;
+                    DAO
+                    &rarr;
+                    Model Object
+                    &rarr;
+                    Controller
+                    &rarr;
+                    View / API Response
+                </div>
+
+
+                <!-- 10.2.2 View -->
+                <h4>10.2.2 View</h4>
+
+                <p>
+                    The View component represents the user interface
+                    of the system and is mainly implemented using
+                    JSP, JSTL, HTML, CSS, and JavaScript.
+                </p>
+
+                <p>
+                    The View displays data received from the Controller,
+                    provides forms and controls for user interaction,
+                    sends requests to the server,
+                    and updates visible information on the page.
+                </p>
+
+                <p>
+                    The View does not directly access SQL Server
+                    and does not directly control the physical ESP32-CAM device.
+                </p>
+
+
+                <!-- 10.2.3 Controller -->
+                <h4>10.2.3 Controller</h4>
+
+                <p>
+                    The Controller component is implemented using Java Servlet.
+                    It receives requests from the View or external devices,
+                    checks authentication and authorization,
+                    validates input data,
+                    communicates with DAO classes,
+                    and determines the appropriate response.
+                </p>
+
+                <p>
+                    A typical request-processing sequence is:
+                </p>
+
+                <div class="flow-box">
+                    Request
+                    &rarr;
+                    Servlet
+                    &rarr;
+                    Session / Role Check
+                    &rarr;
+                    Input Validation
+                    &rarr;
+                    DAO Operation
+                    &rarr;
+                    Model / Result
+                    &rarr;
+                    Response
+                </div>
+
+                <p>
+                    This structure helps keep request-processing logic
+                    outside JSP pages and prevents the View
+                    from directly interacting with the database.
+                </p>
+
+                <!-- 10.3 Role-Based Software Design -->
+                <h3>10.3 Role-Based Software Design</h3>
+
+                <p>
+                    The system applies role-based access control to separate
+                    administrative and operational functions.
+                    The main permissions of each role are summarized in the table below.
+                </p>
+
+                <div class="tw">
+                    <table>
+                        <tr>
+                            <th>Function</th>
+                            <th>Admin</th>
+                            <th>Manager</th>
+                            <th>Operator</th>
+                        </tr>
+
+                        <tr>
+                            <td>System Overview</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                        </tr>
+
+                        <tr>
+                            <td>Manage Users</td>
+                            <td>✓</td>
+                            <td>View Only</td>
+                            <td>✗</td>
+                        </tr>
+
+                        <tr>
+                            <td>Manage Warehouses</td>
+                            <td>✓</td>
+                            <td>Assigned / View Only</td>
+                            <td>✗</td>
+                        </tr>
+
+                        <tr>
+                            <td>Manage Devices</td>
+                            <td>✓</td>
+                            <td>✗</td>
+                            <td>✗</td>
+                        </tr>
+
+                        <tr>
+                            <td>Monitor Sensor Data</td>
+                            <td>✗</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                        </tr>
+
+                        <tr>
+                            <td>Change AUTO / MANUAL Mode</td>
+                            <td>✗</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                        </tr>
+
+                        <tr>
+                            <td>OPEN / CLOSE Roof</td>
+                            <td>✗</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                        </tr>
+
+                        <tr>
+                            <td>Start Drying Batch</td>
+                            <td>✗</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                        </tr>
+
+                        <tr>
+                            <td>Complete Drying Batch</td>
+                            <td>✗</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                        </tr>
+
+                        <tr>
+                            <td>View Sensor History</td>
+                            <td>✗</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                        </tr>
+
+                        <tr>
+                            <td>View Event Log</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                        </tr>
+
+                        <tr>
+                            <td>Monitor Device Status</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                            <td>✓</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <p>
+                    Access permissions are enforced by the backend Controller
+                    based on the authenticated user's role and assigned warehouse scope.
+                </p>
+            </section>
+            <section id="database">
+                <h2><i>11</i>Database Design</h2>
+                <figure class="fig">
+                    <div class="imgph">[Image placeholder] ERD của 7 bảng trên SQL Server</div>
+                    <figcaption>Hình 9.1. Sơ đồ thực thể liên kết.</figcaption>
+                </figure>
+                <div class="tw">
+                    <table>
+                        <tr>
+                            <th>Bảng</th>
+                            <th>Trường chính</th>
+                            <th>Quan hệ</th>
+                        </tr>
+                        <tr>
+                            <td>USER</td>
+                            <td>user_id, username, password_hash, role, status</td>
+                            <td>N–N Warehouse qua USER_WAREHOUSE</td>
+                        </tr>
+                        <tr>
+                            <td>WAREHOUSE</td>
+                            <td>warehouse_id, name, location</td>
+                            <td>1–N Device, 1–N Drying_Batch</td>
+                        </tr>
+                        <tr>
+                            <td>USER_WAREHOUSE</td>
+                            <td>user_id, warehouse_id</td>
+                            <td>Bảng trung gian phân công</td>
+                        </tr>
+                        <tr>
+                            <td>DEVICE</td>
+                            <td>device_id, code, warehouse_id, mode, roof_state, last_seen</td>
+                            <td>1–N Sensor_Data</td>
+                        </tr>
+                        <tr>
+                            <td>SENSOR_DATA</td>
+                            <td>id, device_id, temperature, humidity, rain, light, created_at</td>
+                            <td>N–1 Device</td>
+                        </tr>
+                        <tr>
+                            <td>DRYING_BATCH</td>
+                            <td>batch_id, warehouse_id, product, start_time, end_time, status</td>
+                            <td>N–1 Warehouse</td>
+                        </tr>
+                        <tr>
+                            <td>EVENT_LOG</td>
+                            <td>id, device_id, type, message, created_at</td>
+                            <td>N–1 Device</td>
+                        </tr>
+                    </table>
+                </div>
+
+            </section>
+
+
+
+            <!-- 12. System Testing -->
+            <section id="testing">
+                <h2><i>12</i>System Testing</h2>
+
+                <p>
+                    The Smart Agricultural Drying System was tested to verify
+                    the correctness of its main functions, user permissions,
+                    IoT device communication, roof control logic, realtime updates,
+                    and device connection monitoring.
+                </p>
+
+                <p>
+                    The testing process focuses on comparing the expected result
+                    with the actual system behavior under different test conditions.
+                    Each test case includes the tested function, input condition,
+                    expected result, actual result, and final status.
+                </p>
+
+                <!-- 12.1 Testing Approach -->
+                <h3>12.1 Testing Approach</h3>
+
+                <p>
+                    The system is evaluated using several testing categories,
+                    including functional testing, role-based authorization testing,
+                    AUTO and MANUAL roof control testing, realtime synchronization testing,
+                    device online/offline testing, and end-to-end integration testing.
+                </p>
+
+                <p>
+                    Testing is performed on both the Java Web application
+                    and the ESP32-CAM hardware to ensure that software
+                    and hardware components operate correctly as an integrated system.
+                </p>
+                <!-- 12.2 Functional Testing -->
+                <h3>12.2 Functional Testing</h3>
+
+                <p>
+                    Functional testing is performed to verify that the main system
+                    features operate according to the defined requirements.
+                    Each test case compares the expected result with the actual
+                    behavior of the implemented system.
+                </p>
+
+                <div class="tw">
+                    <table>
+                        <tr>
+                            <th>Test ID</th>
+                            <th>Function</th>
+                            <th>Test Procedure</th>
+                            <th>Expected Result</th>
+                            <th>Actual Result</th>
+                            <th>Status</th>
+                        </tr>
+
+                        <tr>
+                            <td>FT-01</td>
+                            <td>Login</td>
+                            <td>
+                                Enter a valid username and password,
+                                then submit the login form.
+                            </td>
+                            <td>
+                                The user is authenticated and redirected
+                                to the dashboard corresponding to the assigned role.
+                            </td>
+                            <td>
+                                The user successfully logs in and is redirected
+                                to the correct dashboard.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>FT-02</td>
+                            <td>Logout</td>
+                            <td>
+                                Select the Logout function after logging in.
+                            </td>
+                            <td>
+                                The current session is invalidated
+                                and the user is redirected to the login page.
+                            </td>
+                            <td>
+                                The session is cleared and the login page is displayed.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>FT-03</td>
+                            <td>View Dashboard</td>
+                            <td>
+                                Log in as Manager or Operator
+                                and open the dashboard.
+                            </td>
+                            <td>
+                                The dashboard displays the assigned warehouse,
+                                device information, and latest sensor data.
+                            </td>
+                            <td>
+                                The required monitoring information is displayed correctly.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>FT-04</td>
+                            <td>Change Device Mode</td>
+                            <td>
+                                Change the operating mode from AUTO to MANUAL
+                                or from MANUAL to AUTO.
+                            </td>
+                            <td>
+                                The selected mode is updated in the system
+                                and returned to the ESP32-CAM.
+                            </td>
+                            <td>
+                                The device mode is updated successfully.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>FT-05</td>
+                            <td>Manual Roof Control</td>
+                            <td>
+                                Set the device to MANUAL mode
+                                and select OPEN or CLOSE.
+                            </td>
+                            <td>
+                                The selected roof command is stored by the server,
+                                received by the ESP32-CAM,
+                                and executed by the Servo Motor.
+                            </td>
+                            <td>
+                                The roof responds according to the selected command.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>FT-06</td>
+                            <td>Start Drying Batch</td>
+                            <td>
+                                Enter the required batch information
+                                and select Start Batch.
+                            </td>
+                            <td>
+                                A new drying batch is created
+                                with an active status.
+                            </td>
+                            <td>
+                                The drying batch is created successfully.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>FT-07</td>
+                            <td>Complete Drying Batch</td>
+                            <td>
+                                Select an active drying batch
+                                and perform the Complete action.
+                            </td>
+                            <td>
+                                The selected batch is completed
+                                and its completion information is stored.
+                            </td>
+                            <td>
+                                The batch status is updated successfully.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+                        <tr>
+                            <td>FT-08</td>
+                            <td>View Batch History</td>
+                            <td>
+                                Open the Batch History page
+                                after one or more drying batches
+                                have been completed.
+                            </td>
+                            <td>
+                                Completed drying batches are retrieved
+                                and displayed with their recorded information.
+                            </td>
+                            <td>
+                                Batch history is displayed correctly.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+                        <tr>
+                            <td>FT-09</td>
+                            <td>View Sensor History</td>
+                            <td>
+                                Open the Sensor History page
+                                for the assigned warehouse.
+                            </td>
+                            <td>
+                                Previously stored sensor records
+                                are displayed in chronological order.
+                            </td>
+                            <td>
+                                Sensor history is displayed correctly.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>FT-10</td>
+                            <td>View Event Log</td>
+                            <td>
+                                Open the Event Log page.
+                            </td>
+                            <td>
+                                Recorded system events are retrieved
+                                and displayed to the authorized user.
+                            </td>
+                            <td>
+                                Event records are displayed successfully.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>FT-11</td>
+                            <td>User Management</td>
+                            <td>
+                                Log in as Admin and perform
+                                user management operations.
+                            </td>
+                            <td>
+                                Admin can view, create, update, delete
+                                or manage user information according to the system design.
+                            </td>
+                            <td>
+                                User management functions operate correctly.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>FT-12</td>
+                            <td>Warehouse Management</td>
+                            <td>
+                                Log in as Admin and perform
+                                warehouse management operations.
+                            </td>
+                            <td>
+                                Warehouse information can be managed
+                                and stored correctly.
+                            </td>
+                            <td>
+                                Warehouse management functions operate correctly.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>FT-13</td>
+                            <td>Device Management</td>
+                            <td>
+                                Log in as Admin and perform
+                                device management operations.
+                            </td>
+                            <td>
+                                Device information can be created,
+                                updated, viewed, deleted and managed correctly.
+                            </td>
+                            <td>
+                                Device management functions operate correctly.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <p>
+                    The functional testing results show that the main web-based
+                    management and operational functions are able to perform
+                    their intended tasks under normal operating conditions.
+                </p>
+                <!-- 12.3 Role and Authorization Testing -->
+                <h3>12.3 Role and Authorization Testing</h3>
+
+                <p>
+                    Role and authorization testing is performed to verify that
+                    each user can only access functions and warehouse data
+                    according to the assigned role and access scope.
+                </p>
+
+                <p>
+                    The testing also checks whether unauthorized access attempts,
+                    such as changing a URL or request parameter,
+                    are correctly blocked by the backend.
+                </p>
+
+                <div class="tw">
+                    <table>
+                        <tr>
+                            <th>Test ID</th>
+                            <th>Role</th>
+                            <th>Test Procedure</th>
+                            <th>Expected Result</th>
+                            <th>Actual Result</th>
+                            <th>Status</th>
+                        </tr>
+
+                        <tr>
+                            <td>RA-01</td>
+                            <td>Admin</td>
+                            <td>
+                                Access User Management.
+                            </td>
+                            <td>
+                                Admin is allowed to access and manage user information.
+                            </td>
+                            <td>
+                                User Management is accessible and functions correctly.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>RA-02</td>
+                            <td>Admin</td>
+                            <td>
+                                Access Warehouse Management.
+                            </td>
+                            <td>
+                                Admin is allowed to access and manage warehouse information.
+                            </td>
+                            <td>
+                                Warehouse Management is accessible and functions correctly.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>RA-03</td>
+                            <td>Admin</td>
+                            <td>
+                                Access Device Management.
+                            </td>
+                            <td>
+                                Admin is allowed to access and manage device information.
+                            </td>
+                            <td>
+                                Device Management is accessible and functions correctly.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>RA-04</td>
+                            <td>Admin</td>
+                            <td>
+                                Attempt to access operational roof control
+                                by entering the control URL directly.
+                            </td>
+                            <td>
+                                Admin is not allowed to perform operational
+                                roof control functions.
+                            </td>
+                            <td>
+                                Unauthorized operational access is prevented.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>RA-05</td>
+                            <td>Manager</td>
+                            <td>
+                                Select a warehouse assigned to the current Manager.
+                            </td>
+                            <td>
+                                The selected warehouse dashboard and related data
+                                are loaded successfully.
+                            </td>
+                            <td>
+                                The assigned warehouse data is displayed correctly.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>RA-06</td>
+                            <td>Manager</td>
+                            <td>
+                                Modify the warehouseId in the request
+                                to an unassigned warehouse.
+                            </td>
+                            <td>
+                                Unauthorized warehouse access is rejected
+                                and the Manager remains on the previously
+                                authorized warehouse dashboard.
+                            </td>
+                            <td>
+                                The unauthorized warehouse is not loaded
+                                and the current authorized dashboard remains displayed.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>RA-07</td>
+                            <td>Manager</td>
+                            <td>
+                                Change AUTO / MANUAL mode
+                                in an assigned warehouse.
+                            </td>
+                            <td>
+                                Manager is allowed to change the operating mode
+                                for an assigned warehouse.
+                            </td>
+                            <td>
+                                The device mode is updated successfully.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>RA-08</td>
+                            <td>Manager</td>
+                            <td>
+                                Start and complete a drying batch
+                                in an assigned warehouse.
+                            </td>
+                            <td>
+                                Manager is allowed to perform
+                                drying batch operations.
+                            </td>
+                            <td>
+                                Batch operations are completed successfully.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>RA-09</td>
+                            <td>Manager</td>
+                            <td>
+                                Attempt to access Device Management.
+                            </td>
+                            <td>
+                                Manager is not allowed to access
+                                Device Management.
+                            </td>
+                            <td>
+                                Access is prevented.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>RA-10</td>
+                            <td>Operator</td>
+                            <td>
+                                Access the assigned warehouse dashboard.
+                            </td>
+                            <td>
+                                Operator can access only the assigned warehouse.
+                            </td>
+                            <td>
+                                The assigned warehouse is loaded correctly.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>RA-11</td>
+                            <td>Operator</td>
+                            <td>
+                                Attempt to access data from another warehouse.
+                            </td>
+                            <td>
+                                Access to other warehouse data is rejected.
+                            </td>
+                            <td>
+                                The Operator cannot access another warehouse.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>RA-12</td>
+                            <td>Operator</td>
+                            <td>
+                                Change device mode and perform
+                                OPEN / CLOSE roof control
+                                in the assigned warehouse.
+                            </td>
+                            <td>
+                                Operator is allowed to perform operational control
+                                within the assigned warehouse.
+                            </td>
+                            <td>
+                                Operational controls function correctly.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>RA-13</td>
+                            <td>Operator</td>
+                            <td>
+                                Start and complete a drying batch
+                                in the assigned warehouse.
+                            </td>
+                            <td>
+                                Operator is allowed to manage
+                                drying batches in the assigned warehouse.
+                            </td>
+                            <td>
+                                Batch operations function correctly.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>RA-14</td>
+                            <td>Operator</td>
+                            <td>
+                                Attempt to access User Management,
+                                Warehouse Management, or Device Management.
+                            </td>
+                            <td>
+                                Operator is not allowed to access
+                                administrative management functions.
+                            </td>
+                            <td>
+                                Administrative access is prevented.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>RA-15</td>
+                            <td>Unauthenticated User</td>
+                            <td>
+                                Access a protected URL without logging in.
+                            </td>
+                            <td>
+                                The user is redirected to the login page
+                                .
+                            </td>
+                            <td>
+                                Protected pages cannot be accessed
+                                without authentication.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>RA-16</td>
+                            <td>Authenticated User</td>
+                            <td>
+                                Log out and then attempt to access
+                                a previously protected URL.
+                            </td>
+                            <td>
+                                The previous session is no longer valid
+                                and the user must log in again.
+                            </td>
+                            <td>
+                                The user is redirected to the login page.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <p>
+                    The authorization testing results show that access permissions
+                    are enforced according to both user roles and assigned warehouse scope.
+                    Unauthorized requests do not expose data or functions outside
+                    the user's permitted access range.
+                </p>
+
+                <!-- 12.4 AUTO Control Testing -->
+                <h3>12.4 AUTO Control Testing</h3>
+
+                <p>
+                    AUTO control testing is performed to verify that the ESP32-CAM
+                    automatically determines the correct roof state based on
+                    rain and light conditions.
+                </p>
+
+                <p>
+                    In AUTO mode, the expected control rule is:
+                    rain or dark conditions cause the roof to close,
+                    while no rain and bright conditions cause the roof to open.
+                </p>
+
+                <div class="tw">
+                    <table>
+                        <tr>
+                            <th>Test ID</th>
+                            <th>Rain Status</th>
+                            <th>Light Status</th>
+                            <th>Expected Roof Status</th>
+                            <th>Actual Result</th>
+                            <th>Status</th>
+                        </tr>
+
+                        <tr>
+                            <td>AT-01</td>
+                            <td>NO_RAIN</td>
+                            <td>BRIGHT</td>
+                            <td>OPEN</td>
+                            <td>
+                                The servo opens the roof.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>AT-02</td>
+                            <td>RAINING</td>
+                            <td>BRIGHT</td>
+                            <td>CLOSED</td>
+                            <td>
+                                The servo closes the roof.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>AT-03</td>
+                            <td>NO_RAIN</td>
+                            <td>DARK</td>
+                            <td>CLOSED</td>
+                            <td>
+                                The servo closes the roof.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>AT-04</td>
+                            <td>RAINING</td>
+                            <td>DARK</td>
+                            <td>CLOSED</td>
+                            <td>
+                                The servo closes the roof.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>AT-05</td>
+                            <td>NO_RAIN</td>
+                            <td>BRIGHT</td>
+                            <td>
+                                Roof remains OPEN while the environment
+                                continues to satisfy the AUTO opening condition.
+                            </td>
+                            <td>
+                                The roof remains open without unnecessary repeated movement.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>AT-06</td>
+                            <td>State changes from NO_RAIN to RAINING</td>
+                            <td>BRIGHT</td>
+                            <td>
+                                The ESP32-CAM detects the changed condition
+                                and closes the roof.
+                            </td>
+                            <td>
+                                The roof changes from OPEN to CLOSED.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>AT-07</td>
+                            <td>NO_RAIN</td>
+                            <td>State changes from BRIGHT to DARK</td>
+                            <td>
+                                The ESP32-CAM detects the dark condition
+                                and closes the roof.
+                            </td>
+                            <td>
+                                The roof changes from OPEN to CLOSED.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>AT-08</td>
+                            <td>State changes from RAINING to NO_RAIN</td>
+                            <td>BRIGHT</td>
+                            <td>
+                                The ESP32-CAM re-evaluates the AUTO condition
+                                and opens the roof.
+                            </td>
+                            <td>
+                                The roof changes from CLOSED to OPEN.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <p>
+                    The AUTO control test results show that the roof responds correctly
+                    to changes in rain and light conditions.
+                    The ESP32-CAM performs the control decision locally
+                    and updates the actual roof state after servo movement.
+                </p>
+                <!-- 12.5 MANUAL Control Testing -->
+                <h3>12.5 MANUAL Control Testing</h3>
+
+                <p>
+                    MANUAL control testing is performed to verify that
+                    Manager and Operator can manually control the roof
+                    through the web application when the device is operating
+                    in MANUAL mode.
+                </p>
+
+                <p>
+                    The test focuses on whether the selected OPEN or CLOSE command
+                    is correctly processed by the Java Web Server,
+                    retrieved by the ESP32-CAM through
+                    <code>/api/device-state</code>,
+                    and executed by the Servo Motor.
+                </p>
+
+                <div class="tw">
+                    <table>
+                        <tr>
+                            <th>Test ID</th>
+                            <th>Initial Condition</th>
+                            <th>Test Procedure</th>
+                            <th>Expected Result</th>
+                            <th>Actual Result</th>
+                            <th>Status</th>
+                        </tr>
+
+                        <tr>
+                            <td>MT-01</td>
+                            <td>Device is in AUTO mode</td>
+                            <td>
+                                Manager or Operator changes the operating mode
+                                from AUTO to MANUAL.
+                            </td>
+                            <td>
+                                The device mode is updated to MANUAL
+                                and returned to the ESP32-CAM.
+                            </td>
+                            <td>
+                                The device successfully changes to MANUAL mode.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>MT-02</td>
+                            <td>MANUAL mode, roof CLOSED</td>
+                            <td>
+                                Select OPEN from the web application.
+                            </td>
+                            <td>
+                                The server updates the desired roof status to OPEN.
+                                The ESP32-CAM receives the command and opens the roof.
+                            </td>
+                            <td>
+                                The Servo Motor moves and the roof changes to OPEN.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>MT-03</td>
+                            <td>MANUAL mode, roof OPEN</td>
+                            <td>
+                                Select CLOSE from the web application.
+                            </td>
+                            <td>
+                                The server updates the desired roof status to CLOSED.
+                                The ESP32-CAM receives the command and closes the roof.
+                            </td>
+                            <td>
+                                The Servo Motor moves and the roof changes to CLOSED.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>MT-04</td>
+                            <td>MANUAL mode, roof already OPEN</td>
+                            <td>
+                                Select OPEN again.
+                            </td>
+                            <td>
+                                The roof remains OPEN
+                                and no unnecessary opposite movement occurs.
+                            </td>
+                            <td>
+                                The roof remains in the OPEN state.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>MT-05</td>
+                            <td>MANUAL mode, roof already CLOSED</td>
+                            <td>
+                                Select CLOSE again.
+                            </td>
+                            <td>
+                                The roof remains CLOSED
+                                and no unnecessary opposite movement occurs.
+                            </td>
+                            <td>
+                                The roof remains in the CLOSED state.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>MT-06</td>
+                            <td>MANUAL mode</td>
+                            <td>
+                                Change the rain or light sensor condition
+                                while keeping the device in MANUAL mode.
+                            </td>
+                            <td>
+                                Sensor changes do not override
+                                the user-selected manual roof command.
+                            </td>
+                            <td>
+                                The roof remains controlled by the MANUAL command.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>MT-07</td>
+                            <td>MANUAL mode</td>
+                            <td>
+                                Send an OPEN or CLOSE command
+                                and observe the device state returned
+                                through the next device-state request.
+                            </td>
+                            <td>
+                                The ESP32-CAM receives the latest MODE
+                                and ROOF command from the Java Server.
+                            </td>
+                            <td>
+                                The latest control command is received correctly.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>MT-08</td>
+                            <td>MANUAL mode after roof movement</td>
+                            <td>
+                                Observe the reported roof status
+                                after the Servo Motor completes the movement.
+                            </td>
+                            <td>
+                                The actual roof status is reported
+                                and synchronized with the server.
+                            </td>
+                            <td>
+                                The reported roof status matches
+                                the physical roof state.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <p>
+                    The MANUAL control test results show that authorized users
+                    can control the roof through the web application
+                    and that the ESP32-CAM correctly executes the latest
+                    server-side roof command while operating in MANUAL mode.
+                </p>
+                <!-- 12.6 Realtime and Synchronization Testing -->
+                <h3>12.6 Realtime and Synchronization Testing</h3>
+
+                <p>
+                    Realtime and synchronization testing is performed to verify
+                    that device status, sensor information, control commands,
+                    and monitoring data are updated correctly between
+                    the ESP32-CAM, Java Web Server, database, and web interface.
+                </p>
+
+                <p>
+                    Different components use different update intervals
+                    depending on their purpose.
+                    Fast-changing operational information is refreshed frequently,
+                    while historical sensor records are stored less frequently
+                    to avoid unnecessary database writes.
+                </p>
+
+                <div class="tw">
+                    <table>
+                        <tr>
+                            <th>Test ID</th>
+                            <th>Component</th>
+                            <th>Test Procedure</th>
+                            <th>Expected Result</th>
+                            <th>Actual Result</th>
+                            <th>Status</th>
+                        </tr>
+
+                        <tr>
+                            <td>RT-01</td>
+                            <td>Device State / Heartbeat</td>
+                            <td>
+                                Keep the ESP32-CAM connected
+                                and observe requests to
+                                <code>/api/device-state</code>.
+                            </td>
+                            <td>
+                                The ESP32-CAM periodically sends device-state
+                                requests at approximately 2-second intervals.
+                            </td>
+                            <td>
+                                Device-state communication is maintained
+                                at approximately the expected interval.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>RT-02</td>
+                            <td>Manager / Operator Dashboard</td>
+                            <td>
+                                Open the dashboard and observe sensor
+                                and device information while the system is running.
+                            </td>
+                            <td>
+                                The dashboard requests updated data
+                                approximately every 2 seconds
+                                without requiring a full page reload.
+                            </td>
+                            <td>
+                                Dashboard information is refreshed
+                                dynamically at approximately 2-second intervals.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>RT-03</td>
+                            <td>Sensor State Change</td>
+                            <td>
+                                Change an important sensor state,
+                                such as NO_RAIN to RAINING
+                                or BRIGHT to DARK.
+                            </td>
+                            <td>
+                                The ESP32-CAM sends sensor data
+                                to <code>/api/sensor</code> immediately
+                                after detecting the important state change.
+                            </td>
+                            <td>
+                                The changed sensor state is sent
+                                to the server without waiting
+                                for the periodic storage interval.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>RT-04</td>
+                            <td>Periodic Sensor Storage</td>
+                            <td>
+                                Keep sensor conditions stable
+                                without any important state changes.
+                            </td>
+                            <td>
+                                Sensor data is not inserted every 2 seconds.
+                                A periodic sensor record is sent
+                                approximately every 5 minutes.
+                            </td>
+                            <td>
+                                Sensor history is stored periodically
+                                without unnecessary high-frequency inserts.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>RT-05</td>
+                            <td>Admin Device Status</td>
+                            <td>
+                                Open the Admin Dashboard
+                                and observe Online / Offline device counts.
+                            </td>
+                            <td>
+                                The Admin Dashboard refreshes
+                                device connection information
+                                approximately every 5 seconds.
+                            </td>
+                            <td>
+                                Online / Offline counts are updated
+                                at approximately the expected interval.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>RT-06</td>
+                            <td>Event Log</td>
+                            <td>
+                                Open the Event Log page
+                                and create a new system event.
+                            </td>
+                            <td>
+                                The Event Log is refreshed
+                                approximately every 10 seconds
+                                without a full page reload.
+                            </td>
+                            <td>
+                                New event information appears
+                                after the periodic refresh.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>RT-07</td>
+                            <td>Sensor History</td>
+                            <td>
+                                Open the Sensor History page
+                                while new sensor records are being stored.
+                            </td>
+                            <td>
+                                Sensor History is refreshed
+                                approximately every 30 seconds.
+                            </td>
+                            <td>
+                                Newly stored sensor records are displayed
+                                after the periodic history refresh.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>RT-08</td>
+                            <td>Manual Command Synchronization</td>
+                            <td>
+                                Change the roof command
+                                from the web application
+                                while the device is in MANUAL mode.
+                            </td>
+                            <td>
+                                The new desired roof state is stored
+                                on the server and received by the ESP32-CAM
+                                through the next device-state request.
+                            </td>
+                            <td>
+                                The ESP32-CAM receives
+                                and executes the latest roof command.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>RT-09</td>
+                            <td>Physical Roof Status Synchronization</td>
+                            <td>
+                                Perform an OPEN or CLOSE command
+                                and observe the server and dashboard
+                                after the Servo Motor completes movement.
+                            </td>
+                            <td>
+                                The actual physical roof state
+                                is reported by the ESP32-CAM
+                                and displayed consistently on the dashboard.
+                            </td>
+                            <td>
+                                The displayed roof status matches
+                                the physical roof state.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+                        <tr>
+                            <td>RT-10</td>
+                            <td>Device Offline Detection</td>
+                            <td>
+                                Disconnect the ESP32-CAM from Wi-Fi or power
+                                and stop heartbeat communication.
+                            </td>
+                            <td>
+                                If no heartbeat is received for more than 30 seconds,
+                                the device is classified as OFFLINE.
+                            </td>
+                            <td>
+                                The device status changes to OFFLINE
+                                after the heartbeat timeout.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>RT-11</td>
+                            <td>Device Reconnection</td>
+                            <td>
+                                Reconnect the ESP32-CAM after it has been detected
+                                as OFFLINE.
+                            </td>
+                            <td>
+                                When heartbeat communication resumes,
+                                the device is classified as ONLINE again.
+                            </td>
+                            <td>
+                                The device status returns to ONLINE
+                                after heartbeat communication is restored.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <p>
+                    The realtime and synchronization testing results show that
+                    the system maintains frequent device communication
+                    and responsive dashboard updates while avoiding
+                    unnecessary high-frequency sensor history storage.
+                    Control commands and physical device states remain synchronized
+                    between the web application and the ESP32-CAM.
+                </p>
+
+                <!-- 12.7 End-to-End Testing -->
+                <h3>12.7 End-to-End Testing</h3>
+
+                <p>
+                    End-to-end testing is performed to verify that
+                    the hardware, Java Web application, database,
+                    and user interface work correctly as one integrated system.
+                </p>
+
+                <p>
+                    The test scenarios focus on complete operational flows
+                    rather than individual functions.
+                </p>
+
+                <div class="tw">
+                    <table>
+                        <tr>
+                            <th>Test ID</th>
+                            <th>Scenario</th>
+                            <th>Test Procedure</th>
+                            <th>Expected Result</th>
+                            <th>Actual Result</th>
+                            <th>Status</th>
+                        </tr>
+
+                        <tr>
+                            <td>E2E-01</td>
+                            <td>Rain Detection in AUTO Mode</td>
+                            <td>
+                                Set the device to AUTO mode,
+                                keep the environment bright,
+                                and trigger the rain sensor.
+                            </td>
+                            <td>
+                                The ESP32-CAM detects RAINING,
+                                closes the roof,
+                                sends the updated sensor state to the server,
+                                stores the data,
+                                and the dashboard displays
+                                RAINING and CLOSED.
+                            </td>
+                            <td>
+                                Rain status and roof status are updated correctly
+                                from the physical device to the web interface.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>E2E-02</td>
+                            <td>Automatic Roof Opening</td>
+                            <td>
+                                Keep the device in AUTO mode,
+                                remove the rain condition,
+                                and provide a BRIGHT light condition.
+                            </td>
+                            <td>
+                                The ESP32-CAM evaluates NO_RAIN and BRIGHT,
+                                opens the roof,
+                                updates the actual roof status,
+                                and the web dashboard displays OPEN.
+                            </td>
+                            <td>
+                                The roof opens and the displayed state
+                                matches the physical roof state.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>E2E-03</td>
+                            <td>Manual Roof Control</td>
+                            <td>
+                                Log in as Manager or Operator,
+                                switch the device to MANUAL mode,
+                                and select OPEN or CLOSE.
+                            </td>
+                            <td>
+                                The control request is processed by the Java Server,
+                                the ESP32-CAM retrieves the latest MODE and ROOF command,
+                                the Servo Motor executes the command,
+                                and the actual roof state is reported back.
+                            </td>
+                            <td>
+                                The physical roof follows the command
+                                selected from the web application.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>E2E-04</td>
+                            <td>Device Offline and Reconnection</td>
+                            <td>
+                                Disconnect the ESP32-CAM
+                                until the heartbeat timeout is exceeded,
+                                then reconnect the device.
+                            </td>
+                            <td>
+                                The device becomes OFFLINE after more than 30 seconds
+                                without heartbeat and returns to ONLINE
+                                after communication is restored.
+                            </td>
+                            <td>
+                                The web application reflects
+                                both offline and reconnection states correctly.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>E2E-05</td>
+                            <td>Drying Batch Lifecycle</td>
+                            <td>
+                                Log in as Manager or Operator,
+                                start a new drying batch,
+                                monitor the active batch,
+                                and complete it.
+                            </td>
+                            <td>
+                                The batch is created as active,
+                                can be monitored during operation,
+                                changes to completed status,
+                                and remains available in Batch History.
+                            </td>
+                            <td>
+                                The complete drying batch lifecycle
+                                operates correctly.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+
+                        <tr>
+                            <td>E2E-06</td>
+                            <td>Sensor Data Monitoring</td>
+                            <td>
+                                Change environmental conditions
+                                while the Manager or Operator dashboard is open.
+                            </td>
+                            <td>
+                                Important sensor state changes are sent to the server,
+                                stored when required,
+                                and displayed on the dashboard
+                                through periodic realtime updates.
+                            </td>
+                            <td>
+                                The dashboard reflects the latest
+                                environmental and device information correctly.
+                            </td>
+                            <td>Pass</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <p>
+                    The end-to-end testing results show that
+                    the main hardware and software components
+                    can operate together as an integrated system.
+                    Sensor information can travel from the physical environment
+                    to the web interface, while authorized control commands
+                    can travel from the web application back to the ESP32-CAM
+                    and physical roof mechanism.
+                </p>
+
+
+                <!-- 12.8 Testing Summary -->
+                <h3>12.8 Testing Summary</h3>
+
+                <p>
+                    The system was evaluated through functional,
+                    authorization, automatic control, manual control,
+                    realtime synchronization, and end-to-end testing.
+                    The tests cover both the Java Web application
+                    and the ESP32-CAM hardware integration.
+                </p>
+
+                <div class="tw">
+                    <table>
+                        <tr>
+                            <th>Testing Category</th>
+                            <th>Number of Test Cases</th>
+                            <th>Passed</th>
+                            <th>Failed</th>
+                        </tr>
+
+                        <tr>
+                            <td>Functional Testing</td>
+                            <td>13</td>
+                            <td>13</td>
+                            <td>0</td>
+                        </tr>
+
+                        <tr>
+                            <td>Role and Authorization Testing</td>
+                            <td>16</td>
+                            <td>16</td>
+                            <td>0</td>
+                        </tr>
+
+                        <tr>
+                            <td>AUTO Control Testing</td>
+                            <td>8</td>
+                            <td>8</td>
+                            <td>0</td>
+                        </tr>
+
+                        <tr>
+                            <td>MANUAL Control Testing</td>
+                            <td>8</td>
+                            <td>8</td>
+                            <td>0</td>
+                        </tr>
+
+                        <tr>
+                            <td>Realtime and Synchronization Testing</td>
+                            <td>11</td>
+                            <td>11</td>
+                            <td>0</td>
+                        </tr>
+
+                        <tr>
+                            <td>End-to-End Testing</td>
+                            <td>6</td>
+                            <td>6</td>
+                            <td>0</td>
+                        </tr>
+
+                        <tr>
+                            <th>Total</th>
+                            <th>62</th>
+                            <th>62</th>
+                            <th>0</th>
+                        </tr>
+                    </table>
+                </div>
+
+                <p>
+                    The testing results indicate that the implemented prototype
+                    satisfies the main functional and integration requirements
+                    within the defined project scope.
+                    Core functions including role-based access,
+                    sensor monitoring, AUTO and MANUAL roof control,
+                    realtime synchronization, device connection monitoring,
+                    and drying batch management operate as expected.
+                </p>
+            </section>
+            <!-- User Guide -->
+            <section id="user-guide">
+                <h2><i>13</i>User Guide</h2>
+
+                <p>
+                    This section provides basic instructions for accessing
+                    and operating the Smart Agricultural Drying System.
+                    The guide is organized according to the three system roles:
+                    Admin, Manager, and Operator.
+                </p>
+
+                <p>
+                    Each role has a different set of available functions.
+                    Users should log in using an account assigned to the
+                    appropriate role before performing system operations.
+                </p>
+                <h3>13.1 System Access and Login</h3>
+
+                <p>
+                    To access the system, open the Smart Agricultural Drying System
+                    web application in a supported web browser.
+                    The Login page requires a valid username and password.
+                </p>
+
+                <ol>
+                    <li>Open the system Login page.</li>
+                    <li>Enter a valid username.</li>
+                    <li>Enter the corresponding password.</li>
+                    <li>Click the Login button.</li>
+                    <li>
+                        After successful authentication, the system redirects
+                        the user to the dashboard corresponding to the assigned role.
+                    </li>
+                </ol>
+
+                <figure class="fig">
+                    <img src="/img/13.1.png.jpg" alt="System Login Page" class="report-image">
+
+                    <figcaption>
+                        Figure 13.1. System Login Page.
+                    </figcaption>
+                </figure>
+
+                <h3>13.2 Demo Accounts</h3>
+
+                <p>
+                    The following active accounts can be used to demonstrate
+                    the main functions of each system role.
+                </p>
+
+                <div class="tw">
+                    <table>
+                        <tr>
+                            <th>Role</th>
+                            <th>Username</th>
+                            <th>Password</th>
+                            <th>Access Scope</th>
+                        </tr>
+
+                        <tr>
+                            <td>Admin</td>
+                            <td>admin01</td>
+                            <td>123456</td>
+                            <td>Full system administration</td>
+                        </tr>
+
+                        <tr>
+                            <td>Manager</td>
+                            <td>manager01</td>
+                            <td>123456</td>
+                            <td>Assigned warehouses</td>
+                        </tr>
+
+                        <tr>
+                            <td>Operator</td>
+                            <td>operator01</td>
+                            <td>123456</td>
+                            <td>Assigned warehouse</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <h3>13.3 Admin User Guide</h3>
+
+                <p>
+                    Admin is responsible for managing the main system resources
+                    and monitoring the overall system status.
+                </p>
+                <figure class="fig">
+                    <img src="/img/13.2.jpg" alt="Admin Dashboard Page" class="report-image">
+
+                    <figcaption>
+                        Figure 13.2. Admin Dashboard Page.
+                    </figcaption>
+                </figure>
+
+                <ol>
+                    <li>Log in using an Admin account.</li>
+                    <li>Open the Admin Dashboard to view the system overview.</li>
+                    <li>Use User Management to manage system users.</li>
+                    <li>Use Warehouse Management to manage warehouses.</li>
+                    <li>Use Device Management to manage registered devices.</li>
+                    <li>View Online / Offline device information from the dashboard.</li>
+                    <li>Open Event Log to review recorded system events.</li>
+                    <li>Use Logout when system administration is completed.</li>
+                </ol>
+
+                <h3>13.4 Manager User Guide</h3>
+
+                <p>
+                    Manager can monitor and operate the warehouses
+                    assigned to the current account.
+                </p>
+                <figure class="fig">
+                    <img src="/img/13.3.jpg" alt="Manager Dashboard Page" class="report-image">
+
+                    <figcaption>
+                        Figure 13.3. Maneger Dashboard Page.
+                    </figcaption>
+                </figure>
+
+                <ol>
+                    <li>Log in using a Manager account.</li>
+                    <li>Select one of the assigned warehouses.</li>
+                    <li>Monitor temperature, humidity, rain, light, roof, and device status.</li>
+                    <li>Select AUTO or MANUAL operating mode.</li>
+                    <li>
+                        In MANUAL mode, select OPEN or CLOSE
+                        to control the roof.
+                    </li>
+                    <li>Start a new drying batch when required.</li>
+                    <li>Monitor active drying batches.</li>
+                    <li>Complete a drying batch when the process is finished.</li>
+                    <li>View Batch History and Sensor History.</li>
+                    <li>View Event Log for system activities.</li>
+                </ol>
+
+
+                <h3>13.5 Operator User Guide</h3>
+
+                <p>
+                    Operator is assigned to one warehouse
+                    and performs day-to-day drying operations.
+                </p>
+                <figure class="fig">
+                    <img src="/img/13.4.jpg" alt="Operator Dashboard Page" class="report-image">
+
+                    <figcaption>
+                        Figure 13.4. Operator Dashboard Page.
+                    </figcaption>
+                </figure>
+
+                <ol>
+                    <li>Log in using an Operator account.</li>
+                    <li>
+                        The system automatically loads
+                        the assigned warehouse.
+                    </li>
+                    <li>Monitor current sensor and device information.</li>
+                    <li>Select AUTO or MANUAL mode when permitted.</li>
+                    <li>
+                        In MANUAL mode, use OPEN or CLOSE
+                        to control the roof.
+                    </li>
+                    <li>Start a drying batch.</li>
+                    <li>Monitor the active drying batch.</li>
+                    <li>Complete the batch when the drying process is finished.</li>
+                    <li>View Batch History and Sensor History.</li>
+                    <li>View Event Log when required.</li>
+                </ol>
+
+                <h3>13.6 Operating Notes</h3>
+
+                <ul>
+                    <li>
+                        AUTO mode automatically controls the roof
+                        based on rain and light conditions.
+                    </li>
+
+                    <li>
+                        MANUAL mode allows Manager or Operator
+                        to select OPEN or CLOSE from the web interface.
+                    </li>
+
+                    <li>
+                        If the ESP32-CAM does not send a heartbeat
+                        for more than 30 seconds,
+                        the device is displayed as OFFLINE.
+                    </li>
+
+                    <li>
+                        Manager can only access warehouses
+                        assigned to the current account.
+                    </li>
+
+                    <li>
+                        Operator can only operate the warehouse
+                        assigned to the current account.
+                    </li>
+
+                    <li>
+                        Dashboard information is updated automatically
+                        and normally does not require a full page reload.
+                    </li>
+
+                    <li>
+                        Sensor History is not stored every 2 seconds.
+                        Important sensor state changes are sent immediately,
+                        while unchanged sensor data is stored periodically.
+                    </li>
+                </ul>
+
+            </section>
+            </section>
+            <section id="results">
+                <h2><i>14</i>Results</h2>
+                <div class="stat">
+                    <div>Temperature<strong>31.5°C</strong></div>
+                    <div>Humidity<strong>68%</strong></div>
+                    <div>Rain<strong>NO_RAIN</strong></div>
+                    <div>Light<strong>BRIGHT</strong></div>
+                    <div>Roof<strong>OPEN</strong></div>
+                    <div>Mode<strong>AUTO</strong></div>
+                    <div>Device<strong>ONLINE</strong></div>
+                </div>
+                <figure class="fig"><svg id="chart" viewBox="0 0 720 260" width="100%" role="img"
+                        aria-label="Biểu đồ nhiệt độ và độ ẩm trong ngày"></svg>
+                    <figcaption>Hình 14.1. Nhiệt độ (xanh lá) và độ ẩm (xanh dương) từ 06:00 đến 18:00. Dữ liệu minh
+                        họa.</figcaption>
+                </figure>
+                <h3>Event Log mẫu</h3>
+                <div class="tw">
+                    <table>
+                        <tr>
+                            <th>Thời gian</th>
+                            <th>Device</th>
+                            <th>Sự kiện</th>
+                            <th>Chi tiết</th>
+                        </tr>
+                        <tr>
+                            <td>13:42:10</td>
+                            <td>DRY-01</td>
+                            <td><span class="pill r">Rain Detected</span></td>
+                            <td>Mái chuyển OPEN → CLOSED</td>
+                        </tr>
+                        <tr>
+                            <td>14:05:33</td>
+                            <td>DRY-01</td>
+                            <td><span class="pill">Roof Opened</span></td>
+                            <td>Hết mưa, trời sáng (AUTO)</td>
+                        </tr>
+                        <tr>
+                            <td>14:20:00</td>
+                            <td>DRY-01</td>
+                            <td><span class="pill w">High Temperature</span></td>
+                            <td>Nhiệt độ vượt ngưỡng cấu hình</td>
+                        </tr>
+                        <tr>
+                            <td>15:02:48</td>
+                            <td>DRY-02</td>
+                            <td><span class="pill r">Device Offline</span></td>
+                            <td>Quá 30 giây không có dữ liệu</td>
+                        </tr>
+                    </table>
+                </div>
+                <figure class="fig">
+                    <div class="imgph">[Image placeholder] Ảnh chụp Dashboard OPERATOR</div>
+                    <figcaption>Hình 14.2. Giao diện theo dõi realtime.</figcaption>
+                </figure>
+            </section>
+
+            <!-- 14. Limitations -->
+<section id="limitations">
+    <h2><i>15</i>Limitations</h2>
+
+    <p>
+        Although the Smart Agricultural Drying System successfully integrates
+        environmental monitoring, automatic roof control, manual operation,
+        database storage, and web-based management, the current implementation
+        still has several limitations due to the prototype scope of the project.
+    </p>
+
+    <h3>15.1 Sensor Accuracy</h3>
+
+    <p>
+        The system uses DHT11, Rain Sensor, and LDR modules for environmental
+        monitoring. These sensors are suitable for demonstration purposes,
+        but their accuracy and stability are lower than industrial-grade sensors.
+        In particular, the LDR is currently used mainly to classify light conditions
+        as BRIGHT or DARK rather than measure precise light intensity.
+    </p>
+
+    <h3>15.2 Prototype Roof Mechanism</h3>
+
+    <p>
+        The roof mechanism is simulated using a Servo Motor.
+        This setup is appropriate for a small prototype,
+        but it does not represent the mechanical load and durability requirements
+        of a real agricultural drying roof.
+    </p>
+
+    <p>
+        The current prototype does not evaluate factors such as
+        motor torque, waterproofing, mechanical wear,
+        emergency stop mechanisms, or backup power.
+    </p>
+
+    <h3>15.3 Wi-Fi and Network Dependency</h3>
+
+    <p>
+        Communication between the ESP32-CAM and the Java Web Server
+        depends on Wi-Fi connectivity.
+        If the network connection is interrupted,
+        new sensor information cannot be synchronized to the server
+        and MANUAL commands from the web application cannot reach the device.
+    </p>
+
+    <p>
+        However, AUTO control can still continue locally on the ESP32-CAM
+        because the automatic roof decision is performed directly on the device.
+    </p>
+
+    <h3>15.4 HTTP-Based IoT Communication</h3>
+
+    <p>
+        The current system uses HTTP requests for device communication,
+        including sensor data transmission, heartbeat updates,
+        and control-state synchronization.
+        This approach is simple and suitable for the current prototype,
+        but may become less efficient when the number of devices
+        or warehouses is significantly increased.
+    </p>
+
+    <h3>15.5 Limited Environmental Control</h3>
+
+    <p>
+        The current system only controls the roof mechanism.
+        Other environmental control devices such as fans,
+        heaters, dehumidifiers, or industrial drying equipment
+        are not included in the current project scope.
+    </p>
+
+    <h3>15.6 Limited Notification Capability</h3>
+
+    <p>
+        The web application can display warnings and system events,
+        but external notification channels are still limited.
+        The current prototype does not provide a complete mobile application
+        or multi-channel alert system for users outside the web interface.
+    </p>
+
+    <h3>15.7 Prototype Deployment Environment</h3>
+
+    <p>
+        The Java Web application and SQL Server database
+        are currently deployed in a local development and demonstration environment.
+        The system has not yet been evaluated under long-term cloud deployment,
+        unstable public networks, or large-scale production conditions.
+    </p>
+
+    <h3>15.8 Limited Physical Device Scale</h3>
+
+    <p>
+        The prototype is currently demonstrated with a limited number
+        of physical IoT devices.
+        Although the software architecture supports multiple warehouses
+        and devices, large-scale multi-device deployment
+        has not yet been fully tested in a real environment.
+    </p>
+</section>
+           <!-- 16. Future Improvements -->
+<section id="future">
+    <h2><i>16</i>Future Improvements</h2>
+
+    <p>
+        Based on the current limitations of the prototype,
+        several enhancements can be considered for future development
+        to improve system reliability, scalability, and practical applicability.
+    </p>
+
+    <h3>16.1 Upgrade Sensor Hardware</h3>
+
+    <p>
+        The current DHT11, Rain Sensor, and LDR modules can be replaced
+        with higher-precision, industrial-grade sensors better suited
+        for harsh agricultural environments.
+    </p>
+
+    <p>
+        In particular, the light sensing module can be upgraded
+        from a simple binary classification (BRIGHT / DARK) to a precise
+        illuminance measurement (Lux).
+    </p>
+
+    <h3>16.2 Improve the Roof Actuation Mechanism</h3>
+
+    <p>
+        The prototype Servo Motor can be replaced with higher-torque motors
+        or heavy-duty linear actuators capable of driving real-world outdoor roof structures.
+        Future implementations should also address mechanical limits, position feedback,
+        waterproofing standards, and emergency override protections.
+    </p>
+
+    <h3>16.3 Improve IoT Communication</h3>
+
+    <p>
+        The current HTTP-based communication can be upgraded or combined
+        with MQTT in future versions.
+        MQTT will offer significantly higher network efficiency, lower latency,
+        and reduced bandwidth overhead when multiple devices and warehouses operate concurrently.
+    </p>
+
+    <h3>16.4 Cloud Deployment</h3>
+
+    <p>
+        The Java Web application and database can be deployed to a cloud platform (e.g., Cloud VPS/Server)
+        to enable secure remote access from any geographical location.
+    </p>
+
+    <p>
+        Cloud deployment would also streamline centralized multi-warehouse management
+        without relying on local network configurations.
+    </p>
+
+    <h3>16.5 Expand Multi-Device and Multi-Warehouse Support</h3>
+
+    <p>
+        Although the software architecture natively supports multiple warehouses and devices,
+        future phases should focus on stress-testing the system with a higher density
+        of physical ESP32-CAM units operating simultaneously.
+    </p>
+
+    <h3>16.6 External Notification Integration</h3>
+
+    <p>
+        The system can be integrated with external messaging services
+        such as Telegram Bot or SMS gateways to deliver instant alerts for critical events.
+    </p>
+
+    <p>
+        Key notification triggers include:
+    </p>
+
+    <ul>
+        <li>Rain detection events</li>
+        <li>High-temperature thresholds</li>
+        <li>Low-temperature thresholds</li>
+        <li>Device offline status</li>
+    </ul>
+
+    <h3>16.7 Additional Environmental Control Devices</h3>
+
+    <p>
+        Future iterations can integrate auxiliary hardware components such as
+        ventilation fans, heating elements, or dehumidifiers to provide comprehensive
+        microclimate control throughout the drying process.
+    </p>
+
+    <h3>16.8 Weather Forecast Integration</h3>
+
+    <p>
+        Integrating third-party weather forecast APIs can provide predictive insights
+        to assist operators in proactive decision-making.
+        However, local real-time sensor data will remain the primary trigger
+        for instant roof actuation.
+    </p>
+
+    <h3>16.9 Data Analytics and Decision Support</h3>
+
+    <p>
+        Historical sensor data and drying batch records can be leveraged
+        for in-depth data analytics.
+        The system can evaluate correlations between temperature, humidity,
+        and drying duration to help optimize overall operational efficiency.
+    </p>
+
+    <p>
+        More advanced predictive models or recommendation algorithms
+        can be considered in future releases once a sufficient volume
+        of field data has been collected.
+    </p>
+</section>
+
+           <!-- 16. Conclusion -->
+<section id="conclusion">
+    <h2><i>17</i>Conclusion</h2>
+
+    <p>
+        The Smart Agricultural Drying System was developed to support
+        the monitoring and control of agricultural drying conditions
+        through the integration of IoT hardware and a Java Web application.
+    </p>
+
+    <p>
+        The system successfully combines ESP32-CAM, DHT11,
+        Rain Sensor, LDR, and Servo Motor with a Java Web platform
+        using JSP, Servlet, JDBC, JavaScript, and SQL Server.
+        Environmental data can be collected from the physical device,
+        transmitted to the server, stored in the database,
+        and displayed through the web interface.
+    </p>
+
+    <p>
+        The implemented prototype supports both AUTO and MANUAL roof control.
+        In AUTO mode, the ESP32-CAM automatically opens or closes the roof
+        based on rain and light conditions.
+        In MANUAL mode, authorized Manager and Operator users
+        can control the roof through the web application.
+    </p>
+
+    <p>
+        The system also provides role-based access for Admin,
+        Manager, and Operator, together with functions for
+        warehouse management, device management, drying batch management,
+        sensor history, event logging, realtime monitoring,
+        and device Online / Offline detection.
+    </p>
+
+    <p>
+        Through system testing, the main hardware and software components
+        were shown to operate together as an integrated prototype.
+        Sensor information can move from the physical environment
+        to the monitoring interface, while control commands can be sent
+        from authorized users back to the ESP32-CAM and roof mechanism.
+    </p>
+
+    <p>
+        Overall, the project demonstrates the feasibility of applying
+        IoT and Java Web technologies to reduce manual monitoring
+        in agricultural drying activities.
+        Although the current system is still a prototype,
+        it provides a suitable foundation for future improvements
+        such as higher-accuracy sensors, cloud deployment,
+        MQTT communication, external notifications,
+        and larger multi-device implementations.
+    </p>
+</section>
+            <section id="references" style="border:0">
+                <h2><i>18</i>References</h2>
+                
+            </section>
+
+            <footer>IoT-Based Smart Agricultural Drying System </footer>
+        </div>
+    </main>
+
+    <script>
+        (function () {
+            var secs = [["cover", "Cover Page", "•"], ["introduction", "Introduction", "1"], ["problem", "Problem Statement", "2"], ["objectives", "Objectives", "3"], ["scope", "Scope", "4"], ["expected-outcomes", "Expected Outcomes", "5"], ["requirements", "Requirement Analysis", "6"], ["architecture", "System Architecture", "7"], ["flow", "System Flow Analysis", "8"], ["hardware", "Hardware Design", "9"], ["software", "Software Design", "10"], ["database", "Database Design", "11"], ["testing", "Testing", "12"], ["user-guide", "User Guide", "13"], ["results", "Results", "14"], ["limitations", "Limitations", "15"], ["future", "Future Improvements", "16"], ["conclusion", "Conclusion", "17"], ["references", "References", "18"]];
+            var L = document.getElementById("links"), toc = document.getElementById("toc"), mb = document.getElementById("menu");
+            secs.forEach(function (s) { var a = document.createElement("a"); a.href = "#" + s[0]; a.innerHTML = "<span>" + s[2] + "</span>" + s[1]; a.onclick = function () { toc.classList.remove("open"); mb.setAttribute("aria-expanded", "false") }; L.appendChild(a) });
+            mb.onclick = function () { var o = toc.classList.toggle("open"); mb.setAttribute("aria-expanded", o) };
+            var links = L.querySelectorAll("a"), els = secs.map(function (s) { return document.getElementById(s[0]) }), bar = document.getElementById("bar");
+            function spy() {
+                var y = window.scrollY + 120, i = 0; els.forEach(function (e, k) { if (e.offsetTop <= y) i = k });
+                links.forEach(function (a, k) { a.classList.toggle("on", k === i) });
+                var h = document.documentElement.scrollHeight - innerHeight; bar.style.width = (h > 0 ? scrollY / h * 100 : 0) + "%"
+            }
+            addEventListener("scroll", spy, { passive: true }); spy();
+
+            function sim() {
+                var r = document.getElementById("sr").value, l = document.getElementById("sl").value, o = document.getElementById("so"), c = r === "RAIN" || l === "DARK";
+                o.textContent = c ? "CLOSED" : "OPEN"; o.className = "out" + (c ? " closed" : "")
+            }
+            document.getElementById("sr").onchange = sim; document.getElementById("sl").onchange = sim;
+
+            var h = [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18], T = [26.0, 27.2, 28.9, 30.1, 31.0, 32.4, 33.1, 31.5, 32.0, 31.2, 30.0, 28.4, 27.1], H = [78, 76, 73, 71, 69, 66, 63, 68, 65, 67, 70, 73, 75];
+            var s = document.getElementById("chart"), W = 720, Ht = 260, m = { l: 40, r: 40, t: 16, b: 30 }, ns = "http://www.w3.org/2000/svg";
+            function X(i) { return m.l + i * (W - m.l - m.r) / (h.length - 1) }
+            function yT(v) { return Ht - m.b - (v - 24) / (36 - 24) * (Ht - m.t - m.b) }
+            function yH(v) { return Ht - m.b - (v - 50) / (90 - 50) * (Ht - m.t - m.b) }
+            var o = "";
+            for (var g = 24; g <= 36; g += 4) { o += '<line x1="' + m.l + '" x2="' + (W - m.r) + '" y1="' + yT(g) + '" y2="' + yT(g) + '" stroke="var(--line)"/><text x="' + (m.l - 6) + '" y="' + (yT(g) + 4) + '" text-anchor="end" font-size="11" fill="var(--leaf)">' + g + '°</text>' }
+            [50, 70, 90].forEach(function (g) { o += '<text x="' + (W - m.r + 6) + '" y="' + (yH(g) + 4) + '" font-size="11" fill="var(--rain)">' + g + '%</text>' });
+            h.forEach(function (v, i) { if (i % 2 == 0) o += '<text x="' + X(i) + '" y="' + (Ht - 8) + '" text-anchor="middle" font-size="11" fill="var(--mute)">' + v + ':00</text>' });
+            function pl(a, f, c) { return '<polyline fill="none" stroke="' + c + '" stroke-width="2.5" stroke-linejoin="round" points="' + a.map(function (v, i) { return X(i) + "," + f(v) }).join(" ") + '"/>' }
+            o += pl(T, yT, "var(--leaf)") + pl(H, yH, "var(--rain)");
+            o += '<circle cx="' + X(7) + '" cy="' + yT(T[7]) + '" r="5" fill="var(--grain)"/><text x="' + (X(7) + 8) + '" y="' + (yT(T[7]) - 8) + '" font-size="11" fill="var(--ink)">13:00 mưa, mái đóng</text>';
+            s.innerHTML = o;
+        })();
+    </script>
+</body>
+
+</html>

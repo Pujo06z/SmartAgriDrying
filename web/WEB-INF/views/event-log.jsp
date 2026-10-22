@@ -575,5 +575,93 @@
         </div>
     </main>
 </div>
+            <script>
+    // =====================================
+    // Refresh event log automatically
+    // =====================================
+
+    function refreshEventLog() {
+
+        fetch(window.location.href)
+                .then(function (response) {
+
+                    if (!response.ok) {
+                        throw new Error(
+                                "HTTP error: "
+                                + response.status
+                                );
+                    }
+
+                    return response.text();
+                })
+                .then(function (html) {
+
+                    var parser
+                            = new DOMParser();
+
+                    var newDocument
+                            = parser.parseFromString(
+                                    html,
+                                    "text/html"
+                                    );
+
+                    // =====================================
+                    // Update event table
+                    // =====================================
+
+                    var currentTable
+                            = document.querySelector(
+                                    ".event-table-card"
+                                    );
+
+                    var newTable
+                            = newDocument.querySelector(
+                                    ".event-table-card"
+                                    );
+
+                    if (currentTable && newTable) {
+
+                        currentTable.innerHTML
+                                = newTable.innerHTML;
+                    }
+
+                    // =====================================
+                    // Update total event counter
+                    // =====================================
+
+                    var currentTotal
+                            = document.querySelector(
+                                    ".header-total-badge"
+                                    );
+
+                    var newTotal
+                            = newDocument.querySelector(
+                                    ".header-total-badge"
+                                    );
+
+                    if (currentTotal && newTotal) {
+
+                        currentTotal.innerHTML
+                                = newTotal.innerHTML;
+                    }
+                })
+                .catch(function (error) {
+
+                    console.error(
+                            "Failed to refresh event log:",
+                            error
+                            );
+                });
+    }
+
+    // =====================================
+    // Refresh every 10 seconds
+    // =====================================
+
+    setInterval(
+            refreshEventLog,
+            10000
+            );
+</script>
 </body>
 </html>
