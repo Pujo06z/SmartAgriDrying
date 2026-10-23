@@ -2088,38 +2088,65 @@
 
                 <!-- 8.1 Overall System Flow -->
 
+                ```html
                 <h3>8.1 Overall End-to-End System Flow</h3>
 
                 <p>
-                    The overall system flow begins when the ESP32-CAM
-                    starts up, connects to the Wi-Fi network, and reads
-                    environmental data from the DHT11, Rain Sensor,
-                    and LDR sensor.
-                    Depending on the selected operating mode,
-                    either AUTO or MANUAL, the ESP32-CAM determines
-                    the required roof status and controls the servo motor.
+                    The overall system flow describes the interaction among system users,
+                    the Web Application, Java Web Server, SQL Server Database,
+                    ESP32-CAM, sensors, and the roof actuator.
+                    The process begins when a user logs into the system.
+                    After successful authentication, the system displays the appropriate
+                    dashboard and functions according to the user's assigned role.
                 </p>
 
                 <p>
-                    Sensor readings and device status information
-                    are then transmitted to the Java Web Server
-                    through HTTP API endpoints.
-                    The server processes the received data,
-                    interacts with the Data Access Object (DAO) Layer,
-                    and stores the necessary information in SQL Server.
-                    The web application retrieves the latest data
-                    from the server and displays relevant information
-                    to Admin, Manager, and Operator users.
+                    Admin users can manage system resources such as users,
+                    warehouses, and devices.
+                    Manager and Operator users can monitor environmental conditions,
+                    manage drying batches, view historical data and event logs,
+                    and control the drying roof according to their assigned permissions.
+                </p>
+
+                <p>
+                    For environmental monitoring, the ESP32-CAM reads data from
+                    the DHT11, Rain Sensor, and LDR sensor.
+                    Sensor data is transmitted to the Java Web Server through HTTP APIs
+                    and stored in the SQL Server database.
+                    The Web Application retrieves the latest information from the server
+                    and displays it on the dashboard for realtime monitoring.
+                </p>
+
+                <p>
+                    Roof control is performed in two operating modes.
+                    In AUTO mode, the ESP32-CAM automatically determines whether
+                    the roof should be opened or closed based on rain and light conditions.
+                    In MANUAL mode, Manager or Operator users send roof commands
+                    through the Web Application.
+                    The requested mode and roof state are stored on the server,
+                    and the ESP32-CAM periodically retrieves the latest control state
+                    through the device-state API before operating the servo motor.
+                </p>
+
+                <p>
+                    In addition, the ESP32-CAM periodically sends heartbeat information
+                    to update the device's last communication time.
+                    This information is used by the system to determine whether
+                    the device is ONLINE or OFFLINE.
+                    Drying batch operations, sensor history, batch history,
+                    and event logs are also processed through the Java Web Server
+                    and stored in the corresponding database tables.
                 </p>
 
                 <figure class="fig">
-                    <img src="img/8.1.png" alt="Overall End-to-End System Flow" class="report-image">
+                    <img src="img/swimlane.drawio.png" alt="Overall System Swimlane Diagram" class="report-image">
 
                     <figcaption>
-                        Figure 8.1. Overall End-to-End System Flow
+                        Figure 8.1. Overall System Swimlane Diagram
                         of the Smart Agricultural Drying System.
                     </figcaption>
                 </figure>
+                
                 <!-- 8.2 AUTO Control Flow -->
 
                 <h3>8.2 Automatic Roof Control Flow</h3>
@@ -4483,274 +4510,274 @@
             </section>
 
             <!-- 14. Limitations -->
-<section id="limitations">
-    <h2><i>15</i>Limitations</h2>
+            <section id="limitations">
+                <h2><i>15</i>Limitations</h2>
 
-    <p>
-        Although the Smart Agricultural Drying System successfully integrates
-        environmental monitoring, automatic roof control, manual operation,
-        database storage, and web-based management, the current implementation
-        still has several limitations due to the prototype scope of the project.
-    </p>
+                <p>
+                    Although the Smart Agricultural Drying System successfully integrates
+                    environmental monitoring, automatic roof control, manual operation,
+                    database storage, and web-based management, the current implementation
+                    still has several limitations due to the prototype scope of the project.
+                </p>
 
-    <h3>15.1 Sensor Accuracy</h3>
+                <h3>15.1 Sensor Accuracy</h3>
 
-    <p>
-        The system uses DHT11, Rain Sensor, and LDR modules for environmental
-        monitoring. These sensors are suitable for demonstration purposes,
-        but their accuracy and stability are lower than industrial-grade sensors.
-        In particular, the LDR is currently used mainly to classify light conditions
-        as BRIGHT or DARK rather than measure precise light intensity.
-    </p>
+                <p>
+                    The system uses DHT11, Rain Sensor, and LDR modules for environmental
+                    monitoring. These sensors are suitable for demonstration purposes,
+                    but their accuracy and stability are lower than industrial-grade sensors.
+                    In particular, the LDR is currently used mainly to classify light conditions
+                    as BRIGHT or DARK rather than measure precise light intensity.
+                </p>
 
-    <h3>15.2 Prototype Roof Mechanism</h3>
+                <h3>15.2 Prototype Roof Mechanism</h3>
 
-    <p>
-        The roof mechanism is simulated using a Servo Motor.
-        This setup is appropriate for a small prototype,
-        but it does not represent the mechanical load and durability requirements
-        of a real agricultural drying roof.
-    </p>
+                <p>
+                    The roof mechanism is simulated using a Servo Motor.
+                    This setup is appropriate for a small prototype,
+                    but it does not represent the mechanical load and durability requirements
+                    of a real agricultural drying roof.
+                </p>
 
-    <p>
-        The current prototype does not evaluate factors such as
-        motor torque, waterproofing, mechanical wear,
-        emergency stop mechanisms, or backup power.
-    </p>
+                <p>
+                    The current prototype does not evaluate factors such as
+                    motor torque, waterproofing, mechanical wear,
+                    emergency stop mechanisms, or backup power.
+                </p>
 
-    <h3>15.3 Wi-Fi and Network Dependency</h3>
+                <h3>15.3 Wi-Fi and Network Dependency</h3>
 
-    <p>
-        Communication between the ESP32-CAM and the Java Web Server
-        depends on Wi-Fi connectivity.
-        If the network connection is interrupted,
-        new sensor information cannot be synchronized to the server
-        and MANUAL commands from the web application cannot reach the device.
-    </p>
+                <p>
+                    Communication between the ESP32-CAM and the Java Web Server
+                    depends on Wi-Fi connectivity.
+                    If the network connection is interrupted,
+                    new sensor information cannot be synchronized to the server
+                    and MANUAL commands from the web application cannot reach the device.
+                </p>
 
-    <p>
-        However, AUTO control can still continue locally on the ESP32-CAM
-        because the automatic roof decision is performed directly on the device.
-    </p>
+                <p>
+                    However, AUTO control can still continue locally on the ESP32-CAM
+                    because the automatic roof decision is performed directly on the device.
+                </p>
 
-    <h3>15.4 HTTP-Based IoT Communication</h3>
+                <h3>15.4 HTTP-Based IoT Communication</h3>
 
-    <p>
-        The current system uses HTTP requests for device communication,
-        including sensor data transmission, heartbeat updates,
-        and control-state synchronization.
-        This approach is simple and suitable for the current prototype,
-        but may become less efficient when the number of devices
-        or warehouses is significantly increased.
-    </p>
+                <p>
+                    The current system uses HTTP requests for device communication,
+                    including sensor data transmission, heartbeat updates,
+                    and control-state synchronization.
+                    This approach is simple and suitable for the current prototype,
+                    but may become less efficient when the number of devices
+                    or warehouses is significantly increased.
+                </p>
 
-    <h3>15.5 Limited Environmental Control</h3>
+                <h3>15.5 Limited Environmental Control</h3>
 
-    <p>
-        The current system only controls the roof mechanism.
-        Other environmental control devices such as fans,
-        heaters, dehumidifiers, or industrial drying equipment
-        are not included in the current project scope.
-    </p>
+                <p>
+                    The current system only controls the roof mechanism.
+                    Other environmental control devices such as fans,
+                    heaters, dehumidifiers, or industrial drying equipment
+                    are not included in the current project scope.
+                </p>
 
-    <h3>15.6 Limited Notification Capability</h3>
+                <h3>15.6 Limited Notification Capability</h3>
 
-    <p>
-        The web application can display warnings and system events,
-        but external notification channels are still limited.
-        The current prototype does not provide a complete mobile application
-        or multi-channel alert system for users outside the web interface.
-    </p>
+                <p>
+                    The web application can display warnings and system events,
+                    but external notification channels are still limited.
+                    The current prototype does not provide a complete mobile application
+                    or multi-channel alert system for users outside the web interface.
+                </p>
 
-    <h3>15.7 Prototype Deployment Environment</h3>
+                <h3>15.7 Prototype Deployment Environment</h3>
 
-    <p>
-        The Java Web application and SQL Server database
-        are currently deployed in a local development and demonstration environment.
-        The system has not yet been evaluated under long-term cloud deployment,
-        unstable public networks, or large-scale production conditions.
-    </p>
+                <p>
+                    The Java Web application and SQL Server database
+                    are currently deployed in a local development and demonstration environment.
+                    The system has not yet been evaluated under long-term cloud deployment,
+                    unstable public networks, or large-scale production conditions.
+                </p>
 
-    <h3>15.8 Limited Physical Device Scale</h3>
+                <h3>15.8 Limited Physical Device Scale</h3>
 
-    <p>
-        The prototype is currently demonstrated with a limited number
-        of physical IoT devices.
-        Although the software architecture supports multiple warehouses
-        and devices, large-scale multi-device deployment
-        has not yet been fully tested in a real environment.
-    </p>
-</section>
-           <!-- 16. Future Improvements -->
-<section id="future">
-    <h2><i>16</i>Future Improvements</h2>
+                <p>
+                    The prototype is currently demonstrated with a limited number
+                    of physical IoT devices.
+                    Although the software architecture supports multiple warehouses
+                    and devices, large-scale multi-device deployment
+                    has not yet been fully tested in a real environment.
+                </p>
+            </section>
+            <!-- 16. Future Improvements -->
+            <section id="future">
+                <h2><i>16</i>Future Improvements</h2>
 
-    <p>
-        Based on the current limitations of the prototype,
-        several enhancements can be considered for future development
-        to improve system reliability, scalability, and practical applicability.
-    </p>
+                <p>
+                    Based on the current limitations of the prototype,
+                    several enhancements can be considered for future development
+                    to improve system reliability, scalability, and practical applicability.
+                </p>
 
-    <h3>16.1 Upgrade Sensor Hardware</h3>
+                <h3>16.1 Upgrade Sensor Hardware</h3>
 
-    <p>
-        The current DHT11, Rain Sensor, and LDR modules can be replaced
-        with higher-precision, industrial-grade sensors better suited
-        for harsh agricultural environments.
-    </p>
+                <p>
+                    The current DHT11, Rain Sensor, and LDR modules can be replaced
+                    with higher-precision, industrial-grade sensors better suited
+                    for harsh agricultural environments.
+                </p>
 
-    <p>
-        In particular, the light sensing module can be upgraded
-        from a simple binary classification (BRIGHT / DARK) to a precise
-        illuminance measurement (Lux).
-    </p>
+                <p>
+                    In particular, the light sensing module can be upgraded
+                    from a simple binary classification (BRIGHT / DARK) to a precise
+                    illuminance measurement (Lux).
+                </p>
 
-    <h3>16.2 Improve the Roof Actuation Mechanism</h3>
+                <h3>16.2 Improve the Roof Actuation Mechanism</h3>
 
-    <p>
-        The prototype Servo Motor can be replaced with higher-torque motors
-        or heavy-duty linear actuators capable of driving real-world outdoor roof structures.
-        Future implementations should also address mechanical limits, position feedback,
-        waterproofing standards, and emergency override protections.
-    </p>
+                <p>
+                    The prototype Servo Motor can be replaced with higher-torque motors
+                    or heavy-duty linear actuators capable of driving real-world outdoor roof structures.
+                    Future implementations should also address mechanical limits, position feedback,
+                    waterproofing standards, and emergency override protections.
+                </p>
 
-    <h3>16.3 Improve IoT Communication</h3>
+                <h3>16.3 Improve IoT Communication</h3>
 
-    <p>
-        The current HTTP-based communication can be upgraded or combined
-        with MQTT in future versions.
-        MQTT will offer significantly higher network efficiency, lower latency,
-        and reduced bandwidth overhead when multiple devices and warehouses operate concurrently.
-    </p>
+                <p>
+                    The current HTTP-based communication can be upgraded or combined
+                    with MQTT in future versions.
+                    MQTT will offer significantly higher network efficiency, lower latency,
+                    and reduced bandwidth overhead when multiple devices and warehouses operate concurrently.
+                </p>
 
-    <h3>16.4 Cloud Deployment</h3>
+                <h3>16.4 Cloud Deployment</h3>
 
-    <p>
-        The Java Web application and database can be deployed to a cloud platform (e.g., Cloud VPS/Server)
-        to enable secure remote access from any geographical location.
-    </p>
+                <p>
+                    The Java Web application and database can be deployed to a cloud platform (e.g., Cloud VPS/Server)
+                    to enable secure remote access from any geographical location.
+                </p>
 
-    <p>
-        Cloud deployment would also streamline centralized multi-warehouse management
-        without relying on local network configurations.
-    </p>
+                <p>
+                    Cloud deployment would also streamline centralized multi-warehouse management
+                    without relying on local network configurations.
+                </p>
 
-    <h3>16.5 Expand Multi-Device and Multi-Warehouse Support</h3>
+                <h3>16.5 Expand Multi-Device and Multi-Warehouse Support</h3>
 
-    <p>
-        Although the software architecture natively supports multiple warehouses and devices,
-        future phases should focus on stress-testing the system with a higher density
-        of physical ESP32-CAM units operating simultaneously.
-    </p>
+                <p>
+                    Although the software architecture natively supports multiple warehouses and devices,
+                    future phases should focus on stress-testing the system with a higher density
+                    of physical ESP32-CAM units operating simultaneously.
+                </p>
 
-    <h3>16.6 External Notification Integration</h3>
+                <h3>16.6 External Notification Integration</h3>
 
-    <p>
-        The system can be integrated with external messaging services
-        such as Telegram Bot or SMS gateways to deliver instant alerts for critical events.
-    </p>
+                <p>
+                    The system can be integrated with external messaging services
+                    such as Telegram Bot or SMS gateways to deliver instant alerts for critical events.
+                </p>
 
-    <p>
-        Key notification triggers include:
-    </p>
+                <p>
+                    Key notification triggers include:
+                </p>
 
-    <ul>
-        <li>Rain detection events</li>
-        <li>High-temperature thresholds</li>
-        <li>Low-temperature thresholds</li>
-        <li>Device offline status</li>
-    </ul>
+                <ul>
+                    <li>Rain detection events</li>
+                    <li>High-temperature thresholds</li>
+                    <li>Low-temperature thresholds</li>
+                    <li>Device offline status</li>
+                </ul>
 
-    <h3>16.7 Additional Environmental Control Devices</h3>
+                <h3>16.7 Additional Environmental Control Devices</h3>
 
-    <p>
-        Future iterations can integrate auxiliary hardware components such as
-        ventilation fans, heating elements, or dehumidifiers to provide comprehensive
-        microclimate control throughout the drying process.
-    </p>
+                <p>
+                    Future iterations can integrate auxiliary hardware components such as
+                    ventilation fans, heating elements, or dehumidifiers to provide comprehensive
+                    microclimate control throughout the drying process.
+                </p>
 
-    <h3>16.8 Weather Forecast Integration</h3>
+                <h3>16.8 Weather Forecast Integration</h3>
 
-    <p>
-        Integrating third-party weather forecast APIs can provide predictive insights
-        to assist operators in proactive decision-making.
-        However, local real-time sensor data will remain the primary trigger
-        for instant roof actuation.
-    </p>
+                <p>
+                    Integrating third-party weather forecast APIs can provide predictive insights
+                    to assist operators in proactive decision-making.
+                    However, local real-time sensor data will remain the primary trigger
+                    for instant roof actuation.
+                </p>
 
-    <h3>16.9 Data Analytics and Decision Support</h3>
+                <h3>16.9 Data Analytics and Decision Support</h3>
 
-    <p>
-        Historical sensor data and drying batch records can be leveraged
-        for in-depth data analytics.
-        The system can evaluate correlations between temperature, humidity,
-        and drying duration to help optimize overall operational efficiency.
-    </p>
+                <p>
+                    Historical sensor data and drying batch records can be leveraged
+                    for in-depth data analytics.
+                    The system can evaluate correlations between temperature, humidity,
+                    and drying duration to help optimize overall operational efficiency.
+                </p>
 
-    <p>
-        More advanced predictive models or recommendation algorithms
-        can be considered in future releases once a sufficient volume
-        of field data has been collected.
-    </p>
-</section>
+                <p>
+                    More advanced predictive models or recommendation algorithms
+                    can be considered in future releases once a sufficient volume
+                    of field data has been collected.
+                </p>
+            </section>
 
-           <!-- 16. Conclusion -->
-<section id="conclusion">
-    <h2><i>17</i>Conclusion</h2>
+            <!-- 16. Conclusion -->
+            <section id="conclusion">
+                <h2><i>17</i>Conclusion</h2>
 
-    <p>
-        The Smart Agricultural Drying System was developed to support
-        the monitoring and control of agricultural drying conditions
-        through the integration of IoT hardware and a Java Web application.
-    </p>
+                <p>
+                    The Smart Agricultural Drying System was developed to support
+                    the monitoring and control of agricultural drying conditions
+                    through the integration of IoT hardware and a Java Web application.
+                </p>
 
-    <p>
-        The system successfully combines ESP32-CAM, DHT11,
-        Rain Sensor, LDR, and Servo Motor with a Java Web platform
-        using JSP, Servlet, JDBC, JavaScript, and SQL Server.
-        Environmental data can be collected from the physical device,
-        transmitted to the server, stored in the database,
-        and displayed through the web interface.
-    </p>
+                <p>
+                    The system successfully combines ESP32-CAM, DHT11,
+                    Rain Sensor, LDR, and Servo Motor with a Java Web platform
+                    using JSP, Servlet, JDBC, JavaScript, and SQL Server.
+                    Environmental data can be collected from the physical device,
+                    transmitted to the server, stored in the database,
+                    and displayed through the web interface.
+                </p>
 
-    <p>
-        The implemented prototype supports both AUTO and MANUAL roof control.
-        In AUTO mode, the ESP32-CAM automatically opens or closes the roof
-        based on rain and light conditions.
-        In MANUAL mode, authorized Manager and Operator users
-        can control the roof through the web application.
-    </p>
+                <p>
+                    The implemented prototype supports both AUTO and MANUAL roof control.
+                    In AUTO mode, the ESP32-CAM automatically opens or closes the roof
+                    based on rain and light conditions.
+                    In MANUAL mode, authorized Manager and Operator users
+                    can control the roof through the web application.
+                </p>
 
-    <p>
-        The system also provides role-based access for Admin,
-        Manager, and Operator, together with functions for
-        warehouse management, device management, drying batch management,
-        sensor history, event logging, realtime monitoring,
-        and device Online / Offline detection.
-    </p>
+                <p>
+                    The system also provides role-based access for Admin,
+                    Manager, and Operator, together with functions for
+                    warehouse management, device management, drying batch management,
+                    sensor history, event logging, realtime monitoring,
+                    and device Online / Offline detection.
+                </p>
 
-    <p>
-        Through system testing, the main hardware and software components
-        were shown to operate together as an integrated prototype.
-        Sensor information can move from the physical environment
-        to the monitoring interface, while control commands can be sent
-        from authorized users back to the ESP32-CAM and roof mechanism.
-    </p>
+                <p>
+                    Through system testing, the main hardware and software components
+                    were shown to operate together as an integrated prototype.
+                    Sensor information can move from the physical environment
+                    to the monitoring interface, while control commands can be sent
+                    from authorized users back to the ESP32-CAM and roof mechanism.
+                </p>
 
-    <p>
-        Overall, the project demonstrates the feasibility of applying
-        IoT and Java Web technologies to reduce manual monitoring
-        in agricultural drying activities.
-        Although the current system is still a prototype,
-        it provides a suitable foundation for future improvements
-        such as higher-accuracy sensors, cloud deployment,
-        MQTT communication, external notifications,
-        and larger multi-device implementations.
-    </p>
-</section>
+                <p>
+                    Overall, the project demonstrates the feasibility of applying
+                    IoT and Java Web technologies to reduce manual monitoring
+                    in agricultural drying activities.
+                    Although the current system is still a prototype,
+                    it provides a suitable foundation for future improvements
+                    such as higher-accuracy sensors, cloud deployment,
+                    MQTT communication, external notifications,
+                    and larger multi-device implementations.
+                </p>
+            </section>
             <section id="references" style="border:0">
                 <h2><i>18</i>References</h2>
-                
+
             </section>
 
             <footer>IoT-Based Smart Agricultural Drying System </footer>

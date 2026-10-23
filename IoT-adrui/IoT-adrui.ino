@@ -21,10 +21,10 @@
 // =====================================
 
 const char* ssid =
-  "Phat";
+  "VVT_L4";
 
 const char* password =
-  "xincailon";
+  "Vvt@1537174";
 
 
 // =====================================
@@ -34,10 +34,10 @@ const char* password =
 // Replace this IP address with the laptop IPv4 address.
 
 const char* deviceStateUrl =
-  "http://172.20.10.2:8080/SmartAgriDrying/api/device-state";
+  "http://192.168.1.6:8080/SmartAgriDrying/api/device-state";
 
 const char* sensorUrl =
-  "http://172.20.10.2:8080/SmartAgriDrying/api/sensor";
+  "http://192.168.1.6:8080/SmartAgriDrying/api/sensor";
 
 
 // =====================================
@@ -94,7 +94,7 @@ const int ROOF_CLOSED_ANGLE =
   0;
 
 const int ROOF_OPEN_ANGLE =
-  90;
+  100;
 
 
 // =====================================
