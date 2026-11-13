@@ -21,10 +21,10 @@
 // =====================================
 
 const char* ssid =
-  "VVT_L4";
+  "Phat";
 
 const char* password =
-  "Vvt@1537174";
+  "iloveiot102";
 
 
 // =====================================
@@ -34,10 +34,10 @@ const char* password =
 // Replace this IP address with the laptop IPv4 address.
 
 const char* deviceStateUrl =
-  "http://192.168.1.6:8080/SmartAgriDrying/api/device-state";
+  "http://172.20.10.6:8080/SmartAgriDrying/api/device-state";
 
 const char* sensorUrl =
-  "http://192.168.1.6:8080/SmartAgriDrying/api/sensor";
+  "http://172.20.10.6:8080/SmartAgriDrying/api/sensor";
 
 
 // =====================================
@@ -402,9 +402,7 @@ void readFastSensors() {
       RAIN_PIN);
 
 
-  bool newIsRaining =
-    (rainValue
-     == LOW);
+  bool newIsRaining = (rainValue == LOW);
 
 
   currentLdrValue =
