@@ -22,6 +22,7 @@ import javax.servlet.http.HttpSession;
 import model.DryingBatch;
 import model.User;
 import model.Warehouse;
+import util.NotificationService;
 
 /**
  *
@@ -404,140 +405,6 @@ public class BatchController extends HttpServlet {
                 response
         );
     }
-//   private void loadBatchPage(
-//           HttpServletRequest request,
-//           HttpServletResponse response,
-//           User user)
-//           throws Exception {
-//
-//       WarehouseDAO warehouseDAO
-//               = new WarehouseDAO();
-//
-//       DryingBatchDAO batchDAO
-//               = new DryingBatchDAO();
-//
-//       Warehouse warehouse = null;
-//
-//       List<Warehouse> warehouseList
-//               = new ArrayList<>();
-//
-//       // =========================================
-//       // MANAGER
-//       // =========================================
-//       if ("MANAGER".equals(user.getRole())) {
-//
-//           warehouseList
-//                   = warehouseDAO.getWarehousesByManager(
-//                           user.getUserId()
-//                   );
-//
-//           if (warehouseList == null
-//                   || warehouseList.isEmpty()) {
-//
-//               request.setAttribute(
-//                       "error",
-//                       "No warehouse assigned."
-//               );
-//
-//               request.setAttribute(
-//                       "warehouseList",
-//                       warehouseList
-//               );
-//
-//               request.getRequestDispatcher(
-//                       "/WEB-INF/views/batch.jsp"
-//               ).forward(request, response);
-//
-//               return;
-//           }
-//
-//           String warehouseId
-//                   = request.getParameter(
-//                           "warehouseId"
-//                   );
-//
-//           // Manager has selected a warehouse
-//           if (warehouseId != null
-//                   && !warehouseId.trim().isEmpty()) {
-//
-//               for (Warehouse w : warehouseList) {
-//
-//                   if (warehouseId.equals(
-//                           w.getWarehouseId())) {
-//                       warehouse = w;
-//                       break;
-//                   }
-//               }
-//           }
-//
-//           // Not selected -> default to the first warehouse
-//           if (warehouse == null) {
-//
-//               warehouse
-//                       = warehouseList.get(0);
-//           }
-//       } // =========================================
-//       // OPERATOR
-//       // =========================================
-//       else if ("OPERATOR".equals(user.getRole())) {
-//
-//           warehouse
-//                   = warehouseDAO.getWarehouseByUser(
-//                           user.getUserId()
-//                   );
-//
-//           if (warehouse != null) {
-//
-//               warehouseList.add(
-//                       warehouse
-//               );
-//           }
-//       }
-//
-//       // =========================================
-//       // NO WAREHOUSE ASSIGNED
-//       // =========================================
-//       if (warehouse == null) {
-//
-//           request.setAttribute(
-//                   "error",
-//                   "No warehouse assigned."
-//           );
-//
-//           request.getRequestDispatcher(
-//                   "/WEB-INF/views/batch.jsp"
-//           ).forward(request, response);
-//
-//           return;
-//       }
-//
-//       // =========================================
-//       // BATCH LIST
-//       // =========================================
-//       List<DryingBatch> batches
-//               = batchDAO.getBatchesByWarehouse(
-//                       warehouse.getWarehouseId()
-//               );
-//
-//       request.setAttribute(
-//               "warehouseList",
-//               warehouseList
-//       );
-//
-//       request.setAttribute(
-//               "warehouse",
-//               warehouse
-//       );
-//
-//       request.setAttribute(
-//               "batches",
-//               batches
-//       );
-//
-//       request.getRequestDispatcher(
-//               "/WEB-INF/views/batch.jsp"
-//       ).forward(request, response);
-//   }
 
     // ==============================
     // POST ACTION
@@ -821,123 +688,6 @@ public class BatchController extends HttpServlet {
                 warehouse.getWarehouseId()
         );
     }
-//   private void startBatch(
-//        HttpServletRequest request,
-//        HttpServletResponse response,
-//        User user)
-//        throws Exception {
-//
-//    WarehouseDAO warehouseDAO
-//            = new WarehouseDAO();
-//
-//    DryingBatchDAO batchDAO
-//            = new DryingBatchDAO();
-//
-//
-//    // Get operator's warehouse
-//    Warehouse warehouse
-//            = warehouseDAO.getWarehouseByUser(
-//                    user.getUserId()
-//            );
-//
-//
-//    if (warehouse == null) {
-//
-//        response.sendRedirect(
-//                request.getContextPath() + "/batch"
-//        );
-//
-//        return;
-//    }
-//
-//
-//    // Get data from form
-//    String productName
-//            = request.getParameter("productName");
-//
-//    String weightText
-//            = request.getParameter("weightKg");
-//
-//    String notes
-//            = request.getParameter("notes");
-//
-//
-//    // Validate
-//    if (productName == null
-//            || productName.trim().isEmpty()
-//            || weightText == null
-//            || weightText.trim().isEmpty()) {
-//
-//        request.getSession().setAttribute(
-//                "message",
-//                "Product name and weight are required."
-//        );
-//
-//        response.sendRedirect(
-//                request.getContextPath() + "/batch"
-//        );
-//
-//        return;
-//    }
-//
-//
-//    double weightKg;
-//
-//    try {
-//
-//        weightKg
-//                = Double.parseDouble(weightText);
-//
-//        if (weightKg <= 0) {
-//            throw new NumberFormatException();
-//        }
-//
-//    } catch (NumberFormatException e) {
-//
-//        request.getSession().setAttribute(
-//                "message",
-//                "Weight must be greater than 0."
-//        );
-//
-//        response.sendRedirect(
-//                request.getContextPath() + "/batch"
-//        );
-//
-//        return;
-//    }
-//
-//
-//    // Create new batch
-//    boolean success
-//            = batchDAO.createBatch(
-//                    warehouse.getWarehouseId(),
-//                    user.getUserId(),
-//                    productName.trim(),
-//                    weightKg,
-//                    notes
-//            );
-//
-//
-//    if (success) {
-//
-//        request.getSession().setAttribute(
-//                "message",
-//                "Batch started successfully."
-//        );
-//
-//    } else {
-//
-//        request.getSession().setAttribute(
-//                "message",
-//                "Cannot start batch."
-//        );
-//    }
-//
-//
-//    response.sendRedirect(
-//            request.getContextPath() + "/batch"
-//    );
-//}
 
     // ==============================
     // COMPLETE BATCH
@@ -1019,6 +769,27 @@ public class BatchController extends HttpServlet {
                     "Completed drying batch "
                     + batchId
             );
+            DryingBatch completedBatch
+                    = batchDAO.getBatchById(batchId);
+
+            WarehouseDAO warehouseDAO
+                    = new WarehouseDAO();
+
+            Warehouse warehouse
+                    = warehouseDAO.getById(warehouseId);
+
+            if (completedBatch != null) {
+
+                NotificationService.notifyBatchCompleted(
+                        batchId,
+                        completedBatch.getProductName(),
+                        completedBatch.getWeightKg(),
+                        warehouse != null
+                                ? warehouse.getWarehouseName()
+                                : warehouseId,
+                        user.getFullName()
+                );
+            }
 
             request.getSession().setAttribute(
                     "message",

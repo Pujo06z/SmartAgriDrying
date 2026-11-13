@@ -1315,4 +1315,54 @@ public class DryingBatchDAO {
 
         return 0;
     }
+    // =====================================================
+// GET BATCH BY ID
+// =====================================================
+
+    public DryingBatch getBatchById(String batchId) {
+
+        String sql
+                = "SELECT "
+                + "b.batch_id, "
+                + "b.warehouse_id, "
+                + "b.operator_id, "
+                + "u.full_name AS operator_name, "
+                + "b.product_name, "
+                + "b.weight_kg, "
+                + "b.start_time, "
+                + "b.end_time, "
+                + "b.status, "
+                + "b.notes "
+                + "FROM DRYING_BATCH b "
+                + "JOIN USERS u "
+                + "ON b.operator_id = u.user_id "
+                + "WHERE b.batch_id = ?";
+
+        try (
+                 Connection con
+                = DBContext.getConnection();  PreparedStatement ps
+                = con.prepareStatement(sql)) {
+
+            ps.setString(
+                    1,
+                    batchId
+            );
+
+            try (
+                     ResultSet rs
+                    = ps.executeQuery()) {
+
+                if (rs.next()) {
+
+                    return mapBatch(rs);
+                }
+            }
+
+        } catch (SQLException e) {
+
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }

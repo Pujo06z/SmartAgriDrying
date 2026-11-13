@@ -18,6 +18,7 @@ import javax.servlet.http.HttpSession;
 import model.Device;
 import model.User;
 import model.Warehouse;
+import util.NotificationService;
 
 /**
  *
@@ -299,6 +300,11 @@ public class ControlController extends HttpServlet {
                                     "WEB",
                                     "Changed device mode to AUTO"
                             );
+                            NotificationService.notifyModeChanged(
+                                    device.getDeviceId(),
+                                    "AUTO",
+                                    user.getFullName()
+                            );
                         }
                     }
 
@@ -327,6 +333,11 @@ public class ControlController extends HttpServlet {
                                     "MODE_CHANGED",
                                     "WEB",
                                     "Changed device mode to MANUAL"
+                            );
+                            NotificationService.notifyModeChanged(
+                                    device.getDeviceId(),
+                                    "MANUAL",
+                                    user.getFullName()
                             );
                         }
                     }
@@ -359,6 +370,12 @@ public class ControlController extends HttpServlet {
                                     "MANUAL",
                                     "Roof manually opened"
                             );
+                            NotificationService.notifyRoofChanged(
+                                    device.getDeviceId(),
+                                    "OPEN",
+                                    "MANUAL",
+                                    user.getFullName()
+                            );
                         }
                     }
 
@@ -389,6 +406,12 @@ public class ControlController extends HttpServlet {
                                     "ROOF_CLOSED",
                                     "MANUAL",
                                     "Roof manually closed"
+                            );
+                            NotificationService.notifyRoofChanged(
+                                    device.getDeviceId(),
+                                    "CLOSED",
+                                    "MANUAL",
+                                    user.getFullName()
                             );
                         }
                     }
@@ -424,151 +447,7 @@ public class ControlController extends HttpServlet {
             );
         }
     }
-//    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-//            throws ServletException, IOException {
-//        // check login
-//
-//        HttpSession session = request.getSession(false);
-//
-//        if (session == null || session.getAttribute("LOGIN_USER") == null) {
-//
-//            response.sendRedirect(request.getContextPath() + "/login");
-//
-//            return;
-//        }
-//
-//        // ============================
-//        // 2. get USER
-//        // ============================
-//        User user = (User) session.getAttribute("LOGIN_USER");
-//
-//        if (!"OPERATOR".equals(user.getRole())
-//                && !"MANAGER".equals(user.getRole())) {
-//
-//            response.sendRedirect(request.getContextPath() + "/dashboard");
-//
-//            return;
-//        }
-//        // ============================
-//        // 3. get ACTION
-//        // ============================
-//
-//        String action = request.getParameter("action");
-//
-//        if (action == null) {
-//            response.sendRedirect(request.getContextPath() + "/dashboard");
-//
-//            return;
-//        }
-//
-//        try {
-//
-//            WarehouseDAO warehouseDAO
-//                    = new WarehouseDAO();
-//
-//            DeviceDAO deviceDAO
-//                    = new DeviceDAO();
-//
-//            // ============================
-//            // 4. GET WAREHOUSE
-//            // ============================
-//            Warehouse warehouse
-//                    = warehouseDAO.getWarehouseByUser(
-//                            user.getUserId()
-//                    );
-//
-//            if (warehouse == null) {
-//
-//                response.sendRedirect(
-//                        request.getContextPath() + "/dashboard"
-//                );
-//
-//                return;
-//            }
-//// ============================
-//            // 5. GET DEVICE
-//            // ============================
-//
-//            Device device
-//                    = deviceDAO.getDeviceByWarehouse(
-//                            warehouse.getWarehouseId()
-//                    );
-//
-//            if (device == null) {
-//
-//                response.sendRedirect(
-//                        request.getContextPath() + "/dashboard"
-//                );
-//
-//                return;
-//            }
-//
-//            // ============================
-//            // 6. PROCESS ACTION
-//            // ============================
-//            switch (action) {
-//
-//                case "AUTO":
-//
-//                    deviceDAO.updateMode(
-//                            device.getDeviceId(),
-//                            "AUTO"
-//                    );
-//
-//                    break;
-//
-//                case "MANUAL":
-//
-//                    deviceDAO.updateMode(
-//                            device.getDeviceId(),
-//                            "MANUAL"
-//                    );
-//
-//                    break;
-//
-//                case "OPEN":
-//
-//                    // Only allow opening the roof in MANUAL mode
-//                    if ("MANUAL".equals(device.getMode())) {
-//
-//                        deviceDAO.updateRoofStatus(
-//                                device.getDeviceId(),
-//                                "OPEN"
-//                        );
-//                    }
-//
-//                    break;
-//
-//                case "CLOSE":
-//
-//                    // Only allow closing the roof in MANUAL mode
-//                    if ("MANUAL".equals(device.getMode())) {
-//
-//                        deviceDAO.updateRoofStatus(
-//                                device.getDeviceId(),
-//                                "CLOSED"
-//                        );
-//                    }
-//
-//                    break;
-//
-//                default:
-//                    break;
-//            }
-//
-//        } catch (Exception e) {
-//
-//            e.printStackTrace();
-//        }
-//
-//        // ============================
-//        // 7. RETURN TO DASHBOARD
-//        // ============================
-//        response.sendRedirect(
-//                request.getContextPath() + "/dashboard"
-//        );
-//
-//    }
+
 
 // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**

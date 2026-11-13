@@ -409,50 +409,172 @@
                             <%-- SENSOR PAGINATION --%>
                             <c:if test="${sensorTotalPages > 1}">
                                 <div class="pagination-wrapper">
+
                                     <div class="pagination-info">
-                                        Page <strong>${sensorCurrentPage}</strong> of <strong>${sensorTotalPages}</strong>
+                                        Page
+                                        <strong>${sensorCurrentPage}</strong>
+                                        of
+                                        <strong>${sensorTotalPages}</strong>
                                     </div>
+
                                     <div class="pagination-controls">
-                                        <%-- PREV --%>
-                                        <c:if test="${sensorCurrentPage > 1}">
-                                            <c:url var="sensorPrevUrl" value="/history">
-                                                <c:param name="tab" value="sensor"/>
-                                                <c:param name="warehouseId" value="${warehouse.warehouseId}"/>
-                                                <c:param name="sensorKeyword" value="${sensorKeyword}"/>
-                                                <c:param name="rainStatus" value="${selectedRainStatus}"/>
-                                                <c:param name="lightStatus" value="${selectedLightStatus}"/>
-                                                <c:param name="sensorPage" value="${sensorCurrentPage - 1}"/>
-                                            </c:url>
-                                            <a href="${sensorPrevUrl}" class="page-link-btn" aria-label="Previous page">‹ Prev</a>
+
+                                        <%-- PREVIOUS --%>
+                                        <c:choose>
+                                            <c:when test="${sensorCurrentPage > 1}">
+                                                <c:url var="sensorPrevUrl" value="/history">
+                                                    <c:param name="tab" value="sensor"/>
+                                                    <c:param name="warehouseId" value="${warehouse.warehouseId}"/>
+                                                    <c:param name="sensorKeyword" value="${sensorKeyword}"/>
+                                                    <c:param name="rainStatus" value="${selectedRainStatus}"/>
+                                                    <c:param name="lightStatus" value="${selectedLightStatus}"/>
+                                                    <c:param name="sensorPage" value="${sensorCurrentPage - 1}"/>
+                                                </c:url>
+
+                                                <a href="${sensorPrevUrl}"
+                                                   class="page-link-btn">
+                                                    ‹ Prev
+                                                </a>
+                                            </c:when>
+
+                                            <c:otherwise>
+                                                <span class="page-link-btn disabled">
+                                                    ‹ Prev
+                                                </span>
+                                            </c:otherwise>
+                                        </c:choose>
+
+
+                                        <%-- FIRST PAGE --%>
+                                        <c:url var="sensorFirstUrl" value="/history">
+                                            <c:param name="tab" value="sensor"/>
+                                            <c:param name="warehouseId" value="${warehouse.warehouseId}"/>
+                                            <c:param name="sensorKeyword" value="${sensorKeyword}"/>
+                                            <c:param name="rainStatus" value="${selectedRainStatus}"/>
+                                            <c:param name="lightStatus" value="${selectedLightStatus}"/>
+                                            <c:param name="sensorPage" value="1"/>
+                                        </c:url>
+
+                                        <c:choose>
+                                            <c:when test="${sensorCurrentPage == 1}">
+                                                <span class="page-link-btn active">1</span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <a href="${sensorFirstUrl}"
+                                                   class="page-link-btn">
+                                                    1
+                                                </a>
+                                            </c:otherwise>
+                                        </c:choose>
+
+
+                                        <%-- LEFT ELLIPSIS --%>
+                                        <c:if test="${sensorCurrentPage > 4}">
+                                            <span class="page-ellipsis">...</span>
                                         </c:if>
 
-                                        <%-- NUMBERS --%>
-                                        <c:forEach begin="1" end="${sensorTotalPages}" var="i">
-                                            <c:url var="sensorPageUrl" value="/history">
-                                                <c:param name="tab" value="sensor"/>
-                                                <c:param name="warehouseId" value="${warehouse.warehouseId}"/>
-                                                <c:param name="sensorKeyword" value="${sensorKeyword}"/>
-                                                <c:param name="rainStatus" value="${selectedRainStatus}"/>
-                                                <c:param name="lightStatus" value="${selectedLightStatus}"/>
-                                                <c:param name="sensorPage" value="${i}"/>
-                                            </c:url>
-                                            <a href="${sensorPageUrl}" class="page-link-btn ${i eq sensorCurrentPage ? 'active' : ''}">
-                                                ${i}
-                                            </a>
+
+                                        <%-- MIDDLE PAGE WINDOW --%>
+                                        <c:forEach begin="2"
+                                                   end="${sensorTotalPages - 1}"
+                                                   var="i">
+
+                                            <c:if test="${
+                                                  i >= sensorCurrentPage - 2
+                                                      and i <= sensorCurrentPage + 2
+                                                  }">
+
+                                                <c:url var="sensorPageUrl" value="/history">
+                                                    <c:param name="tab" value="sensor"/>
+                                                    <c:param name="warehouseId" value="${warehouse.warehouseId}"/>
+                                                    <c:param name="sensorKeyword" value="${sensorKeyword}"/>
+                                                    <c:param name="rainStatus" value="${selectedRainStatus}"/>
+                                                    <c:param name="lightStatus" value="${selectedLightStatus}"/>
+                                                    <c:param name="sensorPage" value="${i}"/>
+                                                </c:url>
+
+                                                <c:choose>
+                                                    <c:when test="${i == sensorCurrentPage}">
+                                                        <span class="page-link-btn active">
+                                                            ${i}
+                                                        </span>
+                                                    </c:when>
+
+                                                    <c:otherwise>
+                                                        <a href="${sensorPageUrl}"
+                                                           class="page-link-btn">
+                                                            ${i}
+                                                        </a>
+                                                    </c:otherwise>
+                                                </c:choose>
+
+                                            </c:if>
                                         </c:forEach>
 
-                                        <%-- NEXT --%>
-                                        <c:if test="${sensorCurrentPage < sensorTotalPages}">
-                                            <c:url var="sensorNextUrl" value="/history">
+
+                                        <%-- RIGHT ELLIPSIS --%>
+                                        <c:if test="${sensorCurrentPage < sensorTotalPages - 3}">
+                                            <span class="page-ellipsis">...</span>
+                                        </c:if>
+
+
+                                        <%-- LAST PAGE --%>
+                                        <c:if test="${sensorTotalPages > 1}">
+
+                                            <c:url var="sensorLastUrl" value="/history">
                                                 <c:param name="tab" value="sensor"/>
                                                 <c:param name="warehouseId" value="${warehouse.warehouseId}"/>
                                                 <c:param name="sensorKeyword" value="${sensorKeyword}"/>
                                                 <c:param name="rainStatus" value="${selectedRainStatus}"/>
                                                 <c:param name="lightStatus" value="${selectedLightStatus}"/>
-                                                <c:param name="sensorPage" value="${sensorCurrentPage + 1}"/>
+                                                <c:param name="sensorPage" value="${sensorTotalPages}"/>
                                             </c:url>
-                                            <a href="${sensorNextUrl}" class="page-link-btn" aria-label="Next page">Next ›</a>
+
+                                            <c:choose>
+                                                <c:when test="${sensorCurrentPage == sensorTotalPages}">
+                                                    <span class="page-link-btn active">
+                                                        ${sensorTotalPages}
+                                                    </span>
+                                                </c:when>
+
+                                                <c:otherwise>
+                                                    <a href="${sensorLastUrl}"
+                                                       class="page-link-btn">
+                                                        ${sensorTotalPages}
+                                                    </a>
+                                                </c:otherwise>
+                                            </c:choose>
+
                                         </c:if>
+
+
+                                        <%-- NEXT --%>
+                                        <c:choose>
+                                            <c:when test="${sensorCurrentPage < sensorTotalPages}">
+
+                                                <c:url var="sensorNextUrl" value="/history">
+                                                    <c:param name="tab" value="sensor"/>
+                                                    <c:param name="warehouseId" value="${warehouse.warehouseId}"/>
+                                                    <c:param name="sensorKeyword" value="${sensorKeyword}"/>
+                                                    <c:param name="rainStatus" value="${selectedRainStatus}"/>
+                                                    <c:param name="lightStatus" value="${selectedLightStatus}"/>
+                                                    <c:param name="sensorPage" value="${sensorCurrentPage + 1}"/>
+                                                </c:url>
+
+                                                <a href="${sensorNextUrl}"
+                                                   class="page-link-btn">
+                                                    Next ›
+                                                </a>
+
+                                            </c:when>
+
+                                            <c:otherwise>
+                                                <span class="page-link-btn disabled">
+                                                    Next ›
+                                                </span>
+                                            </c:otherwise>
+                                        </c:choose>
+
                                     </div>
                                 </div>
                             </c:if>
@@ -671,50 +793,171 @@
                             <%-- BATCH PAGINATION --%>
                             <c:if test="${batchTotalPages > 1}">
                                 <div class="pagination-wrapper">
+
                                     <div class="pagination-info">
-                                        Page <strong>${batchCurrentPage}</strong> of <strong>${batchTotalPages}</strong>
+                                        Page
+                                        <strong>${batchCurrentPage}</strong>
+                                        of
+                                        <strong>${batchTotalPages}</strong>
                                     </div>
+
                                     <div class="pagination-controls">
-                                        <%-- PREV --%>
-                                        <c:if test="${batchCurrentPage > 1}">
-                                            <c:url var="batchPrevUrl" value="/history">
-                                                <c:param name="tab" value="batch"/>
-                                                <c:param name="warehouseId" value="${warehouse.warehouseId}"/>
-                                                <c:param name="batchKeyword" value="${batchKeyword}"/>
-                                                <c:param name="fromDate" value="${fromDate}"/>
-                                                <c:param name="toDate" value="${toDate}"/>
-                                                <c:param name="batchPage" value="${batchCurrentPage - 1}"/>
-                                            </c:url>
-                                            <a href="${batchPrevUrl}" class="page-link-btn" aria-label="Previous page">‹ Prev</a>
+
+                                        <%-- PREVIOUS --%>
+                                        <c:choose>
+                                            <c:when test="${batchCurrentPage > 1}">
+
+                                                <c:url var="batchPrevUrl" value="/history">
+                                                    <c:param name="tab" value="batch"/>
+                                                    <c:param name="warehouseId" value="${warehouse.warehouseId}"/>
+                                                    <c:param name="batchKeyword" value="${batchKeyword}"/>
+                                                    <c:param name="fromDate" value="${fromDate}"/>
+                                                    <c:param name="toDate" value="${toDate}"/>
+                                                    <c:param name="batchPage" value="${batchCurrentPage - 1}"/>
+                                                </c:url>
+
+                                                <a href="${batchPrevUrl}"
+                                                   class="page-link-btn">
+                                                    ‹ Prev
+                                                </a>
+
+                                            </c:when>
+
+                                            <c:otherwise>
+                                                <span class="page-link-btn disabled">
+                                                    ‹ Prev
+                                                </span>
+                                            </c:otherwise>
+                                        </c:choose>
+
+
+                                        <%-- FIRST PAGE --%>
+                                        <c:url var="batchFirstUrl" value="/history">
+                                            <c:param name="tab" value="batch"/>
+                                            <c:param name="warehouseId" value="${warehouse.warehouseId}"/>
+                                            <c:param name="batchKeyword" value="${batchKeyword}"/>
+                                            <c:param name="fromDate" value="${fromDate}"/>
+                                            <c:param name="toDate" value="${toDate}"/>
+                                            <c:param name="batchPage" value="1"/>
+                                        </c:url>
+
+                                        <c:choose>
+                                            <c:when test="${batchCurrentPage == 1}">
+                                                <span class="page-link-btn active">1</span>
+                                            </c:when>
+
+                                            <c:otherwise>
+                                                <a href="${batchFirstUrl}"
+                                                   class="page-link-btn">
+                                                    1
+                                                </a>
+                                            </c:otherwise>
+                                        </c:choose>
+
+
+                                        <%-- LEFT ELLIPSIS --%>
+                                        <c:if test="${batchCurrentPage > 4}">
+                                            <span class="page-ellipsis">...</span>
                                         </c:if>
 
-                                        <%-- NUMBERS --%>
-                                        <c:forEach begin="1" end="${batchTotalPages}" var="i">
-                                            <c:url var="batchPageUrl" value="/history">
-                                                <c:param name="tab" value="batch"/>
-                                                <c:param name="warehouseId" value="${warehouse.warehouseId}"/>
-                                                <c:param name="batchKeyword" value="${batchKeyword}"/>
-                                                <c:param name="fromDate" value="${fromDate}"/>
-                                                <c:param name="toDate" value="${toDate}"/>
-                                                <c:param name="batchPage" value="${i}"/>
-                                            </c:url>
-                                            <a href="${batchPageUrl}" class="page-link-btn ${i eq batchCurrentPage ? 'active' : ''}">
-                                                ${i}
-                                            </a>
+
+                                        <%-- MIDDLE PAGE WINDOW --%>
+                                        <c:forEach begin="2"
+                                                   end="${batchTotalPages - 1}"
+                                                   var="i">
+
+                                            <c:if test="${
+                                                  i >= batchCurrentPage - 2
+                                                      and i <= batchCurrentPage + 2
+                                                  }">
+
+                                                <c:url var="batchPageUrl" value="/history">
+                                                    <c:param name="tab" value="batch"/>
+                                                    <c:param name="warehouseId" value="${warehouse.warehouseId}"/>
+                                                    <c:param name="batchKeyword" value="${batchKeyword}"/>
+                                                    <c:param name="fromDate" value="${fromDate}"/>
+                                                    <c:param name="toDate" value="${toDate}"/>
+                                                    <c:param name="batchPage" value="${i}"/>
+                                                </c:url>
+
+                                                <c:choose>
+                                                    <c:when test="${i == batchCurrentPage}">
+                                                        <span class="page-link-btn active">
+                                                            ${i}
+                                                        </span>
+                                                    </c:when>
+
+                                                    <c:otherwise>
+                                                        <a href="${batchPageUrl}"
+                                                           class="page-link-btn">
+                                                            ${i}
+                                                        </a>
+                                                    </c:otherwise>
+                                                </c:choose>
+
+                                            </c:if>
                                         </c:forEach>
 
-                                        <%-- NEXT --%>
-                                        <c:if test="${batchCurrentPage < batchTotalPages}">
-                                            <c:url var="batchNextUrl" value="/history">
-                                                <c:param name="tab" value="batch"/>
-                                                <c:param name="warehouseId" value="${warehouse.warehouseId}"/>
-                                                <c:param name="batchKeyword" value="${batchKeyword}"/>
-                                                <c:param name="fromDate" value="${fromDate}"/>
-                                                <c:param name="toDate" value="${toDate}"/>
-                                                <c:param name="batchPage" value="${batchCurrentPage + 1}"/>
-                                            </c:url>
-                                            <a href="${batchNextUrl}" class="page-link-btn" aria-label="Next page">Next ›</a>
+
+                                        <%-- RIGHT ELLIPSIS --%>
+                                        <c:if test="${batchCurrentPage < batchTotalPages - 3}">
+                                            <span class="page-ellipsis">...</span>
                                         </c:if>
+
+
+                                        <%-- LAST PAGE --%>
+                                        <c:url var="batchLastUrl" value="/history">
+                                            <c:param name="tab" value="batch"/>
+                                            <c:param name="warehouseId" value="${warehouse.warehouseId}"/>
+                                            <c:param name="batchKeyword" value="${batchKeyword}"/>
+                                            <c:param name="fromDate" value="${fromDate}"/>
+                                            <c:param name="toDate" value="${toDate}"/>
+                                            <c:param name="batchPage" value="${batchTotalPages}"/>
+                                        </c:url>
+
+                                        <c:choose>
+                                            <c:when test="${batchCurrentPage == batchTotalPages}">
+                                                <span class="page-link-btn active">
+                                                    ${batchTotalPages}
+                                                </span>
+                                            </c:when>
+
+                                            <c:otherwise>
+                                                <a href="${batchLastUrl}"
+                                                   class="page-link-btn">
+                                                    ${batchTotalPages}
+                                                </a>
+                                            </c:otherwise>
+                                        </c:choose>
+
+
+                                        <%-- NEXT --%>
+                                        <c:choose>
+                                            <c:when test="${batchCurrentPage < batchTotalPages}">
+
+                                                <c:url var="batchNextUrl" value="/history">
+                                                    <c:param name="tab" value="batch"/>
+                                                    <c:param name="warehouseId" value="${warehouse.warehouseId}"/>
+                                                    <c:param name="batchKeyword" value="${batchKeyword}"/>
+                                                    <c:param name="fromDate" value="${fromDate}"/>
+                                                    <c:param name="toDate" value="${toDate}"/>
+                                                    <c:param name="batchPage" value="${batchCurrentPage + 1}"/>
+                                                </c:url>
+
+                                                <a href="${batchNextUrl}"
+                                                   class="page-link-btn">
+                                                    Next ›
+                                                </a>
+
+                                            </c:when>
+
+                                            <c:otherwise>
+                                                <span class="page-link-btn disabled">
+                                                    Next ›
+                                                </span>
+                                            </c:otherwise>
+                                        </c:choose>
+
                                     </div>
                                 </div>
                             </c:if>
@@ -737,76 +980,76 @@
                 </div>
             </main>
         </div>
-                    <script>
-    // =====================================
-    // Refresh sensor history automatically
-    // =====================================
+        <script>
+// =====================================
+// Refresh sensor history automatically
+// =====================================
 
-    function refreshSensorHistory() {
+            function refreshSensorHistory() {
 
-        var currentSection
-                = document.getElementById(
-                        "sensorHistorySection"
-                        );
-
-        // Do nothing when the Batch History tab is open
-        if (!currentSection) {
-            return;
-        }
-
-        fetch(window.location.href)
-                .then(function (response) {
-
-                    if (!response.ok) {
-
-                        throw new Error(
-                                "HTTP error: "
-                                + response.status
+                var currentSection
+                        = document.getElementById(
+                                "sensorHistorySection"
                                 );
-                    }
 
-                    return response.text();
-                })
-                .then(function (html) {
+// Do nothing when the Batch History tab is open
+                if (!currentSection) {
+                    return;
+                }
 
-                    var parser
-                            = new DOMParser();
+                fetch(window.location.href)
+                        .then(function (response) {
 
-                    var newDocument
-                            = parser.parseFromString(
-                                    html,
-                                    "text/html"
+                            if (!response.ok) {
+
+                                throw new Error(
+                                        "HTTP error: "
+                                        + response.status
+                                        );
+                            }
+
+                            return response.text();
+                        })
+                        .then(function (html) {
+
+                            var parser
+                                    = new DOMParser();
+
+                            var newDocument
+                                    = parser.parseFromString(
+                                            html,
+                                            "text/html"
+                                            );
+
+                            var newSection
+                                    = newDocument.getElementById(
+                                            "sensorHistorySection"
+                                            );
+
+                            if (currentSection
+                                    && newSection) {
+
+                                currentSection.innerHTML
+                                        = newSection.innerHTML;
+                            }
+                        })
+                        .catch(function (error) {
+
+                            console.error(
+                                    "Failed to refresh sensor history:",
+                                    error
                                     );
+                        });
+            }
 
-                    var newSection
-                            = newDocument.getElementById(
-                                    "sensorHistorySection"
-                                    );
+// =====================================
+// Refresh every 30 seconds
+// =====================================
 
-                    if (currentSection
-                            && newSection) {
-
-                        currentSection.innerHTML
-                                = newSection.innerHTML;
-                    }
-                })
-                .catch(function (error) {
-
-                    console.error(
-                            "Failed to refresh sensor history:",
-                            error
-                            );
-                });
-    }
-
-    // =====================================
-    // Refresh every 30 seconds
-    // =====================================
-
-    setInterval(
-            refreshSensorHistory,
-            30000
-            );
-</script>
+            setInterval(
+                    refreshSensorHistory,
+                    30000
+                    );
+        </script>
     </body>
 </html>

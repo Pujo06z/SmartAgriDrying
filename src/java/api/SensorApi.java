@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import model.Device;
+import util.NotificationService;
 /**
  *
  * @author ADMIN
@@ -278,6 +279,39 @@ public class SensorApi extends HttpServlet {
             deviceDAO.updateLastSeen(
                     deviceId
             );
+               // =====================================
+            // Check & send email alerts
+            // =====================================
+
+            if ("RAINING".equals(rainStatus)) {
+
+                NotificationService.alertRainDetected(
+                        deviceId,
+                        temperature,
+                        humidity,
+                        roofStatus
+                );
+            }
+
+            if (temperature >= 40.0) {
+
+                NotificationService.alertHighTemperature(
+                        deviceId,
+                        temperature,
+                        humidity
+                );
+            }
+
+            if (temperature <= 15.0) {
+
+                NotificationService.alertLowTemperature(
+                        deviceId,
+                        temperature,
+                        humidity
+                );
+            }
+
+        
 
             // =====================================
             // Return success response
